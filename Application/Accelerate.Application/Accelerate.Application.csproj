@@ -3,7 +3,7 @@
     <PropertyGroup>
         <AnalysisLevel>5.0</AnalysisLevel>
         <AssemblyName>Accelerate.Application</AssemblyName>
-        <AssemblyOriginatorKeyFile>../.assets/signature.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(SolutionDir)../.assets/signature.snk</AssemblyOriginatorKeyFile>
         <AssemblyTitle>Accelerate.Application</AssemblyTitle>
         <AssemblyVersion>6.0.0</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -26,7 +26,7 @@
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
         <SignAssembly>true</SignAssembly>
-        <TargetFrameworks>net7.0;net6.0;netstandard2.0</TargetFrameworks>
+        <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     </PropertyGroup>
     <PropertyGroup>
@@ -44,12 +44,11 @@
         <PackageId>Accelerate.Application</PackageId>
         <PackageLicenseFile>license.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/9</PackageProjectUrl>
-        <PackageReadmeFile>readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Accelerate Application Services Dtos</PackageTags>
         <PackageVersion>6.0.0</PackageVersion>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/josemaria-toro/accelerate.application.git</RepositoryUrl>
+        <RepositoryUrl>https://github.com/josemaria-toro/accelerate.git</RepositoryUrl>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -60,8 +59,7 @@
         <Optimize>true</Optimize>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="../.assets/accelerate.png" Pack="true" PackagePath="" />
-        <None Include="../.assets/license.txt" Pack="true" PackagePath="" />
-        <None Include="../readme.md" Pack="true" PackagePath="" />
+        <None Include="$(SolutionDir)../.assets/accelerate.png" Pack="true" PackagePath="" />
+        <None Include="$(SolutionDir)../.assets/license.txt" Pack="true" PackagePath="" />
     </ItemGroup>
 </Project>
