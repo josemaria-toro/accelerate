@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AnalysisLevel>5.0</AnalysisLevel>
+        <AssemblyName>Accelerate.Application</AssemblyName>
+        <AssemblyOriginatorKeyFile>../.assets/signature.snk</AssemblyOriginatorKeyFile>
+        <AssemblyTitle>Accelerate.Application</AssemblyTitle>
+        <AssemblyVersion>6.0.0</AssemblyVersion>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <Company>Accelerate</Company>
+        <Configuration>Release</Configuration>
+        <Configurations>Debug;Release</Configurations>
+        <Copyright>Accelerate © 2023</Copyright>
+        <Description>Contracts and abstractions for application layer</Description>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <FileVersion>6.0.0</FileVersion>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <InformationalVersion>6.0.0</InformationalVersion>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Nullable>disable</Nullable>
+        <Product>Accelerate</Product>
+        <RootNamespace>Accelerate</RootNamespace>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <SignAssembly>true</SignAssembly>
+        <TargetFrameworks>net7.0;net6.0;netstandard2.0</TargetFrameworks>
+        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    </PropertyGroup>
+    <PropertyGroup>
+        <Authors>Jose Maria Toro</Authors>
+        <ContentTargetFolders>content</ContentTargetFolders>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <IncludeBuildOutput>true</IncludeBuildOutput>
+        <IncludeContentInPack>true</IncludeContentInPack>
+        <IncludeSource>true</IncludeSource>
+        <IncludeSymbols>true</IncludeSymbols>
+        <IsPackable>true</IsPackable>
+        <IsTool>false</IsTool>
+        <PackageDescription>Contracts and abstractions for application layer</PackageDescription>
+        <PackageIcon>accelerate.png</PackageIcon>
+        <PackageId>Accelerate.Application</PackageId>
+        <PackageLicenseFile>license.txt</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/9</PackageProjectUrl>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageTags>Accelerate Application Services Dtos</PackageTags>
+        <PackageVersion>6.0.0</PackageVersion>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/josemaria-toro/accelerate.application.git</RepositoryUrl>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <DefineDebug>true</DefineDebug>
+        <DefineTrace>true</DefineTrace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="../.assets/accelerate.png" Pack="true" PackagePath="" />
+        <None Include="../.assets/license.txt" Pack="true" PackagePath="" />
+        <None Include="../readme.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+</Project>

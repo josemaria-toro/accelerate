@@ -1,0 +1,45 @@
+name: 'Accelerate.Application'
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Application/**'
+  push:
+    branches:
+      - main
+defaults:
+  run:
+    shell: bash
+    working-directory: './Application'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: 'Clean workspace'
+      run: dotnet clean --configuration ${{ vars.BUILD_CONFIGURATION }} --nologo --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+    - name: 'Restore nuget packages'
+      run: dotnet restore --nologo --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+    - name: 'Build visual studio solution'
+      run: dotnet build --configuration ${{ vars.BUILD_CONFIGURATION }} --nologo --no-restore --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Run unit tests'
+      run: dotnet test --collect:'XPlat Code Coverage' --configuration ${{ vars.BUILD_CONFIGURATION }} --no-build --nologo --results-directory ${{ vars.OUTPUT_REPORTS }} --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+  pack:
+    if: github.event.pull_request.merged == true
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Build nuget packages'
+      run: dotnet pack --configuration ${{ vars.BUILD_CONFIGURATION }} --include-source --include-symbols --no-build --nologo --no-restore --output ${{ vars.OUTPUT_PACKAGES }} --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+  publish:
+    if: github.event.pull_request.merged == true
+    needs: pack
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Publish nuget packages'
+      run: dotnet nuget push ${{ vars.OUTPUT_PACKAGES }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ vars.FEED_URL }}
