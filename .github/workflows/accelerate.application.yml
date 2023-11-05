@@ -11,7 +11,7 @@ on:
 defaults:
   run:
     shell: bash
-    working-directory: './Application'
+    working-directory: 'Application'
 jobs:
   build:
     runs-on: ubuntu-latest
