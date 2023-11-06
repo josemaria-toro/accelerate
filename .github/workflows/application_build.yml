@@ -1,10 +1,5 @@
-name: 'Accelerate.Application'
+name: 'Application (Build)'
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'Application/**'
   push:
     branches:
       - main
@@ -26,8 +21,9 @@ jobs:
     - name: 'Run unit tests'
       run: dotnet test --collect:'XPlat Code Coverage' --configuration ${{ vars.BUILD_CONFIGURATION }} --no-build --nologo --results-directory ${{ vars.OUTPUT_REPORTS }} --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
     - name: 'Build nuget packages'
-      if: github.event.pull_request.merged == true
       run: dotnet pack --configuration ${{ vars.BUILD_CONFIGURATION }} --include-source --include-symbols --no-build --nologo --no-restore --output ${{ vars.OUTPUT_PACKAGES }} --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
-    - name: 'Publish nuget packages'
-      if: github.event.pull_request.merged == true
-      run: dotnet nuget push ${{ vars.OUTPUT_PACKAGES }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ vars.FEED_URL }}
+    - uses: actions/upload-artifact@v3
+      with:
+        name: 'Application.Packages'
+        path: ${{ vars.OUTPUT_PACKAGES }}
+        retention-days: ${{ vars.RETENTION_DAYS }}
