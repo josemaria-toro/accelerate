@@ -1,0 +1,22 @@
+name: 'Application (Release)'
+on:
+  workflow_run:
+    workflows:
+      - 'Application (Build)'
+    types:
+      - completed
+defaults:
+  run:
+    shell: bash
+    working-directory: 'Application'
+jobs:
+  workflow:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@v3
+      with:
+        name: 'Application.Packages'
+        path: ${{ vars.OUTPUT_PACKAGES }}
+    - name: 'Publish nuget packages'
+      run: dotnet nuget push ${{ vars.OUTPUT_PACKAGES }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ vars.FEED_URL }}

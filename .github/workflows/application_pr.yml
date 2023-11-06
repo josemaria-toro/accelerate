@@ -1,0 +1,24 @@
+name: 'Application (PR)'
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Application/**'
+defaults:
+  run:
+    shell: bash
+    working-directory: 'Application'
+jobs:
+  workflow:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: 'Clean workspace'
+      run: dotnet clean --configuration ${{ vars.BUILD_CONFIGURATION }} --nologo --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+    - name: 'Restore nuget packages'
+      run: dotnet restore --nologo --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+    - name: 'Build visual studio solution'
+      run: dotnet build --configuration ${{ vars.BUILD_CONFIGURATION }} --nologo --no-restore --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+    - name: 'Run unit tests'
+      run: dotnet test --collect:'XPlat Code Coverage' --configuration ${{ vars.BUILD_CONFIGURATION }} --no-build --nologo --results-directory ${{ vars.OUTPUT_REPORTS }} --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
