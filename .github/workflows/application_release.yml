@@ -22,4 +22,4 @@ jobs:
         name: 'Application.Packages'
         path: ${{ env.packages_output_path }}
     - name: 'Publish nuget packages'
-      run: dotnet nuget push ${{ env.packages_output_path }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ env.feed_url }}
+      run: dotnet nuget push ${{ env.packages_output_path }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ env.github_feed_url }}
