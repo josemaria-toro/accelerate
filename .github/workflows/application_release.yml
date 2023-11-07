@@ -9,14 +9,17 @@ defaults:
   run:
     shell: bash
     working-directory: 'Application'
+env:
+  github_feed_url: https://nuget.pkg.github.com/josemaria-toro/index.json
+  packages_output_path: '${{ github.workspace }}/packages'
 jobs:
-  workflow:
+  publish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/download-artifact@v3
       with:
         name: 'Application.Packages'
-        path: ${{ vars.OUTPUT_PACKAGES }}
+        path: ${{ env.packages_output_path }}
     - name: 'Publish nuget packages'
-      run: dotnet nuget push ${{ vars.OUTPUT_PACKAGES }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ vars.FEED_URL }}
+      run: dotnet nuget push ${{ env.packages_output_path }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ env.feed_url }}
