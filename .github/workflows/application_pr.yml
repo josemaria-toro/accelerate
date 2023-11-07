@@ -1,8 +1,14 @@
 name: 'Application (PR)'
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - 'Application/**'
+    types:
+      - edited
+      - opened
+      - reopened
 defaults:
   run:
     shell: bash
