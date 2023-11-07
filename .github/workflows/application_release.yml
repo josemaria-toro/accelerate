@@ -12,7 +12,6 @@ defaults:
     working-directory: 'Application'
 env:
   github_feed_url: https://nuget.pkg.github.com/josemaria-toro/index.json
-  packages_output_path: '${{ github.workspace }}/packages'
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -21,6 +20,5 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: 'Application.Packages'
-        path: ${{ env.packages_output_path }}
     - name: 'Publish nuget packages'
-      run: dotnet nuget push ${{ env.packages_output_path }}/*.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ env.github_feed_url }}
+      run: dotnet nuget push *.nupkg --api-key ${{ secrets.FEED_TOKEN }} --skip-duplicate --source ${{ env.github_feed_url }}
