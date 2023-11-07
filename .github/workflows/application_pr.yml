@@ -9,16 +9,20 @@ defaults:
   run:
     shell: bash
     working-directory: 'Application'
+env:
+  configuration: Release
+  coverage_report_path: '${{ github.workspace }}/coverage'
+  verbosity: normal
 jobs:
-  workflow:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: 'Clean workspace'
-      run: dotnet clean --configuration ${{ vars.BUILD_CONFIGURATION }} --nologo --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+      run: dotnet clean --configuration ${{ env.configuration }} --nologo --verbosity ${{ env.verbosity }} *.sln
     - name: 'Restore nuget packages'
-      run: dotnet restore --nologo --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+      run: dotnet restore --nologo --verbosity ${{ env.verbosity }} *.sln
     - name: 'Build visual studio solution'
-      run: dotnet build --configuration ${{ vars.BUILD_CONFIGURATION }} --nologo --no-restore --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+      run: dotnet build --configuration ${{ env.configuration }} --nologo --no-restore --verbosity ${{ env.verbosity }} *.sln
     - name: 'Run unit tests'
-      run: dotnet test --collect:'XPlat Code Coverage' --configuration ${{ vars.BUILD_CONFIGURATION }} --no-build --nologo --results-directory ${{ vars.OUTPUT_REPORTS }} --verbosity ${{ vars.DOTNET_VERBOSITY }} *.sln
+      run: dotnet test --collect:'XPlat Code Coverage' --configuration ${{ env.configuration }} --no-build --nologo --results-directory ${{ env.coverage_report_path }} --verbosity ${{ env.verbosity }} *.sln
