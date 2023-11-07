@@ -4,11 +4,12 @@ on:
     branches:
       - main
     paths:
-      - 'Application/**'
+      - 'Application/*'
     types:
       - edited
       - opened
       - reopened
+      - synchronize
 defaults:
   run:
     shell: bash
