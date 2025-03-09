@@ -48,7 +48,7 @@ jobs:
         dotnet-version: ${{ vars.dotnet_setup_version }}
     - name: "Setup .NET tools"
       run: |
-          dotnet tool install --global dotnet-outdated-tool
+        dotnet tool install --global dotnet-outdated-tool
       working-directory: ${{ github.workspace }}
     - name: "Clean workspace"
       run: dotnet clean ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --nologo --verbosity ${{ vars.verbosity_level }}
