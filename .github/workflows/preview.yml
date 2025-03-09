@@ -38,5 +38,5 @@ jobs:
       run: dotnet pack ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --include-source --include-symbols --nologo --no-restore --output ${{ vars.packages_path }} --verbosity ${{ vars.verbosity_level }}
       working-directory: ${{ github.workspace }}
     - name: "Push nuget packages"
-      run: dotnet nuget push ${{ vars.packages_path }}/*.nupkg --api-key ${{ github.token }} --source ${{ vars.feed_url }} --symbol-api-key ${{ github.token }} --symbol-source ${{ vars.feed_url }} --skip-duplicate  --timeout 300
+      run: dotnet nuget push ${{ vars.packages_path }}/*.nupkg --api-key ${{ secrets.feed_key }} --source ${{ vars.feed_url }} --symbol-api-key ${{ secrets.feed_key }} --symbol-source ${{ vars.feed_url }} --skip-duplicate  --timeout 300
       working-directory: ${{ github.workspace }}
