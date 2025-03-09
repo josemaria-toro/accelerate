@@ -1,5 +1,5 @@
 name: build
-run-name: Build .NET Solution
+run-name: Build product
 on:
   pull_request:
     branches: [ "develop", "main" ]
@@ -49,7 +49,6 @@ jobs:
     - name: "Setup .NET tools"
       run: |
           dotnet tool install --global dotnet-outdated-tool
-          dotnet tool install --global dotnet-sonarscanner
       working-directory: ${{ github.workspace }}
     - name: "Clean workspace"
       run: dotnet clean ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --nologo --verbosity ${{ vars.verbosity_level }}
