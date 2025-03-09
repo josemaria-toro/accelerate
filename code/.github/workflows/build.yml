@@ -1,0 +1,68 @@
+name: build
+run-name: Build .NET Solution
+on:
+  pull_request:
+    branches: [ "develop", "main" ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+    - name: Check branching strategy
+      run: |
+        isValidBranchName=false
+        sourceBranch="${{ github.ref_name }}"
+        targetBranch="${{ github.ref_name }}"
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          sourceBranch="${{ github.event.pull_request.head.ref }}"
+          targetBranch="${{ github.event.pull_request.base.ref }}"
+        fi
+        if [ "$sourceBranch" == "$targetBranch" ]; then
+          isValidBranchName=true
+        elif [[ "$targetBranch" == */develop ]]; then
+          branchNameFilters=("*/bug/*" "*/feature/*" "*/misc/*")
+        elif [[ "$targetBranch" == */main ]]; then
+          branchNameFilters=("*/develop")
+        fi
+        for branchNameFilter in "${branchNameFilters[@]}"; do
+          if [[ "$sourceBranch" == $branchNameFilter ]]; then
+            isValidBranchName=true
+            break
+          fi
+        done
+        if [ "$isValidBranchName" == false ]; then
+          echo "Branch name $sourceBranch is invalid, the allowed values are the following:"
+          echo "- bug: used to fix issues of product (develop)"
+          echo "- feature: used to develop new product features (develop)"
+          echo "- hotfix: used to fix critical issues of product (develop, main)"
+          echo "- release: used to deploy a release version of product (main)"
+          echo "Branch name $sourceBranch is invalid"
+          exit 1
+        fi
+      working-directory: ${{ github.workspace }}
+    - name: Setup .NET platform
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ vars.dotnet_setup_version }}
+    - name: "Setup .NET tools"
+      run: |
+          dotnet tool install --global dotnet-outdated-tool
+          dotnet tool install --global dotnet-sonarscanner
+      working-directory: ${{ github.workspace }}
+    - name: "Clean workspace"
+      run: dotnet clean ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --nologo --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Restore dependencies"
+      run: dotnet restore ${{ vars.solution_file }} --nologo --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Build artifacts"
+      run: dotnet build ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --nologo --no-restore --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Run unit tests"
+      run: dotnet test ${{ vars.solution_file }} --collect "${{ vars.coverage_analyzer }}" --configuration ${{ vars.build_configuration }} --no-build --nologo --no-restore --results-directory ${{ vars.coverage_reports_path }} --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Check outdated dependencies"
+      run: dotnet outdated ${{ vars.solution_file }} --fail-on-updates --no-restore --pre-release never --recursive --version-lock minor
+      working-directory: ${{ github.workspace }}

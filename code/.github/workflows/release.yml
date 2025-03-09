@@ -1,0 +1,42 @@
+name: build
+run-name: Build .NET Solution
+on:
+  push:
+    branches: [ "develop", "main" ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+    - name: Setup .NET platform
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ vars.dotnet_setup_version }}
+    - name: "Setup .NET tools"
+      run: |
+          dotnet tool install --global dotnet-outdated-tool
+          dotnet tool install --global dotnet-sonarscanner
+      working-directory: ${{ github.workspace }}
+    - name: "Clean workspace"
+      run: dotnet clean ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --nologo --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Restore dependencies"
+      run: dotnet restore ${{ vars.solution_file }} --nologo --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Build artifacts"
+      run: dotnet build ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --nologo --no-restore --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Run unit tests"
+      run: dotnet test ${{ vars.solution_file }} --collect "${{ vars.coverage_analyzer }}" --configuration ${{ vars.build_configuration }} --no-build --nologo --no-restore --results-directory ${{ vars.coverage_reports_path }} --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Check outdated dependencies"
+      run: dotnet outdated ${{ vars.solution_file }} --fail-on-updates --no-restore --pre-release never --recursive --version-lock minor
+      working-directory: ${{ github.workspace }}
+    - name: "Build nuget packages"
+      run: dotnet pack ${{ vars.solution_file }} --configuration ${{ vars.build_configuration }} --include-source --include-symbols --nologo --no-restore --output ${{ vars.packages_path }} --verbosity ${{ vars.verbosity_level }}
+      working-directory: ${{ github.workspace }}
+    - name: "Push nuget packages"
+      run: dotnet nuget push ${{ vars.packages_path }}/*.nupkg --api-key ${{ secrets.github_token }} --source ${{ vars.feed_url }} --symbol-api-key ${{ secrets.github_token }} --symbol-source ${{ vars.feed_url }} --skip-duplicate  --timeout 300
+      working-directory: ${{ github.workspace }}

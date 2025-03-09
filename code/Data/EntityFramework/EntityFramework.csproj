@@ -1,0 +1,96 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AnalysisLevel>5.0</AnalysisLevel>
+        <AssemblyName>Accelerate.Data.EntityFramework</AssemblyName>
+        <AssemblyOriginatorKeyFile>signature.snk</AssemblyOriginatorKeyFile>
+        <AssemblyTitle>Data access library based on entity framework</AssemblyTitle>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <Authors>Zeta Technologies</Authors>
+        <CodeAnalysisOutputToConsole>true</CodeAnalysisOutputToConsole>
+        <Company>Zeta Technologies</Company>
+        <Configuration>Release</Configuration>
+        <Configurations>Debug;Release</Configurations>
+        <ContentTargetFolders>content</ContentTargetFolders>
+        <Copyright>Zeta Technologies © 2025</Copyright>
+        <Description>Data access library based on entity framework</Description>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <IncludeBuildOutput>true</IncludeBuildOutput>
+        <IncludeContentInPack>true</IncludeContentInPack>
+        <IncludeSource>false</IncludeSource>
+        <IncludeSymbols>true</IncludeSymbols>
+        <IsPackable>true</IsPackable>
+        <IsPublishable>false</IsPublishable>
+        <IsTestProject>false</IsTestProject>
+        <IsTool>false</IsTool>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Nullable>disable</Nullable>
+        <OutputType>library</OutputType>
+        <PackageDescription>Data access library based on entity framework</PackageDescription>
+        <PackageIcon>zetatech.png</PackageIcon>
+        <PackageId>Accelerate.Data.EntityFramework</PackageId>
+        <PackageLicenseFile>license</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageTags>Accelerate Data Entity Framework Repository Zeta</PackageTags>
+        <Product>Accelerate</Product>
+        <PublishDocumentationFile>false</PublishDocumentationFile>
+        <PublishDocumentationFiles>false</PublishDocumentationFiles>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/josemaria-toro/accelerate.git</RepositoryUrl>
+        <RootNamespace>Accelerate</RootNamespace>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <RunCodeAnalysis>false</RunCodeAnalysis>
+        <SignAssembly>true</SignAssembly>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <TargetFramework>net8.0</TargetFramework>
+        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <DefineDebug>true</DefineDebug>
+        <DefineTrace>true</DefineTrace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugSymbols>false</DebugSymbols>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="license" Pack="true" PackagePath="" />
+        <None Include="readme.md" Pack="true" PackagePath="" />
+        <None Include="zetatech.png" Pack="true" PackagePath="" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Abstractions/Abstractions.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.13" Condition="'$(TargetFramework)' == 'net8.0'" />
+    </ItemGroup>
+    <Target Name="BinariesVersion" BeforeTargets="GetAssemblyVersion">
+        <ReadLinesFromFile File="$(projectdir)/version.md">
+            <Output TaskParameter="Lines" ItemName="Version" />
+        </ReadLinesFromFile>
+        <PropertyGroup>
+            <AssemblyVersion>@(Version, '%0a')</AssemblyVersion>
+            <FileVersion>@(Version, '%0a')</FileVersion>
+            <InformationalVersion>@(Version, '%0a')</InformationalVersion>
+            <PackageVersion>@(Version, '%0a')</PackageVersion>
+        </PropertyGroup>
+    </Target>
+    <Target Name="ReleaseNotes" BeforeTargets="GenerateNuspec">
+        <ReadLinesFromFile File="$(projectdir)/changelog.md">
+            <Output TaskParameter="Lines" ItemName="ReleaseNotes" />
+        </ReadLinesFromFile>
+        <PropertyGroup>
+            <PackageReleaseNotes>@(ReleaseNotes, '%0a')</PackageReleaseNotes>
+        </PropertyGroup>
+    </Target>
+</Project>

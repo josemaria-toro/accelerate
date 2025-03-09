@@ -1,0 +1,110 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AnalysisLevel>5.0</AnalysisLevel>
+        <AssemblyName>Accelerate.Exceptions.UnitTests</AssemblyName>
+        <AssemblyOriginatorKeyFile>signature.snk</AssemblyOriginatorKeyFile>
+        <AssemblyTitle>Unit tests for exceptions library</AssemblyTitle>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <Authors>Zeta Technologies</Authors>
+        <CodeAnalysisOutputToConsole>true</CodeAnalysisOutputToConsole>
+        <Company>Zeta Technologies</Company>
+        <Configuration>Release</Configuration>
+        <Configurations>Debug;Release</Configurations>
+        <ContentTargetFolders>content</ContentTargetFolders>
+        <Copyright>Zeta Technologies © 2025</Copyright>
+        <Description>Unit tests for exceptions library</Description>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <IncludeBuildOutput>true</IncludeBuildOutput>
+        <IncludeContentInPack>true</IncludeContentInPack>
+        <IncludeSource>false</IncludeSource>
+        <IncludeSymbols>true</IncludeSymbols>
+        <IsPackable>false</IsPackable>
+        <IsPublishable>false</IsPublishable>
+        <IsTestProject>true</IsTestProject>
+        <IsTool>false</IsTool>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Nullable>disable</Nullable>
+        <OutputType>library</OutputType>
+        <PackageDescription>Unit tests for exceptions library</PackageDescription>
+        <PackageIcon>zetatech.png</PackageIcon>
+        <PackageId>Accelerate.Exceptions.UnitTests</PackageId>
+        <PackageLicenseFile>license</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageTags>Accelerate Exception Tests Unit Zeta</PackageTags>
+        <Product>Accelerate</Product>
+        <PublishDocumentationFile>false</PublishDocumentationFile>
+        <PublishDocumentationFiles>false</PublishDocumentationFiles>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/josemaria-toro/accelerate.git</RepositoryUrl>
+        <RootNamespace>Accelerate</RootNamespace>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <RunCodeAnalysis>false</RunCodeAnalysis>
+        <SignAssembly>true</SignAssembly>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <DefineDebug>true</DefineDebug>
+        <DefineTrace>true</DefineTrace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugSymbols>false</DebugSymbols>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="license" Pack="true" PackagePath="" />
+        <None Include="readme.md" Pack="true" PackagePath="" />
+        <None Include="zetatech.png" Pack="true" PackagePath="" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Testing\xUnit\xUnit.csproj" />
+        <ProjectReference Include="..\Exceptions\Exceptions.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.4">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+        <PackageReference Include="Moq" Version="4.20.72" />
+        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+    <Target Name="BinariesVersion" BeforeTargets="GetAssemblyVersion">
+        <ReadLinesFromFile File="$(projectdir)/version.md">
+            <Output TaskParameter="Lines" ItemName="Version" />
+        </ReadLinesFromFile>
+        <PropertyGroup>
+            <AssemblyVersion>@(Version, '%0a')</AssemblyVersion>
+            <FileVersion>@(Version, '%0a')</FileVersion>
+            <InformationalVersion>@(Version, '%0a')</InformationalVersion>
+            <PackageVersion>@(Version, '%0a')</PackageVersion>
+        </PropertyGroup>
+    </Target>
+    <Target Name="ReleaseNotes" BeforeTargets="GenerateNuspec">
+        <ReadLinesFromFile File="$(projectdir)/changelog.md">
+            <Output TaskParameter="Lines" ItemName="ReleaseNotes" />
+        </ReadLinesFromFile>
+        <PropertyGroup>
+            <PackageReleaseNotes>@(ReleaseNotes, '%0a')</PackageReleaseNotes>
+        </PropertyGroup>
+    </Target>
+</Project>
