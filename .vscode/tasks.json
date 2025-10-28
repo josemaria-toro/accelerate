@@ -1,0 +1,105 @@
+{
+    "inputs": [
+        {
+            "default": "debug",
+            "description": "Build configuration",
+            "id": "configuration",
+            "options": [
+                "debug",
+                "release"
+            ],
+            "type": "pickString"
+        }
+    ],
+    "tasks": [
+        {
+            "dependsOn": [],
+            "group": {
+                "isDefault": false,
+                "kind": "build"
+            },
+            "hide": true,
+            "label": "accelerate: cleanup",
+            "linux":{
+                "command": "rm --dir --force --recursive ~/.nuget/packages/zetatech.accelerate.*"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell",
+            "windows":{
+                "command": "del ~/.nuget/packages/zetatech.accelerate.*"
+            }
+        },
+        {
+            "command": "dotnet restore accelerate.sln --nologo --verbosity normal",
+            "dependsOn": [
+                "accelerate: cleanup"
+            ],
+            "group": {
+                "isDefault": false,
+                "kind": "build"
+            },
+            "hide": true,
+            "label": "accelerate: restore",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet clean accelerate.sln --configuration ${input:configuration} --nologo --verbosity normal",
+            "dependsOn": [
+                "accelerate: restore"
+            ],
+            "group": {
+                "isDefault": false,
+                "kind": "build"
+            },
+            "hide": true,
+            "label": "accelerate: clean",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet build accelerate.sln --configuration ${input:configuration} --nologo --no-restore --verbosity normal",
+            "dependsOn": [
+                "accelerate: clean"
+            ],
+            "group": {
+                "isDefault": true,
+                "kind": "build"
+            },
+            "hide": false,
+            "label": "accelerate: build",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet pack accelerate.sln --configuration ${input:configuration} --include-source --include-symbols --nologo --no-restore --output d:\\sources\\packages --verbosity normal",
+            "dependsOn": [
+                "accelerate: build"
+            ],
+            "group": {
+                "isDefault": false,
+                "kind": "build"
+            },
+            "hide": false,
+            "label": "accelerate: pack",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        }
+    ],
+    "version": "2.0.0"
+}
