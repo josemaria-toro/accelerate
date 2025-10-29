@@ -3,30 +3,22 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    name: build_vs_solution
-    description: Build Visual Studio Solution
+    name: Build .NET Solution
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
-      description: Checkout the source code
+    - name: 🔄 Checkout the source code
       uses: actions/checkout@v4
-    - name: dotnet_setup
-      description: Setup .NET 8.0
+    - name: 🛠️ Setup .NET 8.0
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
-    - name: restore
-      description: Restore dependencies
+    - name: 📦 Restore dependencies
       run: dotnet restore Zetatech.Accelerate.sln --nologo --verbosity minimal
-    - name: cleanup
-      description: Clean workspace
+    - name: 🧹 Clean workspace
       run: dotnet clean Zetatech.Accelerate.sln --configuration release --nologo --verbosity minimal
-    - name: build
-      description: Build solution
+    - name: 🏗️ Build solution
       run: dotnet build Zetatech.Accelerate.sln --configuration release --no-incremental --no-restore --nologo
-    - name: pack
-      description: Build packages
+    - name: 📚 Build packages
       run: dotnet pack Zetatech.Accelerate.sln --configuration release --no-build --nologo --output ${{ github.workspace }}/artifacts
-    - name: push
-      description: Publish packages
+    - name: 🚀 Publish packages
       run: dotnet nuget push "${{ github.workspace }}/artifacts/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
