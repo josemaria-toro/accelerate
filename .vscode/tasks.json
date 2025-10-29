@@ -33,7 +33,7 @@
             }
         },
         {
-            "command": "dotnet restore accelerate.sln --nologo --verbosity normal",
+            "command": "dotnet restore zetatech.accelerate.sln --nologo --verbosity normal",
             "dependsOn": [
                 "accelerate: cleanup"
             ],
@@ -50,7 +50,7 @@
             "type": "shell"
         },
         {
-            "command": "dotnet clean accelerate.sln --configuration ${input:configuration} --nologo --verbosity normal",
+            "command": "dotnet clean zetatech.accelerate.sln --configuration ${input:configuration} --nologo --verbosity normal",
             "dependsOn": [
                 "accelerate: restore"
             ],
@@ -67,7 +67,7 @@
             "type": "shell"
         },
         {
-            "command": "dotnet build accelerate.sln --configuration ${input:configuration} --nologo --no-restore --verbosity normal",
+            "command": "dotnet build zetatech.accelerate.sln --configuration ${input:configuration} --nologo --no-restore --verbosity normal",
             "dependsOn": [
                 "accelerate: clean"
             ],
@@ -84,7 +84,7 @@
             "type": "shell"
         },
         {
-            "command": "dotnet pack accelerate.sln --configuration ${input:configuration} --include-source --include-symbols --nologo --no-restore --output d:\\sources\\packages --verbosity normal",
+            "command": "dotnet pack zetatech.accelerate.sln --configuration ${input:configuration} --include-source --include-symbols --nologo --no-restore --output d:\\sources\\packages --verbosity normal",
             "dependsOn": [
                 "accelerate: build"
             ],
