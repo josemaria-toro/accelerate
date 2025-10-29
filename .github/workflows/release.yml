@@ -1,4 +1,4 @@
-name: .NET Build
+name: .NET Release
 on:
   workflow_dispatch:
 jobs:
