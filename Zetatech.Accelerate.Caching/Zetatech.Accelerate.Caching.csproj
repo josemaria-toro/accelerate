@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AnalysisLevel>5.0</AnalysisLevel>
         <AssemblyName>Zetatech.Accelerate.Caching</AssemblyName>
-        <AssemblyOriginatorKeyFile>signature.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
         <AssemblyTitle>Library with the custom implementations of caching components</AssemblyTitle>
         <AssemblyVersion>8.0.0</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,11 +35,11 @@
         <Nullable>disable</Nullable>
         <OutputType>library</OutputType>
         <PackageDescription>Library with the custom implementations of caching components</PackageDescription>
-        <PackageIcon>icon.png</PackageIcon>
+        <PackageIcon>PackageIcon.png</PackageIcon>
         <PackageId>Zetatech.Accelerate.Caching</PackageId>
-        <PackageLicenseFile>license</PackageLicenseFile>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
-        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Accelerate Caching Memory Zetatech</PackageTags>
         <PackageVersion>8.0.0</PackageVersion>
@@ -68,9 +68,9 @@
         <Optimize>true</Optimize>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="icon.png" Pack="true" PackagePath="" />
-        <None Include="license" Pack="true" PackagePath="" />
-        <None Include="readme.md" Pack="true" PackagePath="" />
+        <None Include="$(SolutionDir)/License.txt" Pack="true" PackagePath="License.txt" />
+        <None Include="$(SolutionDir)/PackageIcon.png" Pack="true" PackagePath="PackageIcon.png" />
+        <None Include="$(SolutionDir)/Zetatech.Accelerate.Caching.md" Pack="true" PackagePath="Readme.md" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate.Abstractions/Zetatech.Accelerate.Abstractions.csproj" />

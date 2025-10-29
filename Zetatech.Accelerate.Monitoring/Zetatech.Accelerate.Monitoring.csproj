@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AnalysisLevel>5.0</AnalysisLevel>
         <AssemblyName>Zetatech.Accelerate.Monitoring</AssemblyName>
-        <AssemblyOriginatorKeyFile>signature.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
         <AssemblyTitle>System console application to monitor applications and systems</AssemblyTitle>
         <AssemblyVersion>8.0.0</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,11 +35,11 @@
         <Nullable>disable</Nullable>
         <OutputType>exe</OutputType>
         <PackageDescription>System console application to monitor applications and systems</PackageDescription>
-        <PackageIcon>icon.png</PackageIcon>
+        <PackageIcon>PackageIcon.png</PackageIcon>
         <PackageId>Zetatech.Accelerate.Monitoring</PackageId>
-        <PackageLicenseFile>license</PackageLicenseFile>
+        <PackageLicenseFile>License.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
-        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Accelerate Logging Monitoring PostgreSQL RabbitMQ Telemetry Zetatech</PackageTags>
         <PackageVersion>8.0.0</PackageVersion>
