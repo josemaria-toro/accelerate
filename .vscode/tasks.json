@@ -20,7 +20,7 @@
             },
             "hide": true,
             "label": "accelerate: cleanup",
-            "linux":{
+            "linux": {
                 "command": "rm --dir --force --recursive ~/.nuget/packages/zetatech.accelerate.*"
             },
             "problemMatcher": [
@@ -28,7 +28,7 @@
             ],
             "promptOnClose": false,
             "type": "shell",
-            "windows":{
+            "windows": {
                 "command": "del ~/.nuget/packages/zetatech.accelerate.*"
             }
         },
