@@ -94,7 +94,7 @@ var options = Options.Create(myOptions);
 var myRepository = new MyRepository(options);
 var entities = myRepository.Select("SELECT * FROM MyEntities");
 ```
-### Feedback & Contributing
+## Feedback & Contributing
 Zetatech.Accelerate.Data is released as open source under the [GNU General Public License](./License.txt).  
 Bug reports and contributions are welcome at the [GitHub repository](https://github.com/josemaria-toro/accelerate.git).  
 ## Changelog

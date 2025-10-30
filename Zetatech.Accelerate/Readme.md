@@ -89,7 +89,7 @@ Provides the interface for implementing custom data entities.
 ``` csharp
 public interface IEntity : ICloneable
 ```
-## IRepository
+### IRepository
 Provides the interface for implementing custom data access repositories.  
 **Assembly:** Zetatech.Accelerate.dll  
 **Namespace**: Zetatech.Accelerate.Data  

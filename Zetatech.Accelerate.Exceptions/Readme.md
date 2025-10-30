@@ -156,7 +156,7 @@ public class ValidationException : Exception
 | Name          | Type   | Description                                                         |
 |:--------------|:-------|:--------------------------------------------------------------------|
 | ParameterName | String | Gets the name of the parameter that failed validation, if provided. |
-### Feedback & Contributing
+## Feedback & Contributing
 Zetatech.Accelerate.Exceptions is released as open source under the [GNU General Public License](./License.txt).  
 Bug reports and contributions are welcome at the [GitHub repository](https://github.com/josemaria-toro/accelerate.git).  
 ## Changelog
