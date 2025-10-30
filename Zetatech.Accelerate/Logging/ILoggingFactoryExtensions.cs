@@ -10,19 +10,6 @@ namespace Zetatech.Accelerate.Logging;
 public static class ILoggingFactoryExtensions
 {
     /// <summary>
-    /// Creates a new <see cref="ILogger"/> instance.
-    /// </summary>
-    /// <param name="loggingFactory">
-    /// The instance of the logging factory.
-    /// </param>
-    /// <param name="categoryName">
-    /// The category name for messages produced by the logger.
-    /// </param>
-    public static async Task<ILogger> CreateLoggerAsync(ILoggingFactory loggingFactory, String categoryName)
-    {
-        return await Task.Run(() => loggingFactory.CreateLogger(categoryName));
-    }
-    /// <summary>
     /// Adds an <see cref="ILoggerProvider"/> to the logging system.
     /// </summary>
     /// <param name="loggingFactory">
@@ -34,5 +21,18 @@ public static class ILoggingFactoryExtensions
     public static async Task AddProvider(ILoggingFactory loggingFactory, ILoggerProvider loggerProvider)
     {
         await Task.Run(() => loggingFactory.AddProvider(loggerProvider));
+    }
+    /// <summary>
+    /// Creates a new <see cref="ILogger"/> instance.
+    /// </summary>
+    /// <param name="loggingFactory">
+    /// The instance of the logging factory.
+    /// </param>
+    /// <param name="categoryName">
+    /// The category name for messages produced by the logger.
+    /// </param>
+    public static async Task<ILogger> CreateLoggerAsync(ILoggingFactory loggingFactory, String categoryName)
+    {
+        return await Task.Run(() => loggingFactory.CreateLogger(categoryName));
     }
 }

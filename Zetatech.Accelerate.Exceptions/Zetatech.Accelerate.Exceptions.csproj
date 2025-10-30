@@ -70,6 +70,6 @@
     <ItemGroup>
         <None Include="$(SolutionDir)/License.txt" Pack="true" PackagePath="License.txt" />
         <None Include="$(SolutionDir)/PackageIcon.png" Pack="true" PackagePath="PackageIcon.png" />
-        <None Include="$(SolutionDir)/Zetatech.Accelerate.Exceptions.md" Pack="true" PackagePath="Readme.md" />
+        <None Include="Readme.md" Pack="true" PackagePath="Readme.md" />
     </ItemGroup>
 </Project>
