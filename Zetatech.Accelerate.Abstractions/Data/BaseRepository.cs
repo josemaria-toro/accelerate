@@ -49,6 +49,10 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : BaseDisposab
     }
 
     /// <summary>
+    /// Gets the entity framework context.
+    /// </summary>
+    protected TContext Context => _context;
+    /// <summary>
     /// Gets the set of entities managed by this repository.
     /// </summary>
     protected DbSet<TEntity> Entities => _entities;
