@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Telemetry.Messages;
 using Zetatech.Accelerate.Messaging.Publishers;
@@ -15,7 +16,10 @@ internal sealed class PageViewsPublisherService : RabbitMqPublisherService<PageV
     /// <param name="options">
     /// The configuration options for the publisher service.
     /// </param>
-    public PageViewsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    public PageViewsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
     }
 }

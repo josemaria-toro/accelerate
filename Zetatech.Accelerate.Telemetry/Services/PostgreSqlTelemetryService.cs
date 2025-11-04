@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using Zetatech.Accelerate.Data;
 using Zetatech.Accelerate.Data.Repositories;
@@ -27,7 +28,10 @@ public sealed class PostgreSqlTelemetryService : BaseTelemetryService<PostgreSql
     /// <param name="options">
     /// The configuration options for the telemetry service.
     /// </param>
-    public PostgreSqlTelemetryService(IOptions<PostgreSqlTelemetryServiceOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    public PostgreSqlTelemetryService(IOptions<PostgreSqlTelemetryServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
         var postgreSqlRepositoryOptions = new PostgreSqlRepositoryOptions
         {
@@ -39,12 +43,12 @@ public sealed class PostgreSqlTelemetryService : BaseTelemetryService<PostgreSql
             TrackChanges = Options.TrackChanges
         };
 
-        _dependenciesRepository = new DependenciesRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions));
-        _eventsRepository = new EventsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions));
-        _metricsRepository = new MetricsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions));
-        _pageViewsRepository = new PageViewsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions));
-        _requestsRepository = new RequestsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions));
-        _testsRepository = new TestsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions));
+        _dependenciesRepository = new DependenciesRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions), loggerFactory);
+        _eventsRepository = new EventsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions), loggerFactory);
+        _metricsRepository = new MetricsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions), loggerFactory);
+        _pageViewsRepository = new PageViewsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions), loggerFactory);
+        _requestsRepository = new RequestsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions), loggerFactory);
+        _testsRepository = new TestsRepository(OptionsBuilder.Create(postgreSqlRepositoryOptions), loggerFactory);
     }
 
     /// <summary>

@@ -11,7 +11,6 @@ public abstract class BaseTelemetryService<TOptions> : BaseDisposable, ITelemetr
 {
     private Boolean _disposed;
     private ILogger _logger;
-    private ILoggerFactory _loggerFactory;
     private TOptions _options;
 
     /// <summary>
@@ -20,8 +19,12 @@ public abstract class BaseTelemetryService<TOptions> : BaseDisposable, ITelemetr
     /// <param name="options">
     /// The configuration options for the telemetry service.
     /// </param>
-    protected BaseTelemetryService(IOptions<TOptions> options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    protected BaseTelemetryService(IOptions<TOptions> options, ILoggerFactory loggerFactory)
     {
+        _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options?.Value;
     }
 
@@ -29,18 +32,6 @@ public abstract class BaseTelemetryService<TOptions> : BaseDisposable, ITelemetr
     /// Gets the instance of the logger.
     /// </summary>
     protected ILogger Logger => _logger;
-    /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    public ILoggerFactory LoggerFactory
-    {
-        get => _loggerFactory;
-        set
-        {
-            _loggerFactory = value;
-            _logger = _loggerFactory?.CreateLogger(GetType().Name);
-        }
-    }
     /// <summary>
     /// Gets the options for the telemetry service.
     /// </summary>

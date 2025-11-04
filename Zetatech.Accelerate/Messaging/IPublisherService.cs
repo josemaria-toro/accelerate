@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 
 namespace Zetatech.Accelerate.Messaging;
 
@@ -11,11 +10,6 @@ namespace Zetatech.Accelerate.Messaging;
 /// </typeparam>
 public interface IPublisherService<TMessage> : IDisposable where TMessage : IMessage
 {
-    /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    ILoggerFactory LoggerFactory { get; set; }
-    
     /// <summary>
     /// Publishes a message to all subscribed instances.
     /// </summary>

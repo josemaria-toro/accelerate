@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Data.Repositories;
 using Zetatech.Accelerate.Telemetry.Entities;
@@ -16,7 +17,10 @@ internal sealed class PageViewsRepository : PostgreSqlRepository<PageViewEntity,
     /// <param name="options">
     /// The configuration options for the repository.
     /// </param>
-    public PageViewsRepository(IOptions<PostgreSqlRepositoryOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    public PageViewsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
     }
 

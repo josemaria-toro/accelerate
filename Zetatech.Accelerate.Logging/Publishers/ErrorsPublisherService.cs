@@ -15,7 +15,7 @@ internal sealed class ErrorsPublisherService : RabbitMqPublisherService<ErrorMes
     /// <param name="options">
     /// The configuration options for the publisher service.
     /// </param>
-    public ErrorsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options) : base(options)
+    public ErrorsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options) : base(options, null)
     {
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using Zetatech.Accelerate.Messaging;
 using Zetatech.Accelerate.Messaging.Publishers;
@@ -27,7 +28,10 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
     /// <param name="options">
     /// The configuration options for the telemetry service.
     /// </param>
-    public RabbitMqTelemetryService(IOptions<RabbitMqTelemetryServiceOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    public RabbitMqTelemetryService(IOptions<RabbitMqTelemetryServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
         var dependenciesPublisherServiceOptions = new RabbitMqPublisherServiceOptions
         {
@@ -36,7 +40,7 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
             RoutingKey = Options.AvailabilityRk
         };
 
-        _dependenciesPublisher = new DependenciesPublisherService(OptionsBuilder.Create(dependenciesPublisherServiceOptions));
+        _dependenciesPublisher = new DependenciesPublisherService(OptionsBuilder.Create(dependenciesPublisherServiceOptions), loggerFactory);
 
         var eventsPublisherServiceOptions = new RabbitMqPublisherServiceOptions
         {
@@ -45,7 +49,7 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
             RoutingKey = Options.AvailabilityRk
         };
 
-        _eventsPublisher = new EventsPublisherService(OptionsBuilder.Create(eventsPublisherServiceOptions));
+        _eventsPublisher = new EventsPublisherService(OptionsBuilder.Create(eventsPublisherServiceOptions), loggerFactory);
 
         var metricsPublisherServiceOptions = new RabbitMqPublisherServiceOptions
         {
@@ -54,7 +58,7 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
             RoutingKey = Options.AvailabilityRk
         };
 
-        _metricsPublisher = new MetricsPublisherService(OptionsBuilder.Create(metricsPublisherServiceOptions));
+        _metricsPublisher = new MetricsPublisherService(OptionsBuilder.Create(metricsPublisherServiceOptions), loggerFactory);
 
         var pageViewsPublisherServiceOptions = new RabbitMqPublisherServiceOptions
         {
@@ -63,7 +67,7 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
             RoutingKey = Options.AvailabilityRk
         };
 
-        _pageViewsPublisher = new PageViewsPublisherService(OptionsBuilder.Create(pageViewsPublisherServiceOptions));
+        _pageViewsPublisher = new PageViewsPublisherService(OptionsBuilder.Create(pageViewsPublisherServiceOptions), loggerFactory);
 
         var requestsPublisherServiceOptions = new RabbitMqPublisherServiceOptions
         {
@@ -72,7 +76,7 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
             RoutingKey = Options.AvailabilityRk
         };
 
-        _requestsPublisher = new RequestsPublisherService(OptionsBuilder.Create(requestsPublisherServiceOptions));
+        _requestsPublisher = new RequestsPublisherService(OptionsBuilder.Create(requestsPublisherServiceOptions), loggerFactory);
 
         var testsPublisherServiceOptions = new RabbitMqPublisherServiceOptions
         {
@@ -81,7 +85,7 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
             RoutingKey = Options.AvailabilityRk
         };
 
-        _testsPublisher = new TestsPublisherService(OptionsBuilder.Create(testsPublisherServiceOptions));
+        _testsPublisher = new TestsPublisherService(OptionsBuilder.Create(testsPublisherServiceOptions), loggerFactory);
     }
 
     /// <summary>

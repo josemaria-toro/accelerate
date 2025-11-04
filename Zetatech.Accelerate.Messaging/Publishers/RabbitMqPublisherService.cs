@@ -30,7 +30,10 @@ public abstract class RabbitMqPublisherService<TMessage, TOptions> : BasePublish
     /// <param name="options">
     /// The configuration options for the messages publisher.
     /// </param>
-    public RabbitMqPublisherService(IOptions<TOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    public RabbitMqPublisherService(IOptions<TOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
         _connectionFactory = new ConnectionFactory();
 

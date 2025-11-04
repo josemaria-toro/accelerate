@@ -20,7 +20,10 @@ public sealed class MemoryCachingService : BaseCacheService<MemoryCachingService
     /// <param name="options">
     /// The configuration options for the memory cache service.
     /// </param>
-    public MemoryCachingService(IOptions<MemoryCachingServiceOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    public MemoryCachingService(IOptions<MemoryCachingServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
         _dictionary = new();
     }

@@ -33,7 +33,10 @@ public abstract class RabbitMqSubscriberService<TMessage, TOptions> : BaseSubscr
     /// <param name="options">
     /// The configuration options for the messages subscriber.
     /// </param>
-    public RabbitMqSubscriberService(IOptions<TOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    public RabbitMqSubscriberService(IOptions<TOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
         _connectionFactory = new ConnectionFactory();
 

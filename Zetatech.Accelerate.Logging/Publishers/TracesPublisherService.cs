@@ -15,7 +15,7 @@ internal sealed class TracesPublisherService : RabbitMqPublisherService<TraceMes
     /// <param name="options">
     /// The configuration options for the publisher service.
     /// </param>
-    public TracesPublisherService(IOptions<RabbitMqPublisherServiceOptions> options) : base(options)
+    public TracesPublisherService(IOptions<RabbitMqPublisherServiceOptions> options) : base(options, null)
     {
     }
 }

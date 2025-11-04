@@ -29,7 +29,7 @@
             "promptOnClose": false,
             "type": "shell",
             "windows": {
-                "command": "del ~/.nuget/packages/zetatech.accelerate.*"
+                "command": "del -s -q ~/.nuget/packages/zetatech.accelerate.*"
             }
         },
         {
@@ -84,7 +84,7 @@
             "type": "shell"
         },
         {
-            "command": "dotnet pack zetatech.accelerate.sln --configuration ${input:configuration} --include-source --include-symbols --nologo --no-restore --output d:\\sources\\packages --verbosity normal",
+            "command": "dotnet pack zetatech.accelerate.sln --configuration ${input:configuration} --include-source --include-symbols --nologo --no-restore --output c:/users/josem/.nuget/offline --verbosity normal",
             "dependsOn": [
                 "accelerate: build"
             ],

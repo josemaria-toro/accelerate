@@ -20,7 +20,6 @@ public abstract class BasePublisherService<TMessage, TOptions> : BaseDisposable,
 {
     private Boolean _disposed;
     private ILogger _logger;
-    private ILoggerFactory _loggerFactory;
     private TOptions _options;
     private List<ISubscriberService<TMessage>> _subscriberServices;
 
@@ -30,8 +29,12 @@ public abstract class BasePublisherService<TMessage, TOptions> : BaseDisposable,
     /// <param name="options">
     /// The configuration options for the messages publisher.
     /// </param>
-    protected BasePublisherService(IOptions<TOptions> options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    protected BasePublisherService(IOptions<TOptions> options, ILoggerFactory loggerFactory)
     {
+        _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options?.Value;
         _subscriberServices = [];
     }
@@ -40,18 +43,6 @@ public abstract class BasePublisherService<TMessage, TOptions> : BaseDisposable,
     /// Gets the instance of the logger.
     /// </summary>
     protected ILogger Logger => _logger;
-    /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    public ILoggerFactory LoggerFactory
-    {
-        get => _loggerFactory;
-        set
-        {
-            _loggerFactory = value;
-            _logger = _loggerFactory?.CreateLogger(GetType().Name);
-        }
-    }
     /// <summary>
     /// Gets the options for the messages publisher.
     /// </summary>

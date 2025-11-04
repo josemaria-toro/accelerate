@@ -16,10 +16,9 @@ namespace Zetatech.Accelerate.Data;
 public interface IRepository<TEntity> : IDisposable where TEntity : IEntity
 {
     /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
+    /// Apply the pending changes in the table schema.
     /// </summary>
-    ILoggerFactory LoggerFactory { get; set; }
-
+    void ApplyChangesInTableSchema();
     /// <summary>
     /// Commits all pending changes to the data store.
     /// </summary>

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 
 namespace Zetatech.Accelerate.Application;
 
@@ -8,8 +7,4 @@ namespace Zetatech.Accelerate.Application;
 /// </summary>
 public interface IApplicationService : IDisposable
 {
-    /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    ILoggerFactory LoggerFactory { get; set; }
 }

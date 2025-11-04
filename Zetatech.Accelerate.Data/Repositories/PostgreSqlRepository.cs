@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 
 namespace Zetatech.Accelerate.Data.Repositories;
@@ -25,10 +26,40 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
     /// <param name="options">
     /// The repository options to be used.
     /// </param>
-    protected PostgreSqlRepository(IOptions<TOptions> options) : base(options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    protected PostgreSqlRepository(IOptions<TOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
     {
     }
 
+    /// <summary>
+    /// Apply the pending changes in the table schema.
+    /// </summary>
+    public override void ApplyChangesInTableSchema()
+    {
+        var rootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "migrations", $"{typeof(TEntity).GUID}");
+        var backupPath = Path.Combine(rootPath, $"{DateTime.UtcNow:yyyyMMdd}");
+
+        if (Directory.Exists(rootPath))
+        {
+            var sqlFiles = Directory.GetFiles(rootPath, "*.sql", SearchOption.TopDirectoryOnly)
+                                    .OrderBy(x => x);
+
+            if (sqlFiles.Any())
+            {
+                Directory.CreateDirectory(backupPath);
+            }
+
+            foreach (var sqlFile in sqlFiles)
+            {
+                using var streamReader = new StreamReader(sqlFile);
+                var sqlSript = streamReader.ReadToEnd();
+                Context.Database.ExecuteSqlRaw(sqlSript);
+                File.Move(sqlFile, backupPath, true);
+            }
+        }
+    }
     /// <summary>
     /// Execute a custom query string to select entities.
     /// </summary>

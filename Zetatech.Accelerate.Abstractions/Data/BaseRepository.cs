@@ -30,7 +30,6 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : BaseDisposab
     private Boolean _disposed;
     private DbSet<TEntity> _entities;
     private ILogger _logger;
-    private ILoggerFactory _loggerFactory;
     private TOptions _options;
     private SemaphoreSlim _semaphore;
 
@@ -40,8 +39,12 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : BaseDisposab
     /// <param name="options">
     /// The repository options to be used.
     /// </param>
-    protected BaseRepository(IOptions<TOptions> options)
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    protected BaseRepository(IOptions<TOptions> options, ILoggerFactory loggerFactory)
     {
+        _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options?.Value;
         _context = (TContext)Activator.CreateInstance(typeof(TContext), this, _options);
         _entities = _context.Set<TEntity>();
@@ -61,22 +64,14 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : BaseDisposab
     /// </summary>
     protected ILogger Logger => _logger;
     /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    public ILoggerFactory LoggerFactory
-    {
-        get => _loggerFactory;
-        set
-        {
-            _loggerFactory = value;
-            _logger = _loggerFactory?.CreateLogger(GetType().Name);
-        }
-    }
-    /// <summary>
     /// Gets the configuration options of this repository.
     /// </summary>
     protected TOptions Options => _options;
 
+    /// <summary>
+    /// Apply the pending changes in the table schema.
+    /// </summary>
+    public abstract void ApplyChangesInTableSchema();
     /// <summary>
     /// Commits all pending changes to the data store.
     /// </summary>

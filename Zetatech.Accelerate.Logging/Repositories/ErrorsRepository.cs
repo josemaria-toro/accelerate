@@ -16,7 +16,7 @@ internal sealed class ErrorsRepository : PostgreSqlRepository<ErrorEntity, Postg
     /// <param name="options">
     /// The configuration options for the repository.
     /// </param>
-    public ErrorsRepository(IOptions<PostgreSqlRepositoryOptions> options) : base(options)
+    public ErrorsRepository(IOptions<PostgreSqlRepositoryOptions> options) : base(options, null)
     {
     }
 
@@ -29,79 +29,79 @@ internal sealed class ErrorsRepository : PostgreSqlRepository<ErrorEntity, Postg
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ErrorEntity>()
-                    .ToTable("tg_errors", Options.Schema)
+                    .ToTable("errors", Options.Schema)
                     .HasKey(x => x.Id);
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.AppId)
-                    .HasColumnName("cu_app_id")
+                    .HasColumnName("app_id")
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.Category)
-                    .HasColumnName("cs_category")
+                    .HasColumnName("category")
                     .HasMaxLength(256)
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.Device)
-                    .HasColumnName("cs_device_name")
+                    .HasColumnName("device_name")
                     .HasMaxLength(128)
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.Event)
-                    .HasColumnName("cs_event_name")
+                    .HasColumnName("event_name")
                     .HasMaxLength(128)
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.Id)
-                    .HasColumnName("cu_id")
+                    .HasColumnName("id")
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.Message)
-                    .HasColumnName("cs_message")
+                    .HasColumnName("message")
                     .HasMaxLength(8192)
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.OperatingSystem)
-                    .HasColumnName("cs_os_name")
+                    .HasColumnName("os_name")
                     .HasMaxLength(128)
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.OperationId)
-                    .HasColumnName("cu_operation_id")
+                    .HasColumnName("operation_id")
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.Platform)
-                    .HasColumnName("cs_platform_name")
+                    .HasColumnName("platform_name")
                     .HasMaxLength(128)
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.SeverityLevel)
-                    .HasColumnName("cn_severity_level")
+                    .HasColumnName("severity_level")
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.StackTrace)
-                    .HasColumnName("cs_stack_trace")
+                    .HasColumnName("stack_trace")
                     .HasMaxLength(8192)
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.Timestamp)
-                    .HasColumnName("cd_timestamp")
+                    .HasColumnName("timestamp")
                     .IsRequired();
 
         modelBuilder.Entity<ErrorEntity>()
                     .Property(x => x.TypeName)
-                    .HasColumnName("cs_type_name")
+                    .HasColumnName("type_name")
                     .HasMaxLength(256)
                     .IsRequired();
     }

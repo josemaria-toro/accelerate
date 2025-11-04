@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using System;
 
 namespace Zetatech.Accelerate.Caching;
@@ -8,11 +7,6 @@ namespace Zetatech.Accelerate.Caching;
 /// </summary>
 public interface ICacheService : IDisposable
 {
-    /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    ILoggerFactory LoggerFactory { get; set; }
-
     /// <summary>
     /// Adds a value to the cache with the specified key.
     /// </summary>

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 
 namespace Zetatech.Accelerate.Telemetry;
 
@@ -8,11 +7,6 @@ namespace Zetatech.Accelerate.Telemetry;
 /// </summary>
 public interface ITelemetryService : IDisposable
 {
-    /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    ILoggerFactory LoggerFactory { get; set; }
-
     /// <summary>
     /// Tracks the specified dependency information.
     /// </summary>
