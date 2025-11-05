@@ -20,7 +20,7 @@ internal sealed class PageViewsRepository : PostgreSqlRepository<PageViewEntity,
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public PageViewsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public PageViewsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 

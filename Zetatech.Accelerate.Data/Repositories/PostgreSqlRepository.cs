@@ -29,7 +29,7 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    protected PostgreSqlRepository(IOptions<TOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    protected PostgreSqlRepository(IOptions<TOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 

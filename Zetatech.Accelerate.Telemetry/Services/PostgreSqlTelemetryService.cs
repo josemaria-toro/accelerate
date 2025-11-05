@@ -31,7 +31,7 @@ public sealed class PostgreSqlTelemetryService : BaseTelemetryService<PostgreSql
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public PostgreSqlTelemetryService(IOptions<PostgreSqlTelemetryServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public PostgreSqlTelemetryService(IOptions<PostgreSqlTelemetryServiceOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
         var postgreSqlRepositoryOptions = new PostgreSqlRepositoryOptions
         {

@@ -19,7 +19,7 @@ internal sealed class MetricsPublisherService : RabbitMqPublisherService<MetricM
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public MetricsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public MetricsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 }

@@ -4,15 +4,16 @@ Zetatech Accelerate Framework is a collection of .NET libraries providing essent
 ## 🏗️ Framework Structure
 ### Core Libraries
 - **Zetatech.Accelerate:** The framework's main library containing base contracts and components for application layer, caching, data access, messaging, and telemetry.
-- **Zetatech.Accelerate.Abstractions:** Contains base classes for all components across application layer, caching, data, logging, messaging, telemetry, and web.
+- **Zetatech.Accelerate.Abstractions:** This library contains base classes for all components across application layer, caching, data, logging, messaging, telemetry, and web.
+- **Zetatech.Accelerate.Exceptions:** This library provides the exceptions catalog.
 ### Functional Libraries
-- **Zetatech.Accelerate.Caching:** Features a custom implementation of a memory-based caching service.
-- **Zetatech.Accelerate.Configuration:** Provides extension methods to configure the configuration management service in the dependency container.
-- **Zetatech.Accelerate.Logging:** Includes the following custom implementations:
-  - Factory for creating trace writer instances
-  - Trace providers based on console, PostgreSQL databases, and RabbitMQ messaging
-- **Zetatech.Accelerate.Messaging:** Implements a custom RabbitMQ-based message publisher.
-- **Zetatech.Accelerate.Telemetry:** Provides custom telemetry services using PostgreSQL databases and RabbitMQ messaging.
+- **Zetatech.Accelerate.Caching:** This library provides the custom components for caching capabilities.
+- **Zetatech.Accelerate.Configuration:** This library provides the custom components for configuration capabilities.
+- **Zetatech.Accelerate.Data:** This library provides the custom components for data access components.
+- **Zetatech.Accelerate.Logging:** This library provides the custom components for logging capabilities.
+- **Zetatech.Accelerate.Messaging:** This library provides the custom components for messaging capabilities.
+- **Zetatech.Accelerate.Telemetry:** This library provides the custom components for telemetry capabilities.
+- **Zetatech.Accelerate.Web:** This library provides custom components to be used in ASP.NET Core projects.
 ## 🔧 Key Features
 - Modular architecture for flexible implementation
 - Multiple provider support

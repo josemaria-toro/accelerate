@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -6,7 +7,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Threading;
-using Microsoft.Extensions.Logging;
 
 namespace Zetatech.Accelerate.Messaging.Subscribers;
 
@@ -36,7 +36,7 @@ public abstract class RabbitMqSubscriberService<TMessage, TOptions> : BaseSubscr
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public RabbitMqSubscriberService(IOptions<TOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public RabbitMqSubscriberService(IOptions<TOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
         _connectionFactory = new ConnectionFactory();
 

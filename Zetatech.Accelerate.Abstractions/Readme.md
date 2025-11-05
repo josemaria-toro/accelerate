@@ -91,14 +91,13 @@ Represents the base class for implementing custom application services.
 public abstract class BaseApplicationService : BaseDisposable, IApplicationService
 ```
 #### Constructors
-| Name                     | Description                          |
-|:-------------------------|:-------------------------------------|
-| BaseApplicationService() | Initializes a new instance of class. |
+| Name                                   | Description                          |
+|:---------------------------------------|:-------------------------------------|
+| BaseApplicationService(ILoggerFactory) | Initializes a new instance of class. |
 #### Properties
 | Name          | Type           | Description                                              |
 |:--------------|:---------------|:---------------------------------------------------------|
 | Logger        | ILogger        | Gets the instance of the logger.                         |
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 ### BaseDataTransferObject
 Represents the base class for implementing custom data transfer objects.  
 **Assembly:** Zetatech.Accelerate.Abstractions.dll  
@@ -119,14 +118,13 @@ Represents the base class for implementing custom cache services.
 public abstract class BaseCacheService<TOptions> : BaseDisposable, ICacheService where TOptions : BaseCacheServiceOptions
 ```
 #### Constructors
-| Name                       | Description                          |
-|:---------------------------|:-------------------------------------|
-| BaseCacheService(IOptions) | Initializes a new instance of class. |
+| Name                                       | Description                          |
+|:-------------------------------------------|:-------------------------------------|
+| BaseCacheService(IOptions, ILoggerFactory) | Initializes a new instance of class. |
 #### Properties
 | Name          | Type           | Description                                              |
 |:--------------|:---------------|:---------------------------------------------------------|
 | Logger        | ILogger        | Gets the instance of the logger.                         |
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 | Options       | TOptions       | Gets the options for the messages publisher.             |
 ### BaseCacheServiceOptions
 Represents the base options for configuring a cache service.  
@@ -162,9 +160,9 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : BaseDisposab
                                                                                                          where TContext : BaseRepositoryContext<TEntity, TOptions>
 ```
 #### Constructors
-| Name                     | Description                          |
-|:-------------------------|:-------------------------------------|
-| BaseRepository(IOptions) | Initializes a new instance of class. |
+| Name                                     | Description                          |
+|:-----------------------------------------|:-------------------------------------|
+| BaseRepository(IOptions, ILoggerFactory) | Initializes a new instance of class. |
 ### BaseRepositoryContext
 Represents the base class for implementing custom repository context based on Entity Framework.  
 **Assembly:** Zetatech.Accelerate.Abstractions.dll  
@@ -331,9 +329,9 @@ public abstract class BasePublisherService<TMessage, TOptions> : BaseDisposable,
                                                                                                              where TOptions : BasePublisherServiceOptions
 ```
 #### Constructors
-| Name                           | Description                          |
-|:-------------------------------|:-------------------------------------|
-| BasePublisherService(IOptions) | Initializes a new instance of class. |
+| Name                                           | Description                          |
+|:-----------------------------------------------|:-------------------------------------|
+| BasePublisherService(IOptions, ILoggerFactory) | Initializes a new instance of class. |
 ### BasePublisherServiceOptions
 Represents the base options for configuring a message publisher.  
 **Assembly:** Zetatech.Accelerate.Abstractions.dll  
@@ -348,9 +346,9 @@ public abstract class BaseSubscriberService<TMessage, TOptions> : BaseDisposable
                                                                                                                where TOptions : BaseSubscriberServiceOptions
 ```
 #### Constructors
-| Name                            | Description                          |
-|:--------------------------------|:-------------------------------------|
-| BaseSubscriberService(IOptions) | Initializes a new instance of class. |
+| Name                                            | Description                          |
+|:------------------------------------------------|:-------------------------------------|
+| BaseSubscriberService(IOptions, ILoggerFactory) | Initializes a new instance of class. |
 ### BaseSubscriberServiceOptions
 Represents the base options for configuring a message subscriber.  
 **Assembly:** Zetatech.Accelerate.Abstractions.dll  
@@ -365,9 +363,9 @@ Represents a base class for implementing custom telemetry services.
 public abstract class BaseTelemetryService<TOptions> : BaseDisposable, ITelemetryService where TOptions : BaseTelemetryServiceOptions
 ```
 #### Constructors
-| Name                           | Description                          |
-|:-------------------------------|:-------------------------------------|
-| BaseTelemetryService(IOptions) | Initializes a new instance of class. |
+| Name                                           | Description                          |
+|:-----------------------------------------------|:-------------------------------------|
+| BaseTelemetryService(IOptions, ILoggerFactory) | Initializes a new instance of class. |
 #### Properties
 | Name          | Type           | Description                                              |
 |:--------------|:---------------|:---------------------------------------------------------|

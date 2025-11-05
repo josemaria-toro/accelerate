@@ -10,24 +10,22 @@ public abstract class BaseApplicationService : BaseDisposable, IApplicationServi
 {
     private Boolean _disposed;
     private ILogger _logger;
-    private ILoggerFactory _loggerFactory;
+
+    /// <summary>
+    /// Gets the instance of the logger.
+    /// </summary>
+    /// <param name="loggerFactory">
+    /// The factory to create instances of loggers.
+    /// </param>
+    protected BaseApplicationService(ILoggerFactory loggerFactory = null)
+    {
+        _logger = loggerFactory?.CreateLogger(GetType().Name);
+    }
 
     /// <summary>
     /// Gets the instance of the logger.
     /// </summary>
     protected ILogger Logger => _logger;
-    /// <summary>
-    /// Gets or sets the factory to create instances of loggers.
-    /// </summary>
-    public ILoggerFactory LoggerFactory
-    {
-        get => _loggerFactory;
-        set
-        {
-            _loggerFactory = value;
-            _logger = _loggerFactory?.CreateLogger(GetType().Name);
-        }
-    }
 
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

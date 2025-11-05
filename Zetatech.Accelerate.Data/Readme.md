@@ -19,15 +19,14 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
                                                                                                                                                   where TOptions : PostgreSqlRepositoryOptions
 ```
 #### Constructors
-| Name                           | Description                              |
-|:-------------------------------|:-----------------------------------------|
-| PostgreSqlRepository(IOptions) | Initializes a new instance of the class. |
+| Name                                           | Description                              |
+|:-----------------------------------------------|:-----------------------------------------|
+| PostgreSqlRepository(IOptions, ILoggerFactory) | Initializes a new instance of the class. |
 #### Properties
 | Name          | Type           | Description                                              |
 |:--------------|:---------------|:---------------------------------------------------------|
 | Entities      | DbSet          | Gets the set of entities managed by this repository.     |
 | Logger        | ILogger        | Gets the instance of the logger.                         |
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 | Options       | TOptions       | Gets the configuration options of this repository.       |
 #### Methods
 | Name                               | Description                                       |

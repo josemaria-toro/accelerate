@@ -19,7 +19,7 @@ internal sealed class TestsPublisherService : RabbitMqPublisherService<TestMessa
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public TestsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public TestsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 }

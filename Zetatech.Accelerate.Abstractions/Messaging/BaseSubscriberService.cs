@@ -29,7 +29,7 @@ public abstract class BaseSubscriberService<TMessage, TOptions> : BaseDisposable
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    protected BaseSubscriberService(IOptions<TOptions> options, ILoggerFactory loggerFactory)
+    protected BaseSubscriberService(IOptions<TOptions> options, ILoggerFactory loggerFactory = null)
     {
         _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options?.Value;

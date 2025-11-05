@@ -49,10 +49,6 @@ Provides the interface for implementing custom application services.
 ```csharp
 public interface IApplicationService : IDisposable
 ```
-#### Properties
-| Name          | Type           | Description                                              |
-|:--------------|:---------------|:---------------------------------------------------------|
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 ### IDataTransferObject
 Provides the interface for implementing custom data transfer objects.  
 **Assembly:** Zetatech.Accelerate.dll  
@@ -68,10 +64,6 @@ Provides the interface for implementing custom cache services.
 ```csharp
 public interface ICacheService : IDisposable
 ```
-#### Properties
-| Name          | Type           | Description                                              |
-|:--------------|:---------------|:---------------------------------------------------------|
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 #### Methods
 | Name                                  | Description                                                                                                                                                   |
 |:--------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -96,13 +88,10 @@ Provides the interface for implementing custom data access repositories.
 ```csharp
 public interface IRepository<TEntity> : IDisposable where TEntity : IEntity
 ```
-#### Properties
-| Name          | Type           | Description                                              |
-|:--------------|:---------------|:---------------------------------------------------------|
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 #### Methods
 | Name                               | Description                                                                                           |
 |:-----------------------------------|:------------------------------------------------------------------------------------------------------|
+| ApplyChangesInTableSchema()        | Apply the pending changes in the table schema.                                                        |
 | Commit()                           | Commits all pending changes to the data store. Returns the number of affected records.                |
 | Delete(TEntity)                    | Deletes the specified entity from the data store.                                                     |
 | Delete(IEnumerable)                | Deletes the specified collection of entities from the data store.                                     |
@@ -175,10 +164,6 @@ Provides the interface for implementing custom publisher services for broadcasti
 ```csharp
 public interface IPublisherService<TMessage> : IDisposable where TMessage : IMessage
 ```
-#### Properties
-| Name          | Type           | Description                                              |
-|:--------------|:---------------|:---------------------------------------------------------|
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 #### Methods
 | Name                            | Description                                                              |
 |:--------------------------------|:-------------------------------------------------------------------------|
@@ -192,10 +177,6 @@ Provides the interface for implementing custom subscriber services for receiving
 ```csharp
 public interface ISubscriberService<TMessage> : IDisposable where TMessage : IMessage
 ```
-#### Properties
-| Name          | Type           | Description                                              |
-|:--------------|:---------------|:---------------------------------------------------------|
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 #### Methods
 | Name              | Description                            |
 |:------------------|:---------------------------------------|
@@ -285,10 +266,6 @@ Provides the interface for implementing custom telemetry services.
 ```csharp
 public interface ITelemetryService : IDisposable
 ```
-#### Properties
-| Name          | Type           | Description                                              |
-|:--------------|:---------------|:---------------------------------------------------------|
-| LoggerFactory | ILoggerFactory | Gets or sets the factory to create instances of loggers. |
 #### Methods
 | Name               | Description                                    |
 |:-------------------|:-----------------------------------------------|

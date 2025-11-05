@@ -20,7 +20,7 @@ internal sealed class MetricsRepository : PostgreSqlRepository<MetricEntity, Pos
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public MetricsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public MetricsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 

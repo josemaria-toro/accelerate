@@ -22,7 +22,7 @@ public abstract class BaseTelemetryService<TOptions> : BaseDisposable, ITelemetr
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    protected BaseTelemetryService(IOptions<TOptions> options, ILoggerFactory loggerFactory)
+    protected BaseTelemetryService(IOptions<TOptions> options, ILoggerFactory loggerFactory = null)
     {
         _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options?.Value;

@@ -20,7 +20,7 @@ internal sealed class RequestsRepository : PostgreSqlRepository<RequestEntity, P
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public RequestsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public RequestsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 

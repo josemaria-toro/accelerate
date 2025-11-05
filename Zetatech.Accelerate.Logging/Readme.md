@@ -21,6 +21,7 @@
   - [v8.0.0](#v800)
 ## Overview
 This library provides the custom components for logging capabilities.  
+## Logging
 ### LoggingFactory
 Represents an implementation for a custom logging factory.  
 **Assembly:** Zetatech.Accelerate.Logging.dll  

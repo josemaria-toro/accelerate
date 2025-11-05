@@ -42,7 +42,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : BaseDisposab
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    protected BaseRepository(IOptions<TOptions> options, ILoggerFactory loggerFactory)
+    protected BaseRepository(IOptions<TOptions> options, ILoggerFactory loggerFactory = null)
     {
         _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options?.Value;

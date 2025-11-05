@@ -19,7 +19,7 @@ internal sealed class EventsPublisherService : RabbitMqPublisherService<EventMes
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public EventsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public EventsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 }

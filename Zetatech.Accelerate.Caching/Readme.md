@@ -18,14 +18,13 @@ Represents an implementation for a custom memory-based cache service implementat
 public sealed class MemoryCachingService : BaseCacheService<MemoryCachingServiceOptions>
 ```
 #### Constructors
-| Name                           | Description                              |
-|:-------------------------------|:-----------------------------------------|
-| MemoryCachingService(IOptions) | Initializes a new instance of the class. |
+| Name                                           | Description                              |
+|:-----------------------------------------------|:-----------------------------------------|
+| MemoryCachingService(IOptions, ILoggerFactory) | Initializes a new instance of the class. |
 #### Properties
 | Name          | Type                        | Description                                              |
 |:--------------|:----------------------------|:---------------------------------------------------------|
 | Logger        | ILogger                     | Gets the instance of the logger.                         |
-| LoggerFactory | ILoggerFactory              | Gets or sets the factory to create instances of loggers. |
 | Options       | MemoryCachingServiceOptions | Gets the options for the messages publisher.             |
 #### Methods
 | Name                                  | Description                                                           |

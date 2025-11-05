@@ -22,7 +22,7 @@ public abstract class BaseCacheService<TOptions> : BaseDisposable, ICacheService
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    protected BaseCacheService(IOptions<TOptions> options, ILoggerFactory loggerFactory)
+    protected BaseCacheService(IOptions<TOptions> options, ILoggerFactory loggerFactory = null)
     {
         _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options.Value;

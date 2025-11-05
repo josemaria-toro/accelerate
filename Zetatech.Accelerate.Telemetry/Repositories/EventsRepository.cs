@@ -20,7 +20,7 @@ internal sealed class EventsRepository : PostgreSqlRepository<EventEntity, Postg
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public EventsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public EventsRepository(IOptions<PostgreSqlRepositoryOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 

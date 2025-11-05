@@ -32,7 +32,7 @@ public abstract class BasePublisherService<TMessage, TOptions> : BaseDisposable,
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    protected BasePublisherService(IOptions<TOptions> options, ILoggerFactory loggerFactory)
+    protected BasePublisherService(IOptions<TOptions> options, ILoggerFactory loggerFactory = null)
     {
         _logger = loggerFactory?.CreateLogger(GetType().Name);
         _options = options?.Value;

@@ -19,7 +19,7 @@ internal sealed class DependenciesPublisherService : RabbitMqPublisherService<De
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public DependenciesPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public DependenciesPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 }

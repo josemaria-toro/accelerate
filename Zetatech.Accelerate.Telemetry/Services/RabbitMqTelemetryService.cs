@@ -31,7 +31,7 @@ public sealed class RabbitMqTelemetryService : BaseTelemetryService<RabbitMqTele
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public RabbitMqTelemetryService(IOptions<RabbitMqTelemetryServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public RabbitMqTelemetryService(IOptions<RabbitMqTelemetryServiceOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
         var dependenciesPublisherServiceOptions = new RabbitMqPublisherServiceOptions
         {

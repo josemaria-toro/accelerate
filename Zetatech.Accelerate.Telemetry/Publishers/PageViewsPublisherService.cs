@@ -19,7 +19,7 @@ internal sealed class PageViewsPublisherService : RabbitMqPublisherService<PageV
     /// <param name="loggerFactory">
     /// The factory to create instances of loggers.
     /// </param>
-    public PageViewsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory) : base(options, loggerFactory)
+    public PageViewsPublisherService(IOptions<RabbitMqPublisherServiceOptions> options, ILoggerFactory loggerFactory = null) : base(options, loggerFactory)
     {
     }
 }
