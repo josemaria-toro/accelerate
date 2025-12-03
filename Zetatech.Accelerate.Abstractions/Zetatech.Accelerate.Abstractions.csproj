@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
         <AnalysisLevel>5.0</AnalysisLevel>
-        <AssemblyName>Zetatech.Accelerate.AspNet</AssemblyName>
+        <AssemblyName>Zetatech.Accelerate.Abstractions</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
-        <AssemblyTitle>Library with components for ASP.NET projects</AssemblyTitle>
+        <AssemblyTitle>Library with the abstractions of the framework components</AssemblyTitle>
         <AssemblyVersion>10.0.0</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
@@ -13,7 +13,7 @@
         <ContentTargetFolders>content</ContentTargetFolders>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <Copyright>Zeta Technologies © 2025</Copyright>
-        <Description>Library with components for ASP.NET projects</Description>
+        <Description>Library with the abstractions of the framework components</Description>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -34,21 +34,21 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <Nullable>disable</Nullable>
         <OutputType>library</OutputType>
-        <PackageDescription>Library with components for ASP.NET projects</PackageDescription>
+        <PackageDescription>Library with the abstractions of the framework components</PackageDescription>
         <PackageIcon>PackageIcon.png</PackageIcon>
-        <PackageId>Zetatech.Accelerate.AspNet</PackageId>
+        <PackageId>Zetatech.Accelerate.Abstractions</PackageId>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageTags>Accelerate ASP.NET Filters Interceptors Middlewares Zetatech</PackageTags>
+        <PackageTags>Abstractions Accelerate Application Caching Domain Exceptions Messaging Tracking Zetatech</PackageTags>
         <PackageVersion>10.0.0</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
         <PublishDocumentationFiles>false</PublishDocumentationFiles>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/josemaria-toro/accelerate.git</RepositoryUrl>
-        <RootNamespace>Zetatech.Accelerate.AspNet</RootNamespace>
+        <RootNamespace>Zetatech.Accelerate</RootNamespace>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
         <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -75,6 +75,10 @@
         <Content Include="$(SolutionDir)/PackageIcon.png" Pack="true" PackagePath="PackageIcon.png" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate.Abstractions/Zetatech.Accelerate.Abstractions.csproj" />
+        <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate/Zetatech.Accelerate.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
     </ItemGroup>
 </Project>
