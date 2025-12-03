@@ -1,0 +1,127 @@
+{
+    "tasks": [
+        {
+            "command": "rm --dir --force --recursive /home/zeta/.nuget/packages/zetatech.*",
+            "dependsOn": [],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "zetatech: cleanup",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet restore Zetatech.Accelerate.sln --nologo --verbosity normal",
+            "dependsOn": [
+                "zetatech: cleanup"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "accelerate: restore",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet clean Zetatech.Accelerate.sln --configuration debug --nologo --verbosity normal",
+            "dependsOn": [
+                "accelerate: restore"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "accelerate: clean",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet build Zetatech.Accelerate.sln --configuration debug --nologo --no-restore --verbosity normal",
+            "dependsOn": [
+                "accelerate: clean"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": true,
+                "kind": "build"
+            },
+            "hide": false,
+            "label": "accelerate: build",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet pack Zetatech.Accelerate.sln --configuration debug --include-source --include-symbols --nologo --no-restore --output /home/zeta/.nuget/offline --verbosity normal",
+            "dependsOn": [
+                "accelerate: build"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": false,
+            "label": "accelerate: pack",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet publish --artifacts-path artifacts --configuration debug --nologo --self-contained --verbosity normal Zetatech.Accelerate.sln",
+            "dependsOn": [
+                "accelerate: build"
+            ],
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": false,
+            "label": "accelerate: publish",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        },
+        {
+            "command": "dotnet outdated --no-restore --pre-release never --recursive --upgrade:prompt --version-lock major Zetatech.Accelerate.sln",
+            "dependsOn": [
+                "accelerate: build"
+            ],
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": false,
+            "label": "accelerate: outdated",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        }
+    ],
+    "version": "2.0.0"
+}
