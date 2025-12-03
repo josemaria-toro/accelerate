@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AnalysisLevel>5.0</AnalysisLevel>
-        <AssemblyName>Zetatech.Accelerate.AspNet</AssemblyName>
+        <AssemblyName>Zetatech.Accelerate.Messaging</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
-        <AssemblyTitle>Library with components for ASP.NET projects</AssemblyTitle>
+        <AssemblyTitle>Library with custom implementations of messaging components</AssemblyTitle>
         <AssemblyVersion>10.0.0</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
@@ -13,7 +13,7 @@
         <ContentTargetFolders>content</ContentTargetFolders>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <Copyright>Zeta Technologies © 2025</Copyright>
-        <Description>Library with components for ASP.NET projects</Description>
+        <Description>Library with custom implementations of messaging components</Description>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -34,21 +34,21 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <Nullable>disable</Nullable>
         <OutputType>library</OutputType>
-        <PackageDescription>Library with components for ASP.NET projects</PackageDescription>
+        <PackageDescription>Library with custom implementations of messaging components</PackageDescription>
         <PackageIcon>PackageIcon.png</PackageIcon>
-        <PackageId>Zetatech.Accelerate.AspNet</PackageId>
+        <PackageId>Zetatech.Accelerate.Messaging</PackageId>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageTags>Accelerate ASP.NET Filters Interceptors Middlewares Zetatech</PackageTags>
+        <PackageTags>Accelerate Messaging Publishers RabbitMQ Subscribers Zetatech</PackageTags>
         <PackageVersion>10.0.0</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
         <PublishDocumentationFiles>false</PublishDocumentationFiles>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/josemaria-toro/accelerate.git</RepositoryUrl>
-        <RootNamespace>Zetatech.Accelerate.AspNet</RootNamespace>
+        <RootNamespace>Zetatech.Accelerate.Messaging</RootNamespace>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
         <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -76,5 +76,9 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate.Abstractions/Zetatech.Accelerate.Abstractions.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
+        <PackageReference Include="RabbitMQ.Client" Version="7.2.0" />
     </ItemGroup>
 </Project>
