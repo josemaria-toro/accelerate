@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using System;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Tracking;
 
 namespace Zetatech.Accelerate.Messaging.Abstractions;
@@ -78,5 +79,5 @@ public abstract class BasePublisherService<TMessage, TOptions> : IPublisherServi
     /// <param name="message">
     /// The message to publish.
     /// </param>
-    public abstract void Publish(TMessage message);
+    public abstract Task PublishAsync(TMessage message);
 }

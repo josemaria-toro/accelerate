@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Zetatech.Accelerate.Messaging;
 
@@ -13,9 +14,9 @@ public interface ISubscriberService<TMessage> : IDisposable where TMessage : IMe
     /// <summary>
     /// Subscribes the current subscriber to receive published messages.
     /// </summary>
-    void Subscribe();
+    Task SubscribeAsync();
     /// <summary>
     /// Unsubscribes the current subscriber from receiving published messages.
     /// </summary>
-    void Unsubscribe();
+    Task UnsubscribeAsync();
 }

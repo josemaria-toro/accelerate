@@ -2,6 +2,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Caching.Abstractions;
 using Zetatech.Accelerate.Tracking;
 
@@ -41,9 +42,9 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
     /// <param name="value">
     /// The value to cache.
     /// </param>
-    public override void Add<TValue>(String key, TValue value)
+    public override async Task AddAsync<TValue>(String key, TValue value)
     {
-        Add(key, value, DateTime.UtcNow.AddMinutes(Options.DefaultExpirationTime));
+        await AddAsync(key, value, DateTime.UtcNow.AddMinutes(Options.DefaultExpirationTime));
     }
     /// <summary>
     /// Adds a value to the cache with the specified key and expiration date.
@@ -60,7 +61,7 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
     /// <param name="expiredAt">
     /// The date and time when the cached value expires.
     /// </param>
-    public override void Add<TValue>(String key, TValue value, DateTime expiredAt)
+    public override async Task AddAsync<TValue>(String key, TValue value, DateTime expiredAt)
     {
         if (String.IsNullOrEmpty(key))
         {
@@ -77,7 +78,7 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
             throw new ArgumentException("The expiration date cannot be earlier than now", nameof(key));
         }
 
-        Purge();
+        await PurgeAsync();
 
         if (_dictionary.Count >= Options.MaxSize)
         {
@@ -95,7 +96,7 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
     /// <summary>
     /// Removes all entries from the cache.
     /// </summary>
-    public override void Clear()
+    public override async Task ClearAsync()
     {
         _dictionary.Clear();
     }
@@ -105,14 +106,14 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
     /// <param name="key">
     /// The key to locate in the cache.
     /// </param>
-    public override Boolean Contains(String key)
+    public override async Task<Boolean> ContainsAsync(String key)
     {
         if (String.IsNullOrEmpty(key))
         {
             throw new ArgumentException("The provided key cannot be null", nameof(key));
         }
 
-        Purge();
+        await PurgeAsync();
 
         return _dictionary.ContainsKey(key);
     }
@@ -147,14 +148,14 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
     /// <param name="key">
     /// The key of the cached value to retrieve.
     /// </param>
-    public override TValue Get<TValue>(String key)
+    public override async Task<TValue> GetAsync<TValue>(String key)
     {
         if (String.IsNullOrEmpty(key))
         {
             throw new ArgumentException("The provided key cannot be null", nameof(key));
         }
 
-        Purge();
+        await PurgeAsync();
 
         var value = default(TValue);
 
@@ -168,7 +169,7 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
     /// <summary>
     /// Removes expired cache entries from the dictionary.
     /// </summary>
-    private void Purge()
+    private async Task PurgeAsync()
     {
         var expiredObjects = _dictionary.Values.Where(x => x.ExpiredAt.ToUniversalTime() < DateTime.UtcNow);
 
@@ -183,14 +184,14 @@ public sealed class MemoryCachingService : BaseCachingService<MemoryCachingServi
     /// <param name="key">
     /// The key of the cached value to remove.
     /// </param>
-    public override void Remove(String key)
+    public override async Task RemoveAsync(String key)
     {
         if (String.IsNullOrEmpty(key))
         {
             throw new ArgumentException("The provided key cannot be null", nameof(key));
         }
 
-        Purge();
+        await PurgeAsync();
 
         _dictionary.TryRemove(key, out var _);
     }

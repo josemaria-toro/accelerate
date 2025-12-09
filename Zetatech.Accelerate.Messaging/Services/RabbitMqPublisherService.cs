@@ -4,6 +4,7 @@ using System;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Messaging.Abstractions;
 using Zetatech.Accelerate.Tracking;
 
@@ -42,7 +43,7 @@ public abstract class RabbitMqPublisherService<TMessage, TOptions> : BasePublish
     public RabbitMqPublisherService(IOptions<TOptions> options, ITrackingService trackingService = null, JsonSerializerOptions jsonSerializerOptions = null) : base(options, trackingService)
     {
         _jsonSerializerOptions = jsonSerializerOptions;
-        
+
         if (_jsonSerializerOptions == null)
         {
             _jsonSerializerOptions = new JsonSerializerOptions
@@ -156,7 +157,7 @@ public abstract class RabbitMqPublisherService<TMessage, TOptions> : BasePublish
     /// <param name="message">
     /// The message to publish.
     /// </param>
-    public override void Publish(TMessage message)
+    public override async Task PublishAsync(TMessage message)
     {
         if (message.Id == Guid.Empty)
         {
@@ -172,14 +173,7 @@ public abstract class RabbitMqPublisherService<TMessage, TOptions> : BasePublish
 
         var jsonMessage = JsonSerializer.Serialize(message, _jsonSerializerOptions);
         var jsonMessageBuffer = Encoding.UTF8.GetBytes(jsonMessage);
-        var channelTask = _channel.BasicPublishAsync(Options.Exchange, Options.RoutingKey, jsonMessageBuffer)
-                                  .AsTask();
 
-        channelTask.Wait();
-
-        if (!channelTask.IsCompletedSuccessfully)
-        {
-            throw channelTask.Exception;
-        }
+        await _channel.BasicPublishAsync(Options.Exchange, Options.RoutingKey, jsonMessageBuffer);
     }
 }

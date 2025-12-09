@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Zetatech.Accelerate.Domain;
 
@@ -16,5 +17,5 @@ public interface ISpecification<TEntity> : IDisposable where TEntity : IEntity
     /// <param name="entity">
     /// The entity to evaluate.
     /// </param>
-    Boolean IsSatisfiedBy(TEntity entity);
+    Task<Boolean> IsSatisfiedByAsync(TEntity entity);
 }

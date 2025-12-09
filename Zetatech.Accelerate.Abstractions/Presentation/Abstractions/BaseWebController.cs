@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using Zetatech.Accelerate.Tracking;
 
 namespace Zetatech.Accelerate.Presentation.Abstractions;
 
@@ -9,6 +10,18 @@ namespace Zetatech.Accelerate.Presentation.Abstractions;
 public abstract class BaseWebController : Controller, IDisposable
 {
     private Boolean _disposed;
+    private readonly ITrackingService _trackingService;
+
+    /// <summary>
+    /// Initialize a new instance of class.
+    /// </summary>
+    /// <param name="trackingService">
+    /// Service for tracking application data.
+    /// </param>
+    protected BaseWebController(ITrackingService trackingService = null)
+    {
+        _trackingService = trackingService;
+    }
 
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

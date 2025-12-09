@@ -222,73 +222,37 @@ public abstract class RabbitMqSubscriberService<TMessage, TOptions> : BaseSubscr
     /// <summary>
     /// Subscribes the current subscriber to receive published messages.
     /// </summary>
-    public override void Subscribe()
+    public override async Task SubscribeAsync()
     {
         if (_connection == null || !_connection.IsOpen)
         {
-            var connectionTask = _connectionFactory.CreateConnectionAsync();
-
-            connectionTask.Wait();
-
-            if (connectionTask.IsCompletedSuccessfully)
-            {
-                _connection = connectionTask.Result;
-            }
-            else
-            {
-                throw connectionTask.Exception;
-            }
+            _connection = await _connectionFactory.CreateConnectionAsync();
         }
 
         if (_channel == null || _channel.IsClosed)
         {
-            var channelTask = _connection.CreateChannelAsync();
+            _channel = await _connection.CreateChannelAsync();
 
-            channelTask.Wait();
-
-            if (channelTask.IsCompletedSuccessfully)
-            {
-                _channel = channelTask.Result;
-            }
-            else
-            {
-                throw channelTask.Exception;
-            }
-
-            var suscriptionTask = _channel.BasicConsumeAsync(arguments: default,
-                                                             autoAck: true,
-                                                             cancellationToken: default,
-                                                             consumer: this,
-                                                             consumerTag: GetType().Name,
-                                                             exclusive: Options.Exclusive,
-                                                             noLocal: false,
-                                                             queue: Options.QueueName);
-
-            suscriptionTask.Wait();
-
-            if (!suscriptionTask.IsCompletedSuccessfully)
-            {
-                throw suscriptionTask.Exception;
-            }
+            await _channel.BasicConsumeAsync(arguments: default,
+                                             autoAck: true,
+                                             cancellationToken: default,
+                                             consumer: this,
+                                             consumerTag: GetType().Name,
+                                             exclusive: Options.Exclusive,
+                                             noLocal: false,
+                                             queue: Options.QueueName);
         }
     }
     /// <summary>
     /// Unsubscribes the current subscriber from receiving published messages.
     /// </summary>
-    public override void Unsubscribe()
+    public override async Task UnsubscribeAsync()
     {
         if (_connection != null)
         {
             if (_connection.IsOpen)
             {
-                var connectionTask = _connection.CloseAsync();
-
-                connectionTask.Wait();
-
-                if (!connectionTask.IsCompletedSuccessfully)
-                {
-                    throw connectionTask.Exception;
-                }
+                await _connection.CloseAsync();
             }
 
             _connection = null;
@@ -298,12 +262,7 @@ public abstract class RabbitMqSubscriberService<TMessage, TOptions> : BaseSubscr
         {
             if (_channel.IsOpen)
             {
-                var channelTask = _channel.CloseAsync();
-
-                if (!channelTask.IsCompletedSuccessfully)
-                {
-                    throw channelTask.Exception;
-                }
+                await _channel.CloseAsync();
             }
 
             _channel = null;

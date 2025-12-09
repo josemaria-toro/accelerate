@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Messaging;
 using Zetatech.Accelerate.Messaging.Services;
@@ -85,7 +86,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
     /// <param name="dependency">
     /// The dependency data to track.
     /// </param>
-    public override void Track(Dependency dependency)
+    public override async Task TrackAsync(Dependency dependency)
     {
         var message = new TrackingMessage
         {
@@ -104,7 +105,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
             }
         };
 
-        _telemetryPublisherService.Publish(message);
+        await _telemetryPublisherService.PublishAsync(message);
     }
     /// <summary>
     /// Tracks the specified event information.
@@ -112,7 +113,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
     /// <param name="event">
     /// The event data to track.
     /// </param>
-    public override void Track(Event @event)
+    public override async Task TrackAsync(Event @event)
     {
         var message = new TrackingMessage
         {
@@ -126,7 +127,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
             }
         };
 
-        _eventsPublisherService.Publish(message);
+        await _eventsPublisherService.PublishAsync(message);
     }
     /// <summary>
     /// Tracks the specified HTTP request information.
@@ -134,7 +135,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
     /// <param name="httpRequest">
     /// The HTTP request data to track.
     /// </param>
-    public override void Track(HttpRequest httpRequest)
+    public override async Task TrackAsync(HttpRequest httpRequest)
     {
         var message = new TrackingMessage
         {
@@ -154,7 +155,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
             }
         };
 
-        _telemetryPublisherService.Publish(message);
+        await _telemetryPublisherService.PublishAsync(message);
     }
     /// <summary>
     /// Tracks the specified metric information.
@@ -162,7 +163,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
     /// <param name="metric">
     /// The metric data to track.
     /// </param>
-    public override void Track(Metric metric)
+    public override async Task TrackAsync(Metric metric)
     {
         var message = new TrackingMessage
         {
@@ -177,7 +178,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
             }
         };
 
-        _telemetryPublisherService.Publish(message);
+        await _telemetryPublisherService.PublishAsync(message);
     }
     /// <summary>
     /// Tracks the specified page view information.
@@ -185,7 +186,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
     /// <param name="pageView">
     /// The page view data to track.
     /// </param>
-    public override void Track(PageView pageView)
+    public override async Task TrackAsync(PageView pageView)
     {
         var message = new TrackingMessage
         {
@@ -203,7 +204,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
             }
         };
 
-        _telemetryPublisherService.Publish(message);
+        await _telemetryPublisherService.PublishAsync(message);
     }
     /// <summary>
     /// Tracks the specified test result information.
@@ -211,7 +212,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
     /// <param name="testResult">
     /// The test result to track.
     /// </param>
-    public override void Track(TestResult testResult)
+    public override async Task TrackAsync(TestResult testResult)
     {
         var message = new TrackingMessage
         {
@@ -227,7 +228,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
             }
         };
 
-        _telemetryPublisherService.Publish(message);
+        await _telemetryPublisherService.PublishAsync(message);
     }
     /// <summary>
     /// Tracks the specified trace information.
@@ -235,7 +236,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
     /// <param name="trace">
     /// The trace data to track.
     /// </param>
-    public override void Track(Trace trace)
+    public override async Task TrackAsync(Trace trace)
     {
         var traceMessage = new TrackingMessage
         {
@@ -250,7 +251,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
             }
         };
 
-        _diagnosticsPublisherService.Publish(traceMessage);
+        await _diagnosticsPublisherService.PublishAsync(traceMessage);
 
         if (trace.Exception != null)
         {
@@ -273,7 +274,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
                     }
                 };
 
-                _diagnosticsPublisherService.Publish(errorMessage);
+                await _diagnosticsPublisherService.PublishAsync(errorMessage);
 
                 exception = exception.InnerException;
             }

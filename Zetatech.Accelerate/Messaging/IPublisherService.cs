@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Zetatech.Accelerate.Messaging;
 
@@ -16,5 +17,5 @@ public interface IPublisherService<TMessage> : IDisposable where TMessage : IMes
     /// <param name="message">
     /// The message to publish.
     /// </param>
-    void Publish(TMessage message);
+    Task PublishAsync(TMessage message);
 }

@@ -4,6 +4,7 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Domain.Abstractions;
 using Zetatech.Accelerate.Infrastructure.Abstractions;
 using Zetatech.Accelerate.Tracking;
@@ -38,7 +39,7 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
     /// <summary>
     /// Apply the pending changes in the table schema.
     /// </summary>
-    public override void ApplyChangesInTableSchema()
+    public override async Task ApplyChangesInTableSchemaAsync()
     {
         var rootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Migrations", $"{typeof(TEntity).GUID}");
         var backupPath = Path.Combine(rootPath, $"{DateTime.UtcNow:yyyyMMdd}");
@@ -57,7 +58,7 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
             {
                 using var streamReader = new StreamReader(sqlFile);
                 var sqlSript = streamReader.ReadToEnd();
-                Context.Database.ExecuteSqlRaw(sqlSript);
+                await Context.Database.ExecuteSqlRawAsync(sqlSript);
                 File.Move(sqlFile, backupPath, true);
             }
         }
@@ -71,7 +72,7 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
     /// <param name="parameters">
     /// The values to be assigned to parameters.
     /// </param>
-    public override IQueryable<TEntity> Execute(String queryString, params IDbDataParameter[] parameters)
+    public override async Task<IQueryable<TEntity>> ExecuteAsync(String queryString, params IDbDataParameter[] parameters)
     {
         if (String.IsNullOrEmpty(queryString))
         {

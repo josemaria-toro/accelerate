@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using System;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Tracking;
 
 namespace Zetatech.Accelerate.Caching.Abstractions;
@@ -49,7 +50,7 @@ public abstract class BaseCachingService<TOptions> : ICachingService where TOpti
     /// <param name="value">
     /// The value to cache.
     /// </param>
-    public abstract void Add<TValue>(String key, TValue value);
+    public abstract Task AddAsync<TValue>(String key, TValue value);
     /// <summary>
     /// Adds a value to the cache with the specified key and expiration date.
     /// </summary>
@@ -65,18 +66,18 @@ public abstract class BaseCachingService<TOptions> : ICachingService where TOpti
     /// <param name="expiredAt">
     /// The date and time when the cached value expires.
     /// </param>
-    public abstract void Add<TValue>(String key, TValue value, DateTime expiredAt);
+    public abstract Task AddAsync<TValue>(String key, TValue value, DateTime expiredAt);
     /// <summary>
     /// Removes all entries from the cache.
     /// </summary>
-    public abstract void Clear();
+    public abstract Task ClearAsync();
     /// <summary>
     /// Determines whether the cache contains a value with the specified key.
     /// </summary>
     /// <param name="key">
     /// The key to locate in the cache.
     /// </param>
-    public abstract Boolean Contains(String key);
+    public abstract Task<Boolean> ContainsAsync(String key);
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
@@ -114,12 +115,12 @@ public abstract class BaseCachingService<TOptions> : ICachingService where TOpti
     /// <param name="key">
     /// The key of the cached value to retrieve.
     /// </param>
-    public abstract TValue Get<TValue>(String key);
+    public abstract Task<TValue> GetAsync<TValue>(String key);
     /// <summary>
     /// Removes the value with the specified key from the cache.
     /// </summary>
     /// <param name="key">
     /// The key of the cached value to remove.
     /// </param>
-    public abstract void Remove(String key);
+    public abstract Task RemoveAsync(String key);
 }
