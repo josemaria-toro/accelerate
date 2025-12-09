@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using System;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Tracking;
 
 namespace Zetatech.Accelerate.Messaging.Abstractions;
@@ -82,9 +83,9 @@ public abstract class BaseSubscriberService<TMessage, TOptions> : ISubscriberSer
     /// <summary>
     /// Subscribes the current subscriber to receive published messages.
     /// </summary>
-    public abstract void Subscribe();
+    public abstract Task SubscribeAsync();
     /// <summary>
     /// Unsubscribes the current subscriber from receiving published messages.
     /// </summary>
-    public abstract void Unsubscribe();
+    public abstract Task UnsubscribeAsync();
 }

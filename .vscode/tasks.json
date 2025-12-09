@@ -1,7 +1,7 @@
 {
     "tasks": [
         {
-            "command": "rm --dir --force --recursive /home/zeta/.nuget/packages/zetatech.*",
+            "command": "rm --dir --force --recursive /home/zeta/.nuget/packages/zetatech.accelerate*",
             "dependsOn": [],
             "dependsOrder": "sequence",
             "group": {

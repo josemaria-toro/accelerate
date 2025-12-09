@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Domain;
 using Zetatech.Accelerate.Domain.Abstractions;
 using Zetatech.Accelerate.Tracking;
@@ -73,13 +74,13 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <summary>
     /// Apply the pending changes in the table schema.
     /// </summary>
-    public abstract void ApplyChangesInTableSchema();
+    public abstract Task ApplyChangesInTableSchemaAsync();
     /// <summary>
     /// Commits all pending changes to the data store.
     /// </summary>
-    public virtual Int32 Commit()
+    public virtual async Task<Int32> CommitAsync()
     {
-        _semaphore.Wait();
+        await _semaphore.WaitAsync();
 
         try
         {
@@ -88,7 +89,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
                 _context.ChangeTracker.DetectChanges();
             }
 
-            return _context.SaveChanges(true);
+            return await _context.SaveChangesAsync(true);
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -113,7 +114,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="entity">
     /// The entity to delete.
     /// </param>
-    public virtual void Delete(TEntity entity)
+    public virtual async Task DeleteAsync(TEntity entity)
     {
         if (entity == null)
         {
@@ -140,7 +141,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="entities">
     /// The entities to delete.
     /// </param>
-    public virtual void Delete(IEnumerable<TEntity> entities)
+    public virtual async Task DeleteAsync(IEnumerable<TEntity> entities)
     {
         if (entities == null)
         {
@@ -170,7 +171,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="expression">
     /// The expression to filter entities to delete.
     /// </param>
-    public virtual void Delete(Expression<Func<TEntity, Boolean>> expression)
+    public virtual async Task DeleteAsync(Expression<Func<TEntity, Boolean>> expression)
     {
         if (expression == null)
         {
@@ -235,14 +236,14 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="parameters">
     /// The values to be assigned to parameters.
     /// </param>
-    public abstract IQueryable<TEntity> Execute(String queryString, params IDbDataParameter[] parameters);
+    public abstract Task<IQueryable<TEntity>> ExecuteAsync(String queryString, params IDbDataParameter[] parameters);
     /// <summary>
     /// Inserts the specified entity into the data store.
     /// </summary>
     /// <param name="entity">
     /// The entity to insert.
     /// </param>
-    public virtual void Insert(TEntity entity)
+    public virtual async Task InsertAsync(TEntity entity)
     {
         if (entity == null)
         {
@@ -251,7 +252,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
 
         try
         {
-            _entities.Add(entity);
+            await _entities.AddAsync(entity);
         }
         catch (Exception ex)
         {
@@ -264,7 +265,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="entities">
     /// The entities to insert.
     /// </param>
-    public virtual void Insert(IEnumerable<TEntity> entities)
+    public virtual async Task InsertAsync(IEnumerable<TEntity> entities)
     {
         if (entities == null)
         {
@@ -273,7 +274,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
 
         try
         {
-            _entities.AddRange(entities);
+            await _entities.AddRangeAsync(entities);
         }
         catch (Exception ex)
         {
@@ -293,9 +294,9 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <summary>
     /// Rolls back all pending changes that have not been committed.
     /// </summary>
-    public virtual void Rollback()
+    public virtual async Task RollbackAsync()
     {
-        _semaphore.Wait();
+        await _semaphore.WaitAsync();
 
         try
         {
@@ -320,7 +321,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
                     }
                 }
 
-                _context.SaveChanges(true);
+                await _context.SaveChangesAsync(true);
             }
             else
             {
@@ -349,7 +350,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <summary>
     /// Returns all entities from the data store.
     /// </summary>
-    public virtual IQueryable<TEntity> Select()
+    public virtual async Task<IQueryable<TEntity>> SelectAsync()
     {
         try
         {
@@ -366,7 +367,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="expression">
     /// The expression to filter entities.
     /// </param>
-    public virtual IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression)
+    public virtual async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression)
     {
         if (expression == null)
         {
@@ -391,7 +392,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="skip">
     /// The number of entities to skip.
     /// </param>
-    public virtual IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
+    public virtual async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
     {
         if (expression == null)
         {
@@ -425,7 +426,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="take">
     /// The number of entities to take after skipping.
     /// </param>
-    public virtual IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression, Int32 skip, Int32 take)
+    public virtual async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression, Int32 skip, Int32 take)
     {
         if (expression == null)
         {
@@ -456,11 +457,11 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <summary>
     /// Returns the first entity in the data store.
     /// </summary>
-    public virtual TEntity Single()
+    public virtual async Task<TEntity> SingleAsync()
     {
         try
         {
-            return _entities.FirstOrDefault();
+            return await _entities.FirstOrDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -473,7 +474,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="expression">
     /// The expression to filter entities.
     /// </param>
-    public virtual TEntity Single(Expression<Func<TEntity, Boolean>> expression)
+    public virtual async Task<TEntity> SingleAsync(Expression<Func<TEntity, Boolean>> expression)
     {
         if (expression == null)
         {
@@ -482,7 +483,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
 
         try
         {
-            return _entities.FirstOrDefault(expression);
+            return await _entities.FirstOrDefaultAsync(expression);
         }
         catch (Exception ex)
         {
@@ -498,7 +499,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="skip">
     /// The number of entities to skip.
     /// </param>
-    public virtual TEntity Single(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
+    public virtual async Task<TEntity> SingleAsync(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
     {
         if (expression == null)
         {
@@ -512,9 +513,9 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
 
         try
         {
-            return _entities.Where(expression)
-                            .Skip(skip)
-                            .FirstOrDefault();
+            return await _entities.Where(expression)
+                                  .Skip(skip)
+                                  .FirstOrDefaultAsync();
         }
         catch (Exception ex)
         {
@@ -527,7 +528,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="entity">
     /// The entity to update.
     /// </param>
-    public virtual void Update(TEntity entity)
+    public virtual async Task UpdateAsync(TEntity entity)
     {
         if (entity == null)
         {
@@ -554,7 +555,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="entities">
     /// The entities to update.
     /// </param>
-    public virtual void Update(IEnumerable<TEntity> entities)
+    public virtual async Task UpdateAsync(IEnumerable<TEntity> entities)
     {
         if (entities == null)
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Zetatech.Accelerate.Tracking;
 
 namespace Zetatech.Accelerate.Domain.Abstractions;
@@ -59,5 +60,5 @@ public abstract class BaseSpecification<TEntity> : ISpecification<TEntity> where
     /// <param name="entity">
     /// The entity to evaluate.
     /// </param>
-    public abstract Boolean IsSatisfiedBy(TEntity entity);
+    public abstract Task<Boolean> IsSatisfiedByAsync(TEntity entity);
 }
