@@ -149,7 +149,7 @@ public sealed class TrackingService : BaseTrackingService<TrackingServiceOptions
                 { "ipAddress", $"{httpRequest.IpAddress}" },
                 { "name", httpRequest.Name },
                 { "responseBody", $"{httpRequest.ResponseBody}" },
-                { "responseCode", $"{httpRequest.ResponseCode}" },
+                { "responseCode", $"{(Int32)httpRequest.ResponseCode}" },
                 { "success", $"{httpRequest.Success}".ToLowerInvariant() },
                 { "uri", $"{httpRequest.Uri}" }
             }
