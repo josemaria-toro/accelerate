@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -39,8 +40,13 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
     /// <summary>
     /// Apply the pending changes in the table schema.
     /// </summary>
-    public override async Task ApplyChangesInTableSchemaAsync()
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
+    public override async Task ApplyChangesInTableSchemaAsync(Guid operationId)
     {
+        Context.Database.EnsureCreated();
+
         var rootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Migrations", $"{typeof(TEntity).GUID}");
         var backupPath = Path.Combine(rootPath, $"{DateTime.UtcNow:yyyyMMdd}");
 
@@ -66,19 +72,49 @@ public abstract class PostgreSqlRepository<TEntity, TOptions> : BaseRepository<T
     /// <summary>
     /// Execute a custom query string to select entities.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="queryString">
     /// The query string to execute.
     /// </param>
     /// <param name="parameters">
     /// The values to be assigned to parameters.
     /// </param>
-    public override async Task<IQueryable<TEntity>> ExecuteAsync(String queryString, params IDbDataParameter[] parameters)
+    public override async Task<IEnumerable<TEntity>> ExecuteAsync(Guid operationId, String queryString, params IDbDataParameter[] parameters)
     {
         if (String.IsNullOrEmpty(queryString))
         {
             throw new ArgumentException("The query string to execute cannot be null or empty", nameof(queryString));
         }
 
-        return Entities.FromSqlRaw(queryString, parameters);
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Execute",
+            OperationId = operationId,
+            TargetName = Context.GetDataSource(),
+            Type = "SQL"
+        };
+
+        try
+        {
+            var queryExpression = Entities.FromSqlRaw(queryString, parameters);
+            dependency.InputData = queryExpression.ToQueryString();
+            var entities = await queryExpression.ToListAsync();
+            dependency.OutputData = $"{String.Join(',', entities.Select(x => x.Id))}";
+            dependency.Success = true;
+
+            return entities;
+        }
+        catch (Exception ex)
+        {
+            throw new DataException("Unexpected error is encountered while inserting the entity into the data store", ex);
+        }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
 }

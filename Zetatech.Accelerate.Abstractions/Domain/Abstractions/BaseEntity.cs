@@ -8,6 +8,19 @@ namespace Zetatech.Accelerate.Domain.Abstractions;
 public abstract class BaseEntity : IEntity
 {
     /// <summary>
+    /// Gets or sets the creation date.
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+    /// <summary>
+    /// Gets or sets the unique identifier.
+    /// </summary>
+    public Guid Id { get; set; }
+    /// <summary>
+    /// Gets or sets the update date.
+    /// </summary>
+    public DateTime UpdatedAt { get; set; }
+
+    /// <summary>
     /// Creates a shallow copy of the current object instance.
     /// </summary>
     public virtual Object Clone()

@@ -94,6 +94,10 @@ public abstract class BaseRepositoryContext<TEntity, TOptions> : DbContext where
         }
     }
     /// <summary>
+    /// Get the data source name.
+    /// </summary>
+    public abstract String GetDataSource();
+    /// <summary>
     /// Configures the database and other options for this context.
     /// </summary>
     /// <param name="optionsBuilder">

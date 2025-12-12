@@ -74,13 +74,28 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <summary>
     /// Apply the pending changes in the table schema.
     /// </summary>
-    public abstract Task ApplyChangesInTableSchemaAsync();
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
+    public abstract Task ApplyChangesInTableSchemaAsync(Guid operationId);
     /// <summary>
     /// Commits all pending changes to the data store.
     /// </summary>
-    public virtual async Task<Int32> CommitAsync()
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
+    public virtual async Task<Int32> CommitAsync(Guid operationId)
     {
         await _semaphore.WaitAsync();
+
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Commit",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
 
         try
         {
@@ -89,7 +104,11 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
                 _context.ChangeTracker.DetectChanges();
             }
 
-            return await _context.SaveChangesAsync(true);
+            var affectedRows = await _context.SaveChangesAsync(true);
+            dependency.OutputData = $"{affectedRows}";
+            dependency.Success = true;
+
+            return affectedRows;
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -106,20 +125,35 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
         finally
         {
             _semaphore.Release();
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
         }
     }
     /// <summary>
     /// Deletes the specified entity from the data store.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="entity">
     /// The entity to delete.
     /// </param>
-    public virtual async Task DeleteAsync(TEntity entity)
+    public virtual async Task DeleteAsync(Guid operationId, TEntity entity)
     {
         if (entity == null)
         {
             throw new ArgumentException("The entity to delete cannot be null", nameof(entity));
         }
+
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            InputData = $"{entity.Id}",
+            Name = "Delete",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
 
         try
         {
@@ -129,25 +163,44 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             }
 
             _entities.Remove(entity);
+            dependency.Success = true;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while deleting an entity", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Deletes the specified collection of entities from the data store.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="entities">
     /// The entities to delete.
     /// </param>
-    public virtual async Task DeleteAsync(IEnumerable<TEntity> entities)
+    public virtual async Task DeleteAsync(Guid operationId, IEnumerable<TEntity> entities)
     {
         if (entities == null)
         {
             throw new ArgumentException("The collection of entities to delete cannot be null", nameof(entities));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            InputData = $"{String.Join(',', entities.Select(x => x.Id))}",
+            Name = "Delete",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
             foreach (var entity in entities)
@@ -159,28 +212,49 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             }
 
             _entities.RemoveRange(entities);
+            dependency.Success = true;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while deleting a collection of entities", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Deletes entities that match the specified expression from the data store.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="expression">
     /// The expression to filter entities to delete.
     /// </param>
-    public virtual async Task DeleteAsync(Expression<Func<TEntity, Boolean>> expression)
+    public virtual async Task DeleteAsync(Guid operationId, Expression<Func<TEntity, Boolean>> expression)
     {
         if (expression == null)
         {
             throw new ArgumentException("The expression to execute cannot be null", nameof(expression));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Delete",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            var entities = _entities.Where(expression);
+            var queryExpression = _entities.Where(expression);
+            dependency.InputData = queryExpression.ToQueryString();
+            var entities = await queryExpression.ToListAsync();
+            dependency.OutputData = $"{String.Join(',', entities.Select(x => x.Id))}";
 
             foreach (var entity in entities)
             {
@@ -191,10 +265,16 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             }
 
             _entities.RemoveRange(entities);
+            dependency.Success = true;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while deleting a collection of entities using a expression", ex);
+        }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
         }
     }
     /// <summary>
@@ -230,55 +310,96 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <summary>
     /// Execute a custom query string to select entities.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="queryString">
     /// The query string to execute.
     /// </param>
     /// <param name="parameters">
     /// The values to be assigned to parameters.
     /// </param>
-    public abstract Task<IQueryable<TEntity>> ExecuteAsync(String queryString, params IDbDataParameter[] parameters);
+    public abstract Task<IEnumerable<TEntity>> ExecuteAsync(Guid operationId, String queryString, params IDbDataParameter[] parameters);
     /// <summary>
     /// Inserts the specified entity into the data store.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="entity">
     /// The entity to insert.
     /// </param>
-    public virtual async Task InsertAsync(TEntity entity)
+    public virtual async Task InsertAsync(Guid operationId, TEntity entity)
     {
         if (entity == null)
         {
             throw new ArgumentException("The entity to insert cannot be null", nameof(entity));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            InputData = $"{entity.Id}",
+            Name = "Insert",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
             await _entities.AddAsync(entity);
+            dependency.Success = true;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while inserting the entity into the data store", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Inserts the specified collection of entities into the data store.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="entities">
     /// The entities to insert.
     /// </param>
-    public virtual async Task InsertAsync(IEnumerable<TEntity> entities)
+    public virtual async Task InsertAsync(Guid operationId, IEnumerable<TEntity> entities)
     {
         if (entities == null)
         {
             throw new ArgumentException("The collection of entities to insert cannot be null", nameof(entities));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            InputData = $"{String.Join(',', entities.Select(x => x.Id))}",
+            Name = "Insert",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
             await _entities.AddRangeAsync(entities);
+            dependency.Success = true;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while inserting the collection of entities into to data store", ex);
+        }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
         }
     }
     /// <summary>
@@ -294,9 +415,21 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <summary>
     /// Rolls back all pending changes that have not been committed.
     /// </summary>
-    public virtual async Task RollbackAsync()
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
+    public virtual async Task RollbackAsync(Guid operationId)
     {
         await _semaphore.WaitAsync();
+
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Rollback",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
 
         try
         {
@@ -329,6 +462,8 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
                 _context.ChangeTracker.Clear();
                 _entities = _context.Set<TEntity>();
             }
+
+            dependency.Success = true;
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -345,54 +480,104 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
         finally
         {
             _semaphore.Release();
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
         }
     }
     /// <summary>
     /// Returns all entities from the data store.
     /// </summary>
-    public virtual async Task<IQueryable<TEntity>> SelectAsync()
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
+    public virtual async Task<IEnumerable<TEntity>> SelectAsync(Guid operationId)
     {
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            InputData = _entities.ToQueryString(),
+            Name = "Select",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            return _entities;
+            var entities = await _entities.ToListAsync();
+            dependency.OutputData = $"{String.Join(',', entities.Select(x => x.Id))}";
+            dependency.Success = true;
+
+            return entities;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting all entities from the data store", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Returns all entities that match the specified expression.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="expression">
     /// The expression to filter entities.
     /// </param>
-    public virtual async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression)
+    public virtual async Task<IEnumerable<TEntity>> SelectAsync(Guid operationId, Expression<Func<TEntity, Boolean>> expression)
     {
         if (expression == null)
         {
             throw new ArgumentException("The expression to execute cannot be null", nameof(expression));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Select",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            return _entities.Where(expression);
+            var queryExpression = _entities.Where(expression);
+            dependency.InputData = queryExpression.ToQueryString();
+            var entities = await queryExpression.ToListAsync();
+            dependency.OutputData = $"{String.Join(',', entities.Select(x => x.Id))}";
+            dependency.Success = true;
+
+            return entities;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting a collection of entities using a expression", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Returns entities that match the specified expression, skipping a given number of entities.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="expression">
     /// The expression to filter entities.
     /// </param>
     /// <param name="skip">
     /// The number of entities to skip.
     /// </param>
-    public virtual async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
+    public virtual async Task<IEnumerable<TEntity>> SelectAsync(Guid operationId, Expression<Func<TEntity, Boolean>> expression, Int32 skip)
     {
         if (expression == null)
         {
@@ -404,19 +589,42 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             throw new ArgumentException("The number of entities to skip must be upper or equals than 0", nameof(skip));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Select",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            return _entities.Where(expression)
-                            .Skip<TEntity>(skip);
+            var queryExpression = _entities.Where(expression)
+                                           .Skip<TEntity>(skip);
+            dependency.InputData = queryExpression.ToQueryString();
+            var entities = await queryExpression.ToListAsync();
+            dependency.OutputData = $"{String.Join(',', entities.Select(x => x.Id))}";
+            dependency.Success = true;
+
+            return entities;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting a collection of entities in the data store using a expression after skipping some of them", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Returns entities that match the specified expression, skipping and taking a given number of entities.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="expression">
     /// The expression to filter entities.
     /// </param>
@@ -426,7 +634,7 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
     /// <param name="take">
     /// The number of entities to take after skipping.
     /// </param>
-    public virtual async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression, Int32 skip, Int32 take)
+    public virtual async Task<IEnumerable<TEntity>> SelectAsync(Guid operationId, Expression<Func<TEntity, Boolean>> expression, Int32 skip, Int32 take)
     {
         if (expression == null)
         {
@@ -443,63 +651,130 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             throw new ArgumentException("The number of entities to take must be upper than 0", nameof(take));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Select",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            return _entities.Where(expression)
-                            .Skip<TEntity>(skip)
-                            .Take<TEntity>(take);
+            var queryExpression = _entities.Where(expression)
+                                           .Skip<TEntity>(skip)
+                                           .Take<TEntity>(take);
+            dependency.InputData = queryExpression.ToQueryString();
+            var entities = await queryExpression.ToListAsync();
+            dependency.OutputData = $"{String.Join(',', entities.Select(x => x.Id))}";
+            dependency.Success = true;
+
+            return entities;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting a collection of entities using a expression after skipping some of them", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Returns the first entity in the data store.
     /// </summary>
-    public virtual async Task<TEntity> SingleAsync()
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
+    public virtual async Task<TEntity> SingleAsync(Guid operationId)
     {
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Single",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            return await _entities.FirstOrDefaultAsync();
+            var entity = await _entities.FirstOrDefaultAsync();
+            dependency.OutputData = $"{entity?.Id}";
+            dependency.Success = true;
+
+            return entity;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting the first entity in the data store", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Returns the first entity that matches the specified expression.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="expression">
     /// The expression to filter entities.
     /// </param>
-    public virtual async Task<TEntity> SingleAsync(Expression<Func<TEntity, Boolean>> expression)
+    public virtual async Task<TEntity> SingleAsync(Guid operationId, Expression<Func<TEntity, Boolean>> expression)
     {
         if (expression == null)
         {
             throw new ArgumentException("The expression to execute cannot be null", nameof(expression));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Single",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            return await _entities.FirstOrDefaultAsync(expression);
+            var queryExpression = _entities.Where(expression);
+            dependency.InputData = queryExpression.ToQueryString();
+            var entity = await queryExpression.FirstOrDefaultAsync();
+            dependency.OutputData = $"{entity?.Id}";
+            dependency.Success = true;
+
+            return entity;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting the first entity in the data store using a expression", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Returns the first entity that matches the specified expression, skipping a given number of entities.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="expression">
     /// The expression to filter entities.
     /// </param>
     /// <param name="skip">
     /// The number of entities to skip.
     /// </param>
-    public virtual async Task<TEntity> SingleAsync(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
+    public virtual async Task<TEntity> SingleAsync(Guid operationId, Expression<Func<TEntity, Boolean>> expression, Int32 skip)
     {
         if (expression == null)
         {
@@ -511,29 +786,61 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             throw new ArgumentException("The number of entities to skip must be upper or equals than 0", nameof(skip));
         }
 
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            Name = "Single",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
+
         try
         {
-            return await _entities.Where(expression)
-                                  .Skip(skip)
-                                  .FirstOrDefaultAsync();
+            var queryExpression = _entities.Where(expression)
+                                           .Skip(skip);
+            dependency.InputData = queryExpression.ToQueryString();
+            var entity = await queryExpression.FirstOrDefaultAsync();
+            dependency.OutputData = $"{entity?.Id}";
+            dependency.Success = true;
+
+            return entity;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting the first entity in the data store using a expression after skipping some of them", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Updates the specified entity in the data store.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="entity">
     /// The entity to update.
     /// </param>
-    public virtual async Task UpdateAsync(TEntity entity)
+    public virtual async Task UpdateAsync(Guid operationId, TEntity entity)
     {
         if (entity == null)
         {
             throw new ArgumentException("The entity to update cannot be null", nameof(entity));
         }
+
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            InputData = $"{entity.Id}",
+            Name = "Update",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
 
         try
         {
@@ -543,24 +850,43 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             }
 
             _entities.Update(entity);
+            dependency.Success = true;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while updating an entity", ex);
         }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
+        }
     }
     /// <summary>
     /// Updates the specified collection of entities in the data store.
     /// </summary>
+    /// <param name="operationId">
+    /// The operation identifier used to track the activity.
+    /// </param>
     /// <param name="entities">
     /// The entities to update.
     /// </param>
-    public virtual async Task UpdateAsync(IEnumerable<TEntity> entities)
+    public virtual async Task UpdateAsync(Guid operationId, IEnumerable<TEntity> entities)
     {
         if (entities == null)
         {
             throw new ArgumentException("The collection of entities to update cannot be null", nameof(entities));
         }
+
+        var utcnow = DateTime.UtcNow;
+        var dependency = new Dependency
+        {
+            InputData = $"{String.Join(',', entities.Select(x => x.Id))}",
+            Name = "Update",
+            OperationId = operationId,
+            TargetName = _context.GetDataSource(),
+            Type = "SQL"
+        };
 
         try
         {
@@ -573,10 +899,16 @@ public abstract class BaseRepository<TEntity, TOptions, TContext> : IRepository<
             }
 
             _entities.UpdateRange(entities);
+            dependency.Success = true;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while updating a collection of entities", ex);
+        }
+        finally
+        {
+            dependency.Duration = DateTime.UtcNow - utcnow;
+            await TrackingService?.TrackAsync(dependency);
         }
     }
 }
