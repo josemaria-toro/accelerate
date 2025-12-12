@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Zetatech.Accelerate.Domain.Abstractions;
 using Zetatech.Accelerate.Infrastructure.Abstractions;
@@ -16,6 +17,8 @@ namespace Zetatech.Accelerate.Persistency.Repositories;
 public sealed class PostgreSqlRepositoryContext<TEntity, TOptions> : BaseRepositoryContext<TEntity, TOptions> where TEntity : BaseEntity
                                                                                                               where TOptions : PostgreSqlRepositoryOptions
 {
+    private String _dataSourceName;
+
     /// <summary>
     /// Initializes a new instance of the class.
     /// </summary>
@@ -29,6 +32,21 @@ public sealed class PostgreSqlRepositoryContext<TEntity, TOptions> : BaseReposit
     {
     }
 
+    /// <summary>
+    /// Get the data source name.
+    /// </summary>
+    public override String GetDataSource()
+    {
+        if (String.IsNullOrEmpty(_dataSourceName))
+        {
+            var dbConnection = Database.GetDbConnection();
+            var entityType = Model.FindEntityType(typeof(TEntity));
+
+            _dataSourceName = $"{dbConnection.DataSource} | {dbConnection.Database} | {entityType.GetSchemaQualifiedTableName()}";
+        }
+
+        return _dataSourceName;
+    }
     /// <summary>
     /// Configures the database and other options for this context.
     /// </summary>
