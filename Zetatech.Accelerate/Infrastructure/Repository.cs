@@ -59,7 +59,7 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
             _semaphore.Release();
         }
     }
-    public void Delete(IEnumerable<TEntity> entities)
+    public void Delete(IList<TEntity> entities)
     {
         if (entities == null)
         {
@@ -177,7 +177,7 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
             _semaphore.Release();
         }
     }
-    public void Insert(IEnumerable<TEntity> entities)
+    public void Insert(IList<TEntity> entities)
     {
         if (entities == null)
         {
@@ -210,18 +210,18 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
             _semaphore.Release();
         }
     }
-    public IEnumerable<TEntity> Select()
+    public IQueryable<TEntity> Select()
     {
         try
         {
-            return [.. _entities];
+            return _entities;
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting all entities from the data store", ex);
         }
     }
-    public IEnumerable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression)
+    public IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression)
     {
         if (expression == null)
         {
@@ -230,14 +230,14 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
 
         try
         {
-            return [.. _entities.Where(expression)];
+            return _entities.Where(expression);
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting a collection of entities using a expression", ex);
         }
     }
-    public IEnumerable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
+    public IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression, Int32 skip)
     {
         if (expression == null)
         {
@@ -251,14 +251,15 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
 
         try
         {
-            return [.. _entities.Where(expression).Skip<TEntity>(skip)];
+            return _entities.Where(expression)
+                            .Skip<TEntity>(skip);
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error is encountered while selecting a collection of entities in the data store using a expression after skipping some of them", ex);
         }
     }
-    public IEnumerable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression, Int32 skip, Int32 take)
+    public IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression, Int32 skip, Int32 take)
     {
         if (expression == null)
         {
@@ -277,7 +278,9 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
 
         try
         {
-            return [.. _entities.Where(expression).Skip<TEntity>(skip).Take<TEntity>(take)];
+            return _entities.Where(expression)
+                            .Skip<TEntity>(skip)
+                            .Take<TEntity>(take);
         }
         catch (Exception ex)
         {
@@ -369,7 +372,7 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
             _semaphore.Release();
         }
     }
-    public void Update(IEnumerable<TEntity> entities)
+    public void Update(IList<TEntity> entities)
     {
         if (entities == null)
         {
