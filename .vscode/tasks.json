@@ -1,0 +1,66 @@
+{
+    "tasks": [
+        {
+            "command": "dotnet restore Zetatech.Accelerate.sln --nologo --verbosity normal",
+            "dependsOn": [],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "zetatech: restore",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "command": "dotnet clean Zetatech.Accelerate.sln --configuration Release --nologo --verbosity normal",
+            "dependsOn": [
+                "zetatech: restore"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "zetatech: clean",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "command": "dotnet build Zetatech.Accelerate.sln --configuration Release --nologo --no-restore --verbosity normal",
+            "dependsOn": [
+                "zetatech: clean"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "zetatech: build",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "command": "dotnet pack Zetatech.Accelerate.sln --configuration Release --include-source --include-symbols --nologo --no-restore --output $HOME/.nuget/offline --verbosity normal",
+            "dependsOn": [
+                "zetatech: build"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": false,
+            "label": "zetatech: release",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        }
+    ],
+    "version": "2.0.0"
+}
