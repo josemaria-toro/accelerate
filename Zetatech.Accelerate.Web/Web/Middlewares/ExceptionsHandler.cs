@@ -5,11 +5,11 @@ using Zetatech.Accelerate.Exceptions;
 
 namespace Zetatech.Accelerate.Web.Middlewares;
 
-public sealed class ExceptionsMiddleware
+public sealed class ExceptionsHandler
 {
     private readonly RequestDelegate _next;
 
-    public ExceptionsMiddleware(RequestDelegate next)
+    public ExceptionsHandler(RequestDelegate next)
     {
         _next = next;
     }
@@ -31,55 +31,71 @@ public sealed class ExceptionsMiddleware
         {
             await _next(httpContext);
         }
-        catch (BusinessException)
+        catch (BusinessException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
+            WriteException(ex);
         }
-        catch (ConfigurationException)
+        catch (ConfigurationException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            WriteException(ex);
         }
-        catch (ConflictException)
+        catch (ConflictException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
+            WriteException(ex);
         }
-        catch (DependencyException)
+        catch (DependencyException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+            WriteException(ex);
         }
-        catch (ForbiddenException)
+        catch (ForbiddenException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+            WriteException(ex);
         }
-        catch (NotFoundException)
+        catch (NotFoundException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+            WriteException(ex);
         }
-        catch (UnauthorizedException)
+        catch (UnauthorizedException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            WriteException(ex);
         }
-        catch (UnavailableException)
+        catch (UnavailableException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+            WriteException(ex);
         }
-        catch (ValidationException)
+        catch (ValidationException ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            WriteException(ex);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             Clear(httpContext);
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            WriteException(ex);
         }
+    }
+    private static void WriteException(Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkRed;
+        Console.WriteLine($"An error of type '{ex.GetType()}' was raised: {ex.Message} {ex.StackTrace}");
+        Console.ResetColor();
     }
 }

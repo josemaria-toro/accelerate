@@ -5,12 +5,12 @@ using Zetatech.Accelerate.Exceptions;
 
 namespace Zetatech.Accelerate.Web.Middlewares;
 
-public sealed class RequireHeaderMiddleware
+public sealed class RequireHeader
 {
     private readonly String _headerName;
     private readonly RequestDelegate _next;
 
-    public RequireHeaderMiddleware(RequestDelegate next, String headerName)
+    public RequireHeader(RequestDelegate next, String headerName)
     {
         _headerName = headerName;
         _next = next;

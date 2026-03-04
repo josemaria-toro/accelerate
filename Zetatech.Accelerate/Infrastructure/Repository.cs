@@ -159,6 +159,11 @@ public sealed class Repository<TEntity> : IRepository<TEntity> where TEntity : B
             entity.CreatedAt = DateTime.UtcNow;
             entity.UpdatedAt = DateTime.UtcNow;
 
+            if (entity.Id == Guid.Empty)
+            {
+                entity.Id = Guid.NewGuid();
+            }
+
             _entities.Add(entity);
             _semaphore.Wait();
             _context.Commit();
