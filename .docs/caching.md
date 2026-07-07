@@ -20,5 +20,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 }
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluye una implementación especializada para la gestión de caché en memoria.

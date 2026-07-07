@@ -9,5 +9,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
          ├─ Abstraction           ' Clases base para componentes que ejecutan procesos en segundo plano.
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluyen las clases base para la ejecución de procesos temporizados.

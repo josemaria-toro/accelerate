@@ -9,5 +9,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
          ├─ Middlewares           ' Middlewares para registrar la telemetría de las aplicaciones.
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluye un middleware para registrar información sobre las peticiones HTTP recibidas por una api o aplicación web.

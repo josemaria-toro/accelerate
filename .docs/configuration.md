@@ -8,5 +8,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
       ├─ DependencyInjection      ' Métodos de extensión para registrar los orígenes de las configuraciones.
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluyen los métodos de extensión para registrar los orígenes de configuración mas comunes (variables de entorno, secretos, fichero appsettings.json).

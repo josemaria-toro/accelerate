@@ -14,5 +14,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
       ├─ Telemetry                ' Contratos para los componentes que realizan la gestión de datos de telemetría.
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluyen los contratos de los principales componentes del framework.

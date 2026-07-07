@@ -8,5 +8,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
       ├─ Serialization            ' Métodos de extensión para la serialización / deserialización de objetos.
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluyen métodos de extensión para la serialización / deserialización de objetos.

@@ -98,7 +98,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 }
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluyen las clases base para controladores.
 - Se incluye un cliente HTTP especializado en contenido JSON.
 - Se incluyen middlewares para el diagnóstico y la seguridad de las peticiones.

@@ -10,5 +10,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
          ├─ Middlewares           ' Middlewares para el control de excepciones.
 ```
 ## Control de versiones
-### v10.2607.0
+### v10.2608.0
 - Se incluyen el catálogo inicial de excepciones.
