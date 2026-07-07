@@ -1,0 +1,110 @@
+{
+    "inputs": [
+        {
+            "default": "Release",
+            "description": "Choose the build configuration",
+            "id": "build-config",
+            "options": [
+                "Debug",
+                "Release"
+            ],
+            "type": "pickString"
+        }
+    ],
+    "tasks": [
+        {
+            "command": "dotnet-outdated --no-restore --recursive --upgrade:auto --version-lock major Zetatech.Accelerate.sln",
+            "dependsOn": [],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "outdated",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "dependsOn": [
+                "outdated"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "cleanup",
+            "linux": {
+                "command": "find .nuget -mindepth 1 -maxdepth 1 -exec rm -rf {} +"
+            },
+            "problemMatcher": [],
+            "type": "shell"
+        },
+        {
+            "command": "dotnet restore Zetatech.Accelerate.sln --nologo --verbosity normal",
+            "dependsOn": [
+                "cleanup"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "restore",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "command": "dotnet clean Zetatech.Accelerate.sln --configuration ${input:build-config} --nologo --verbosity normal",
+            "dependsOn": [
+                "restore"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "clean",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "command": "dotnet build Zetatech.Accelerate.sln --configuration ${input:build-config} --nologo --no-restore --verbosity normal",
+            "dependsOn": [
+                "clean"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": true,
+                "kind": "build"
+            },
+            "hide": false,
+            "label": "build",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "command": "dotnet pack Zetatech.Accelerate.sln --configuration ${input:build-config} --include-source --include-symbols --nologo --no-restore --output .nuget/feed --verbosity normal",
+            "dependsOn": [
+                "build"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": false,
+            "label": "pack",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "promptOnClose": false,
+            "type": "shell"
+        }
+    ],
+    "version": "2.0.0"
+}
