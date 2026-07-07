@@ -13,40 +13,8 @@
     ],
     "tasks": [
         {
-            "command": "dotnet-outdated --no-restore --recursive --upgrade:auto --version-lock major Zetatech.Accelerate.sln",
-            "dependsOn": [],
-            "dependsOrder": "sequence",
-            "group": {
-                "isDefault": false,
-                "kind": "none"
-            },
-            "hide": true,
-            "label": "outdated",
-            "problemMatcher": "$msCompile",
-            "type": "shell"
-        },
-        {
-            "dependsOn": [
-                "outdated"
-            ],
-            "dependsOrder": "sequence",
-            "group": {
-                "isDefault": false,
-                "kind": "none"
-            },
-            "hide": true,
-            "label": "cleanup",
-            "linux": {
-                "command": "find .nuget -mindepth 1 -maxdepth 1 -exec rm -rf {} +"
-            },
-            "problemMatcher": [],
-            "type": "shell"
-        },
-        {
             "command": "dotnet restore Zetatech.Accelerate.sln --nologo --verbosity normal",
-            "dependsOn": [
-                "cleanup"
-            ],
+            "dependsOn": [],
             "dependsOrder": "sequence",
             "group": {
                 "isDefault": false,
@@ -90,6 +58,8 @@
         {
             "command": "dotnet pack Zetatech.Accelerate.sln --configuration ${input:build-config} --include-source --include-symbols --nologo --no-restore --output .nuget/feed --verbosity normal",
             "dependsOn": [
+                "cleanup",
+                "outdated",
                 "build"
             ],
             "dependsOrder": "sequence",
@@ -104,7 +74,35 @@
             ],
             "promptOnClose": false,
             "type": "shell"
-        }
+        },
+        {
+            "command": "dotnet-outdated --no-restore --recursive --upgrade:auto --version-lock major Zetatech.Accelerate.sln",
+            "dependsOn": [],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "outdated",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
+            "dependsOn": [],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "cleanup",
+            "linux": {
+                "command": "find .nuget -mindepth 1 -maxdepth 1 -exec rm -rf {} + && mkdir .nuget/feed && mkdir .nuget/packages"
+            },
+            "problemMatcher": [],
+            "type": "shell"
+        },
     ],
     "version": "2.0.0"
 }

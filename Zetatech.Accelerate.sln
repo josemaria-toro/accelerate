@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zetatech.Accelerate", "Zetatech.Accelerate\Zetatech.Accelerate.csproj", "{C2B3017B-5502-400B-ADF5-A6F502405E68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zetatech.Accelerate.Application", "Zetatech.Accelerate.Application\Zetatech.Accelerate.Application.csproj", "{F146E679-20AD-40EB-B373-CE1578ACF5D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -27,6 +29,18 @@ Global
 		{C2B3017B-5502-400B-ADF5-A6F502405E68}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C2B3017B-5502-400B-ADF5-A6F502405E68}.Release|x86.ActiveCfg = Release|Any CPU
 		{C2B3017B-5502-400B-ADF5-A6F502405E68}.Release|x86.Build.0 = Release|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Debug|x64.Build.0 = Debug|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Debug|x86.Build.0 = Debug|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Release|x64.ActiveCfg = Release|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Release|x64.Build.0 = Release|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Release|x86.ActiveCfg = Release|Any CPU
+		{F146E679-20AD-40EB-B373-CE1578ACF5D7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
