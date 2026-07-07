@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zetatech.Accelerate.Data", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zetatech.Accelerate.Domain", "Zetatech.Accelerate.Domain\Zetatech.Accelerate.Domain.csproj", "{6D78D949-99A3-46A6-9DE1-A969BF0470EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zetatech.Accelerate.Exceptions", "Zetatech.Accelerate.Exceptions\Zetatech.Accelerate.Exceptions.csproj", "{BDAE080A-26BA-41BF-90AB-820FA000628F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -97,6 +99,18 @@ Global
 		{6D78D949-99A3-46A6-9DE1-A969BF0470EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6D78D949-99A3-46A6-9DE1-A969BF0470EF}.Release|x86.ActiveCfg = Release|Any CPU
 		{6D78D949-99A3-46A6-9DE1-A969BF0470EF}.Release|x86.Build.0 = Release|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Debug|x64.Build.0 = Debug|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Debug|x86.Build.0 = Debug|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Release|x64.ActiveCfg = Release|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Release|x64.Build.0 = Release|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Release|x86.ActiveCfg = Release|Any CPU
+		{BDAE080A-26BA-41BF-90AB-820FA000628F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
