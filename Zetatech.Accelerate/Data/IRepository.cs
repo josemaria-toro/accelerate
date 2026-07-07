@@ -9,8 +9,6 @@ namespace Zetatech.Accelerate.Data;
 
 public interface IRepository<TEntity> : IDisposable where TEntity : class, IEntity, new()
 {
-    void Commit();
-    Task CommitAsync(CancellationToken cancellationToken = default);
     void Delete(TEntity entity);
     Task DeleteAsync(TEntity entity,
                      CancellationToken cancellationToken = default);
@@ -26,8 +24,6 @@ public interface IRepository<TEntity> : IDisposable where TEntity : class, IEnti
     void Insert(IList<TEntity> entities);
     Task InsertAsync(IList<TEntity> entities,
                      CancellationToken cancellationToken = default);
-    void Rollback();
-    Task RollbackAsync(CancellationToken cancellationToken = default);
     IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression = null,
                                Int32? skip = null,
                                Int32? take = null);
