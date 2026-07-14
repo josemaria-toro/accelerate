@@ -11,4 +11,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ## Control de versiones
 ### v10.2608.0
 - Versión inicial de la librería en la que se incluye:
+  - Implementación especializada para el envío de información al sistema DeepSight.
   - Middleware para registrar información sobre las peticiones HTTP recibidas en un api o una aplicación web.
