@@ -10,4 +10,6 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluyen las clases base para los servicios de aplicacion y para los objetos de entrada / salida que se utilizan en dichos servicios.
+- Versión inicial de la librería en la que se incluyen clases base para:
+  - Clases base para los servicios de aplicacion.
+  - Clases base para los objetos de entrada / salida que se utilizan en los servicios de aplicación.

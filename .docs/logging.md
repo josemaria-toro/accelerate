@@ -35,6 +35,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluyen las clases base para componentes que registran la actividad de diagnóstico de las aplicaciones.
-- Se incluye una implementación especializada para la escritura en consola.
-- Se incluye una implementación especializada para el envío de información al sistema DeepSight.
+- Versión inicial de la librería en la que se incluye:
+  - Clases base para componentes que registran la actividad de diagnóstico de las aplicaciones.
+  - Implementación especializada para la escritura en consola.
+  - Implementación especializada para el envío de información al sistema DeepSight.

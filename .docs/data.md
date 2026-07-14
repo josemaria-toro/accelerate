@@ -11,7 +11,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluyen las clases base para repositorios y entidades.
+- Versión inicial de la librería en la que se incluyen las clases base para repositorios y entidades.
 - Se incluye soporte para repositorios basados en EntityFramework para los siguientes motores de base de datos:
   - Azure SQL
   - Azure Synapse

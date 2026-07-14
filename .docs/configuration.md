@@ -9,4 +9,4 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluyen los métodos de extensión para registrar los orígenes de configuración mas comunes (variables de entorno, secretos, fichero appsettings.json).
+- Versión inicial de la librería en la que se incluyen los métodos de extensión para registrar los orígenes de configuración mas comunes (variables de entorno, secretos, fichero appsettings.json).

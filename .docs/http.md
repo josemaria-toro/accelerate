@@ -32,7 +32,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
       "authorization": {
          "domain": "",
          "password": "",
-         "userName": "",
+         "userName": ""
       }
    }
 }
@@ -99,6 +99,9 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluyen las clases base para controladores.
-- Se incluye un cliente HTTP especializado en contenido JSON.
-- Se incluyen middlewares para el diagnóstico y la seguridad de las peticiones.
+- Versión inicial de la librería en la que se incluye:
+  - Clases base para controladores.
+  - Cliente HTTP especializado en contenido JSON.
+  - Middleware para comprobar la existencia de ciertas cabeceras.
+  - Middleware para incluir en las respuestas, cabeceras de seguridad.
+  - Middleware para habilitar el registro de datos de diagnóstico.

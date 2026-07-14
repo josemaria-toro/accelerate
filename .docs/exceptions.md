@@ -11,4 +11,4 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluyen el catálogo inicial de excepciones.
+- Versión inicial de la librería en la que se incluye el catálogo inicial de excepciones y un middleware para retornar un código HTTP en base a la excepción capturada.

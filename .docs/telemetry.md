@@ -10,4 +10,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluye un middleware para registrar información sobre las peticiones HTTP recibidas por una api o aplicación web.
+- Versión inicial de la librería en la que se incluye:
+  - Middleware para registrar información sobre las peticiones HTTP recibidas en un api o una aplicación web.

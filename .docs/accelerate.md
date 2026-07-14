@@ -15,4 +15,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2608.0
-- Se incluyen los contratos de los principales componentes del framework.
+- Versión inicial de la librería en la que se incluye:
+  - Contratos de los principales componentes del framework.
