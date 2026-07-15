@@ -13,6 +13,34 @@
     ],
     "tasks": [
         {
+            "dependsOn": [],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "cleanup",
+            "linux": {
+                "command": "find .nuget/packages -mindepth 1 -maxdepth 1 -exec rm -rf {} +"
+            },
+            "problemMatcher": [],
+            "type": "shell"
+        },
+        {
+            "command": "dotnet-outdated --no-restore --recursive --upgrade:auto --version-lock major Zetatech.Accelerate.sln",
+            "dependsOn": [],
+            "dependsOrder": "sequence",
+            "group": {
+                "isDefault": false,
+                "kind": "none"
+            },
+            "hide": true,
+            "label": "outdated",
+            "problemMatcher": "$msCompile",
+            "type": "shell"
+        },
+        {
             "command": "dotnet restore Zetatech.Accelerate.sln --nologo --verbosity normal",
             "dependsOn": [],
             "dependsOrder": "sequence",
@@ -74,35 +102,7 @@
             ],
             "promptOnClose": false,
             "type": "shell"
-        },
-        {
-            "command": "dotnet-outdated --no-restore --recursive --upgrade:auto --version-lock major Zetatech.Accelerate.sln",
-            "dependsOn": [],
-            "dependsOrder": "sequence",
-            "group": {
-                "isDefault": false,
-                "kind": "none"
-            },
-            "hide": true,
-            "label": "outdated",
-            "problemMatcher": "$msCompile",
-            "type": "shell"
-        },
-        {
-            "dependsOn": [],
-            "dependsOrder": "sequence",
-            "group": {
-                "isDefault": false,
-                "kind": "none"
-            },
-            "hide": true,
-            "label": "cleanup",
-            "linux": {
-                "command": "find .nuget -mindepth 1 -maxdepth 1 -exec rm -rf {} + && mkdir .nuget/feed && mkdir .nuget/packages"
-            },
-            "problemMatcher": [],
-            "type": "shell"
-        },
+        }
     ],
     "version": "2.0.0"
 }
