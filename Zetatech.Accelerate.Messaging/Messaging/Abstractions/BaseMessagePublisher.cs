@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace Zetatech.Accelerate.Messaging.Abstractions;
@@ -32,10 +30,4 @@ public abstract class BaseMessagePublisher : IMessagePublisher
         _disposed = true;
     }
     public abstract Guid Publish<TBody>(TBody body, String queueName = null) where TBody : class;
-    public async Task<Guid> PublishAsync<TBody>(TBody body,
-                                                String queueName = null,
-                                                CancellationToken cancellationToken = default) where TBody : class
-    {
-        return await Task.Run(() => Publish(body, queueName), cancellationToken);
-    }
 }

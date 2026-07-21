@@ -55,22 +55,10 @@ internal sealed class InMemoryCache : ICache
             Value = value
         });
     }
-    public async Task<Boolean> AddAsync<TValue>(String key,
-                                                TValue value,
-                                                TimeSpan delta,
-                                                CancellationToken cancellationToken = default)
-    {
-        return await Task.Run(() => Add(key, value, delta), cancellationToken);
-    }
     public void Clear()
     {
         _logger.LogDebug("Removing all existing items");
         _dictionary.Clear();
-        _logger.LogWarning("All items were removed");
-    }
-    public async Task ClearAsync(CancellationToken cancellationToken = default)
-    {
-        await Task.Run(() => Clear(), cancellationToken);
     }
     private async Task ClearExpiredObjectsAsync()
     {
@@ -85,7 +73,7 @@ internal sealed class InMemoryCache : ICache
                 foreach (var expiredObject in expiredObjects)
                 {
                     _ = _dictionary.TryRemove(expiredObject.Key, out var _);
-                    _logger.LogWarning($"Item with key '{expiredObject.Key}' was removed");
+                    _logger.LogDebug($"Item with key '{expiredObject.Key}' was removed");
                 }
             }
         }
@@ -104,11 +92,6 @@ internal sealed class InMemoryCache : ICache
         _logger.LogDebug($"Checking if item with key '{key}' exists");
 
         return _dictionary.ContainsKey(key) && !_dictionary[key].IsExpired;
-    }
-    public async Task<Boolean> ContainsAsync(String key,
-                                             CancellationToken cancellationToken = default)
-    {
-        return await Task.Run(() => Contains(key), cancellationToken);
     }
     public void Dispose()
     {
@@ -138,7 +121,7 @@ internal sealed class InMemoryCache : ICache
         {
             if (cacheObject.IsExpired)
             {
-                _logger.LogWarning($"The item with key '{key}' is expired");
+                _logger.LogDebug($"The item with key '{key}' is expired");
             }
             else
             {
@@ -147,15 +130,10 @@ internal sealed class InMemoryCache : ICache
         }
         else
         {
-            _logger.LogWarning($"Item with key '{key}' cannot be found");
+            _logger.LogDebug($"Item with key '{key}' cannot be found");
         }
 
         return value;
-    }
-    public async Task<TValue> GetAsync<TValue>(String key,
-                                               CancellationToken cancellationToken = default)
-    {
-        return await Task.Run(() => Get<TValue>(key), cancellationToken);
     }
     public TValue GetOrAdd<TValue>(String key, Func<TValue> retrieve, TimeSpan delta)
     {
@@ -173,13 +151,6 @@ internal sealed class InMemoryCache : ICache
 
         return value;
     }
-    public async Task<TValue> GetOrAddAsync<TValue>(String key,
-                                                    Func<TValue> retrieve,
-                                                    TimeSpan delta,
-                                                    CancellationToken cancellationToken = default)
-    {
-        return await Task.Run(() => GetOrAdd(key, retrieve, delta), cancellationToken);
-    }
     public Boolean Remove(String key)
     {
         if (String.IsNullOrEmpty(key))
@@ -191,18 +162,13 @@ internal sealed class InMemoryCache : ICache
 
         if (_dictionary.TryRemove(key, out var _))
         {
-            _logger.LogWarning($"Item with key '{key}' was removed");
+            _logger.LogDebug($"Item with key '{key}' was removed");
             return true;
         }
         else
         {
-            _logger.LogWarning($"Item with key '{key}' cannot be found");
+            _logger.LogDebug($"Item with key '{key}' cannot be found");
             return false;
         }
-    }
-    public async Task<Boolean> RemoveAsync(String key,
-                                           CancellationToken cancellationToken = default)
-    {
-        return await Task.Run(() => Remove(key), cancellationToken);
     }
 }

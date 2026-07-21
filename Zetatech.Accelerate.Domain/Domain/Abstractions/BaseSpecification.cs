@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Zetatech.Accelerate.Data;
 
@@ -33,8 +31,4 @@ public abstract class BaseSpecification<TEntity> : ISpecification<TEntity> where
         _disposed = true;
     }
     public abstract Boolean IsSatisfiedBy(TEntity entity);
-    public async Task<Boolean> IsSatisfiedByAsync(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        return await Task.Run(() => IsSatisfiedBy(entity), cancellationToken);
-    }
 }

@@ -1,44 +1,143 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Zetatech.Accelerate.Data.Enums;
 
 namespace Zetatech.Accelerate.Data.Abstractions;
 
-public abstract partial class BaseRepository<TEntity> : DbContext, IRepository<TEntity> where TEntity : class, IEntity, new()
+public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity, new()
 {
     private Boolean _disposed;
+    private RepositoryContext<TEntity> _context;
     private DbSet<TEntity> _entities;
     private readonly ILogger _logger;
-    private readonly RepositoryOptions _options;
     private SemaphoreSlim _semaphore;
 
     protected BaseRepository(IOptions<RepositoryOptions> options,
                              ILoggerFactory loggerFactory)
     {
-        _entities = Set<TEntity>();
+        _context = new RepositoryContext<TEntity>(options);
+        _entities = _context.Set<TEntity>();
         _logger = loggerFactory.CreateLogger(GetType().Name);
-        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
         _semaphore = new SemaphoreSlim(1, 1);
-
-        if (ChangeTracker != null)
-        {
-            ChangeTracker.AutoDetectChangesEnabled = true;
-            ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
-            ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
-            ChangeTracker.LazyLoadingEnabled = true;
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
-        }
-
-        Database.AutoTransactionBehavior = AutoTransactionBehavior.WhenNeeded;
     }
 
     protected ILogger Logger => _logger;
 
-    public override void Dispose()
+    public void Delete(TEntity entity)
+    {
+        if (entity == null)
+        {
+            throw new ArgumentException("The provided entity to delete must be a valid instance", nameof(entity));
+        }
+
+        _logger.LogDebug($"Deleting the entity with id '{entity.Id}'");
+
+        try
+        {
+            if (_entities.Entry(entity).State == EntityState.Detached)
+            {
+                _entities.Attach(entity);
+            }
+
+            _entities.Remove(entity);
+
+            SavePendingChanges(true);
+        }
+        catch (DataException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new DataException($"Unexpected error was thrown while deleting the entity with id '{entity.Id}'", ex);
+        }
+    }
+    public void Delete(IList<TEntity> entities)
+    {
+        if (entities == null)
+        {
+            throw new ArgumentException("The provided list of entities to delete must be a valid instance", nameof(entities));
+        }
+
+        _logger.LogDebug("Deleting a list of entities");
+
+        try
+        {
+            foreach (var entity in entities)
+            {
+                _logger.LogDebug($"Deleting the entity with id '{entity.Id}'");
+
+                if (_entities.Entry(entity).State == EntityState.Detached)
+                {
+                    _entities.Attach(entity);
+                }
+
+                _entities.Remove(entity);
+            }
+
+            SavePendingChanges(true);
+        }
+        catch (DataException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new DataException("Unexpected error was thrown while deleting a list of entities", ex);
+        }
+    }
+    public void Delete(Expression<Func<TEntity, Boolean>> expression)
+    {
+        if (expression == null)
+        {
+            throw new ArgumentException("The provided expression to determine the set of entities to delete must be a valid instance", nameof(expression));
+        }
+
+        _logger.LogDebug("Deleting a set of entities after filtering the data source using a expression");
+
+        try
+        {
+            var entities = _entities.Where(expression)
+                                    .ToList();
+
+            if (entities.Any())
+            {
+                foreach (var entity in entities)
+                {
+                    _logger.LogDebug($"Deleting the entity with id '{entity.Id}'");
+
+                    if (_entities.Entry(entity).State == EntityState.Detached)
+                    {
+                        _entities.Attach(entity);
+                    }
+
+                    _entities.Remove(entity);
+                }
+
+                SavePendingChanges(true);
+            }
+        }
+        catch (DataException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new DataException("Unexpected error was thrown while deleting a list of entities after filtering the data source using a expression", ex);
+        }
+    }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose(Boolean disposing)
     {
         if (_disposed)
         {
@@ -46,48 +145,237 @@ public abstract partial class BaseRepository<TEntity> : DbContext, IRepository<T
         }
 
         _disposed = true;
-        _entities = null;
-        _semaphore = null;
 
-        base.Dispose();
-
-        GC.SuppressFinalize(this);
-    }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-
-        optionsBuilder.ConfigureWarnings(x => { x.Default(WarningBehavior.Log); })
-                      .EnableDetailedErrors(false)
-                      .EnableSensitiveDataLogging(false);
-
-        switch (_options.Engine)
+        if (disposing)
         {
-            case DatabaseEngines.AzureSql:
-                optionsBuilder.UseAzureSql(_options.ConnectionString, options => { options.CommandTimeout(_options.Timeout); });
-                break;
-            case DatabaseEngines.InMemory:
-                optionsBuilder.UseInMemoryDatabase(_options.ConnectionString);
-                break;
-            case DatabaseEngines.PostgreSql:
-                optionsBuilder.UseNpgsql(_options.ConnectionString, options => { options.CommandTimeout(_options.Timeout); });
-                break;
-            case DatabaseEngines.Sqlite:
-                optionsBuilder.UseSqlite(_options.ConnectionString, options => { options.CommandTimeout(_options.Timeout); });
-                break;
-            case DatabaseEngines.SqlServer:
-                optionsBuilder.UseSqlServer(_options.ConnectionString, options => { options.CommandTimeout(_options.Timeout); });
-                break;
-            case DatabaseEngines.Synapse:
-                optionsBuilder.UseAzureSynapse(_options.ConnectionString, options => { options.CommandTimeout(_options.Timeout); });
-                break;
+            _context = null;
+            _entities = null;
+            _semaphore = null;
         }
     }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public void Insert(TEntity entity)
     {
-        base.OnModelCreating(modelBuilder);
+        if (entity == null)
+        {
+            throw new ArgumentException("The provided entity to insert must be a valid instance", nameof(entity));
+        }
 
-        modelBuilder.Entity<TEntity>();
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        if (entity.Id == Guid.Empty)
+        {
+            entity.Id = Guid.NewGuid();
+        }
+
+        _logger.LogDebug($"Inserting a new entity with id '{entity.Id}'");
+        _entities.Add(entity);
+
+        SavePendingChanges(true);
     }
-    public override String ToString() => Database.GenerateCreateScript();
+    public void Insert(IList<TEntity> entities)
+    {
+        if (entities == null)
+        {
+            throw new ArgumentException("The provided collection of entities to insert must be a valid instance", nameof(entities));
+        }
+
+        _logger.LogDebug($"Inserting a set of entities");
+
+        foreach (var entity in entities)
+        {
+            entity.CreatedAt = DateTime.UtcNow;
+            entity.UpdatedAt = DateTime.UtcNow;
+
+            if (entity.Id == Guid.Empty)
+            {
+                entity.Id = Guid.NewGuid();
+            }
+
+            _logger.LogDebug($"Inserting a new entity with id '{entity.Id}'");
+            _entities.Add(entity);
+        }
+
+        SavePendingChanges(true);
+    }
+
+    private void RollbackPendingChanges()
+    {
+        _logger.LogDebug("Undoing pending changes");
+
+        try
+        {
+            var entityEntries = _context.ChangeTracker.Entries()
+                                                      .Where(x => x.State != EntityState.Unchanged);
+
+            foreach (var entityEntry in entityEntries)
+            {
+                switch (entityEntry.State)
+                {
+                    case EntityState.Added:
+                        entityEntry.State = EntityState.Detached;
+                        break;
+                    case EntityState.Deleted:
+                        entityEntry.State = EntityState.Unchanged;
+                        break;
+                    case EntityState.Modified:
+                        entityEntry.State = EntityState.Unchanged;
+                        break;
+                }
+            }
+
+            _context.SaveChanges(true);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new DataException("Something was wrong while undoing pending changes", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new DataException("Unexpected error was thrown while undoing pending changes", ex);
+        }
+    }
+    private void SavePendingChanges(Boolean performRollbackOnFailure)
+    {
+        _logger.LogDebug("Waiting the green in the semaphore");
+        _semaphore.Wait();
+        _logger.LogDebug("Saving pending changes");
+
+        try
+        {
+            _context.SaveChanges(true);
+        }
+        catch (Exception cex)
+        {
+            if (performRollbackOnFailure)
+            {
+                try
+                {
+                    RollbackPendingChanges();
+                }
+                catch (DataException rex)
+                {
+                    throw new AggregateException("Unexpected error was thrown while saving pending changes", cex, rex);
+                }
+            }
+
+            throw new DataException("Unexpected error was thrown while saving pending changes", cex);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+    public IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression = null,
+                                      Int32? skip = null,
+                                      Int32? take = null)
+    {
+        _logger.LogDebug("Selecting entities from the data source");
+
+        try
+        {
+            var entities = _entities.AsQueryable();
+
+            if (expression != null)
+            {
+                entities = entities.Where(expression);
+            }
+
+            return entities.Skip<TEntity>(skip ?? 0)
+                           .Take<TEntity>(take ?? 100);
+        }
+        catch (Exception ex)
+        {
+            throw new DataException("Unexpected error was thrown while selecting entities from the data source", ex);
+        }
+    }
+    public TEntity Single(Expression<Func<TEntity, Boolean>> expression = null,
+                          Int32? skip = null)
+    {
+        _logger.LogDebug("Selecting the first entity in the data source");
+
+        try
+        {
+            var entities = _entities.AsQueryable();
+
+            if (expression != null)
+            {
+                entities = entities.Where(expression);
+            }
+
+            return entities.Skip<TEntity>(skip ?? 0)
+                           .FirstOrDefault();
+        }
+        catch (Exception ex)
+        {
+            throw new DataException("Unexpected error was thrown while selecting the first entity in the data source", ex);
+        }
+    }
+    public void Update(TEntity entity)
+    {
+        if (entity == null)
+        {
+            throw new ArgumentException("The provided entity to update must be a valid instance", nameof(entity));
+        }
+
+        _logger.LogDebug($"Updating the entity with id {entity.Id}");
+
+        try
+        {
+            if (_entities.Entry(entity).State == EntityState.Detached)
+            {
+                _entities.Attach(entity);
+            }
+
+            entity.UpdatedAt = DateTime.UtcNow;
+
+            _entities.Update(entity);
+
+            SavePendingChanges(true);
+        }
+        catch (DataException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new DataException($"Unexpected error was thrown while updating the entity with id {entity.Id}", ex);
+        }
+    }
+    public void Update(IList<TEntity> entities)
+    {
+        if (entities == null)
+        {
+            throw new ArgumentException("The provided list of entities to update must be a valid instance", nameof(entities));
+        }
+
+        _logger.LogDebug("Updating a set of entities");
+
+        try
+        {
+            foreach (var entity in entities)
+            {
+                _logger.LogDebug($"Updating the entity with id {entity.Id}");
+
+                if (_entities.Entry(entity).State == EntityState.Detached)
+                {
+                    _entities.Attach(entity);
+                }
+
+                entity.UpdatedAt = DateTime.UtcNow;
+
+                _entities.Update(entity);
+            }
+
+            SavePendingChanges(true);
+        }
+        catch (DataException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new DataException("Unexpected error was thrown while updating the list of entities", ex);
+        }
+    }
 }

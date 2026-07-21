@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace Zetatech.Accelerate.Messaging.Abstractions;
@@ -32,13 +30,5 @@ public abstract class BaseMessageSubscriber<TBody> : IMessageSubscriber<TBody> w
         _disposed = true;
     }
     public abstract void Subscribe();
-    public async Task SubscribeAsync(CancellationToken cancellationToken = default)
-    {
-        await Task.Run(() => Subscribe(), cancellationToken);
-    }
     public abstract void Unsubscribe();
-    public async Task UnsubscribeAsync(CancellationToken cancellationToken = default)
-    {
-        await Task.Run(() => Subscribe(), cancellationToken);
-    }
 }
