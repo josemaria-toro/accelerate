@@ -2,7 +2,7 @@ using System;
 
 namespace Zetatech.Accelerate.Telemetry;
 
-internal sealed class DeepSightTelemetryOptions
+public sealed class DeepSightTelemetryOptions
 {
     public String AppName { get; set; }
     public Version AppVersion { get; set; }

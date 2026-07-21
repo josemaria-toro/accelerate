@@ -3,7 +3,7 @@ using Zetatech.Accelerate.Logging.Abstractions;
 
 namespace Zetatech.Accelerate.Logging;
 
-internal sealed class DeepSightLoggerOptions : BaseLoggerOptions
+public sealed class DeepSightLoggerOptions : BaseLoggerOptions
 {
     public String AppName { get; set; }
     public Version AppVersion { get; set; }

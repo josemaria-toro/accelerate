@@ -9,13 +9,6 @@ namespace Zetatech.Accelerate.DependencyInjection;
 
 public static partial class DependencyInjection
 {
-    public static ILoggingBuilder AddDeepSightLoggerProvider(this ILoggingBuilder loggingBuilder)
-    {
-        loggingBuilder.Services.AddDeepSightLoggerProvider();
-        loggingBuilder.Services.AddDeepSightLoggerProviderOptions();
-
-        return loggingBuilder;
-    }
     public static IServiceCollection AddDeepSightLoggerProvider(this IServiceCollection serviceCollection)
     {
         return serviceCollection.AddSingleton<ILoggerProvider, DeepSightLoggerProvider>();

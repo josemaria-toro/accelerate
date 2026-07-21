@@ -8,13 +8,6 @@ namespace Zetatech.Accelerate.DependencyInjection;
 
 public static partial class DependencyInjection
 {
-    public static ILoggingBuilder AddConsoleLoggerProvider(this ILoggingBuilder loggingBuilder)
-    {
-        loggingBuilder.Services.AddConsoleLoggerProvider()
-                               .AddConsoleLoggerProviderOptions();
-
-        return loggingBuilder;
-    }
     public static IServiceCollection AddConsoleLoggerProvider(this IServiceCollection serviceCollection)
     {
         return serviceCollection.AddSingleton<ILoggerProvider, ConsoleLoggerProvider>();
