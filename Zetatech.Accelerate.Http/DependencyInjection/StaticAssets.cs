@@ -11,7 +11,7 @@ public static partial class DependencyInjection
     public static IApplicationBuilder UseStaticAssets(this IApplicationBuilder applicationBuilder)
     {
         var configService = applicationBuilder.ApplicationServices.GetRequiredService<IConfiguration>();
-        var featureEnabled = configService.GetValue<Boolean>("appSettings:useStaticAssets", false);
+        var featureEnabled = configService.GetValue<Boolean>("staticAssets:enabled", false);
 
         if (featureEnabled)
         {

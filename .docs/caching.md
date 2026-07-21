@@ -14,7 +14,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 {
    "caching": {
       "inMemory": {
-         "maxItems": 4096
+         "maxItems": 1000
       }
    }
 }

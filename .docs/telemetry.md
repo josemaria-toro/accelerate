@@ -8,6 +8,20 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
       ├─ Http
          ├─ Middlewares           ' Middlewares para registrar la telemetría de las aplicaciones.
 ```
+## Configuración
+### DeepSight
+``` json
+{
+   "logging": {
+      "deepSight": {
+         "appName": "",
+         "appVersion": "x.x.x",
+         "tenant": "",
+         "url": ""
+      }
+   }
+}
+```
 ## Control de versiones
 ### v10.2608.0
 - Versión inicial de la librería en la que se incluye:

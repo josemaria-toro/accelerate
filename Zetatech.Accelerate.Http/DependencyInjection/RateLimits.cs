@@ -13,7 +13,7 @@ public static partial class DependencyInjection
     {
         var serviceProvider = serviceCollection.BuildServiceProvider();
         var configService = serviceProvider.GetRequiredService<IConfiguration>();
-        var featureEnabled = configService.GetValue<Boolean>("appSettings:useRateLimits", false);
+        var featureEnabled = configService.GetValue<Boolean>("rateLimits:enabled", false);
 
         if (featureEnabled)
         {
@@ -35,7 +35,7 @@ public static partial class DependencyInjection
     public static IApplicationBuilder UseRateLimitsFeatures(this IApplicationBuilder applicationBuilder)
     {
         var configService = applicationBuilder.ApplicationServices.GetRequiredService<IConfiguration>();
-        var featureEnabled = configService.GetValue<Boolean>("appSettings:useRateLimits", false);
+        var featureEnabled = configService.GetValue<Boolean>("rateLimits:enabled", false);
 
         if (featureEnabled)
         {

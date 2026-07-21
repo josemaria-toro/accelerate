@@ -1,8 +1,6 @@
-using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Logging;
 using Zetatech.Accelerate.Logging.Providers;
 
@@ -12,22 +10,22 @@ public static partial class DependencyInjection
 {
     public static ILoggingBuilder AddConsoleLoggerProvider(this ILoggingBuilder loggingBuilder)
     {
-        loggingBuilder.Services.AddConsoleLoggerProvider();
+        loggingBuilder.Services.AddConsoleLoggerProvider()
+                               .AddConsoleLoggerProviderOptions();
 
         return loggingBuilder;
     }
     public static IServiceCollection AddConsoleLoggerProvider(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<ILoggerProvider, ConsoleLoggerProvider>(serviceProvider =>
-        {
-            var configService = serviceProvider.GetRequiredService<IConfiguration>();
-            var loggerOptions = new ConsoleLoggerOptions
-            {
-                LogLevel = configService.GetValue<LogLevel>("logging:console:logLevel", LogLevel.Information)
-            };
-
-            return new ConsoleLoggerProvider(Options.Create(loggerOptions));
-        });
+        return serviceCollection.AddSingleton<ILoggerProvider, ConsoleLoggerProvider>();
+    }
+    public static IServiceCollection AddConsoleLoggerProviderOptions(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddOptions<ConsoleLoggerOptions>()
+                         .Configure<IConfiguration>((options, configService) =>
+                         {
+                             options.LogLevel = configService.GetValue<LogLevel>("logging:console:logLevel", LogLevel.Warning);
+                         });
 
         return serviceCollection;
     }

@@ -56,12 +56,11 @@ internal sealed class DeepSightTelemetry : BaseTelemetry
             traceSpan = $"00-{activity.TraceId}-{activity.SpanId}-{traceflag}";
         }
 
-        var appAssembly = Assembly.GetEntryAssembly().GetName();
         var clientAssembly = Assembly.GetExecutingAssembly().GetName();
         var deepSightTelemetryDto = new DeepSightTelemetryDto
         {
-            AppName = appAssembly.Name,
-            AppVersion = appAssembly.Version,
+            AppName = _options.AppName,
+            AppVersion = _options.AppVersion,
             ClientVersion = clientAssembly.Version,
             HostName = Environment.MachineName,
             Metadata = metadata,

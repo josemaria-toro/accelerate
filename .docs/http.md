@@ -13,6 +13,20 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
          ├─ Middlewares           ' Middlewares para el diagnóstico y el control de la seguridad.
 ```
 ## Configuración
+### Cors
+``` json
+{
+   "cors": {
+      "enabled": false,
+      "policies": {
+         "policy name": {
+            "headers": "", // list of headers, separated by pipes '|' or * to allow any header
+            "methods": "", // list of methods, separated by pipes '|' or * to allow any method
+            "origins": "" // list of origins urls, separated by pipes '|' or * to allow any origin
+         }
+      }
+   }
+}
 ### JsonClient
 ``` json
 {
@@ -94,6 +108,27 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
          "userName": "",
          "url": ""
       }
+   }
+}
+```
+### Rate Limits
+``` json
+{
+   "rateLimits": {
+      "enabled": false,
+      "maxRequests": 25,
+      "queueSize": 1000
+   }
+}
+```
+### Static Assets
+``` json
+{
+   "staticAssets": {
+      "enabled": false,
+      "compress": true,
+      "requestPath": "",
+      "serveUnknownFileTypes": false
    }
 }
 ```

@@ -11,13 +11,13 @@ public static partial class DependencyInjection
     {
         var serviceProvider = serviceCollection.BuildServiceProvider();
         var configService = serviceProvider.GetRequiredService<IConfiguration>();
-        var featureEnabled = configService.GetValue<Boolean>("appSettings:useCors", false);
+        var featureEnabled = configService.GetValue<Boolean>("cors:enabled", false);
 
         if (featureEnabled)
         {
             serviceCollection.AddCors(options =>
             {
-                var corsSection = configService.GetSection("cors");
+                var corsSection = configService.GetSection("cors:policies");
                 var corsPolicies = corsSection.GetChildren();
 
                 foreach (var corsPolicy in corsPolicies)
@@ -66,11 +66,11 @@ public static partial class DependencyInjection
     public static IApplicationBuilder UseCorsFeatures(this IApplicationBuilder applicationBuilder)
     {
         var configService = applicationBuilder.ApplicationServices.GetRequiredService<IConfiguration>();
-        var featureEnabled = configService.GetValue<Boolean>("appSettings:useCors", false);
+        var featureEnabled = configService.GetValue<Boolean>("cors:enabled", false);
 
         if (featureEnabled)
         {
-            var corsSection = configService.GetSection("cors");
+            var corsSection = configService.GetSection("cors:policies");
             var corsPolicies = corsSection.GetChildren();
 
             foreach (var corsPolicy in corsPolicies)
