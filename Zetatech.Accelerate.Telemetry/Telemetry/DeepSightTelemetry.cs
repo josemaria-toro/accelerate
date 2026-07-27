@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Serialization;
 using Zetatech.Accelerate.Telemetry.Abstractions;
@@ -19,8 +18,7 @@ internal sealed class DeepSightTelemetry : BaseTelemetry
     private Boolean _disposed;
     private readonly DeepSightTelemetryOptions _options;
 
-    public DeepSightTelemetry(IOptions<DeepSightTelemetryOptions> options,
-                              ILoggerFactory loggerFactory) : base(loggerFactory)
+    public DeepSightTelemetry(IOptions<DeepSightTelemetryOptions> options)
     {
         _httpClient = new HttpClient();
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));

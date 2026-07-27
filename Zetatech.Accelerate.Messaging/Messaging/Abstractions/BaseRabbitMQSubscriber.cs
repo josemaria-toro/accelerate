@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -20,8 +19,7 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
     private readonly String _queueName;
 
     protected BaseRabbitMQSubscriber(IOptions<RabbitMQOptions> options,
-                                     IRabbitMQChannelFactory channelFactory,
-                                     ILoggerFactory loggerFactory) : base(loggerFactory)
+                                     IRabbitMQChannelFactory channelFactory)
     {
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
         _channel = channelFactory.CreateChannel(_options.ConnectionString,
@@ -35,20 +33,17 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
 
     public IChannel Channel => _channel;
 
-    public async Task HandleBasicCancelAsync(String queueName,
-                                             CancellationToken cancellationToken = default)
+    public virtual async Task HandleBasicCancelAsync(String queueName,
+                                                     CancellationToken cancellationToken = default)
     {
-        Logger.LogError($"The suscription for queue '{queueName}' was cancelled");
     }
-    public async Task HandleBasicCancelOkAsync(String queueName,
-                                               CancellationToken cancellationToken = default)
+    public virtual async Task HandleBasicCancelOkAsync(String queueName,
+                                                       CancellationToken cancellationToken = default)
     {
-        Logger.LogInformation($"The suscription for queue '{queueName}' was closed");
     }
-    public async Task HandleBasicConsumeOkAsync(String queueName,
-                                                CancellationToken cancellationToken = default)
+    public virtual async Task HandleBasicConsumeOkAsync(String queueName,
+                                                        CancellationToken cancellationToken = default)
     {
-        Logger.LogInformation($"The suscription for queue '{queueName}' was registered successfully");
     }
     public async Task HandleBasicDeliverAsync(String queueName,
                                               UInt64 deliveryTag,
@@ -59,8 +54,6 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
                                               ReadOnlyMemory<Byte> body,
                                               CancellationToken cancellationToken = default)
     {
-        Logger.LogDebug($"New message was received from queue '{queueName}'");
-
         try
         {
             var activity = new Activity(GetType().Name);
@@ -88,7 +81,7 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
 
             try
             {
-                OnMessageReceived(message);
+                await OnMessageReceivedAsync(message);
             }
             finally
             {
@@ -99,24 +92,20 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
         }
         catch (JsonException)
         {
-            Logger.LogError($"Error deserializating message from queue '{queueName}'");
             await _channel.BasicNackAsync(deliveryTag, false, false, cancellationToken);
         }
         catch (Exception)
         {
-            Logger.LogError($"Error processing message from queue '{queueName}'");
             await _channel.BasicNackAsync(deliveryTag, false, !redelivered, cancellationToken);
         }
     }
-    public async Task HandleChannelShutdownAsync(Object channel, ShutdownEventArgs shutdownReason)
+    public virtual async Task HandleChannelShutdownAsync(Object channel,
+                                                         ShutdownEventArgs shutdownReason)
     {
-        Logger.LogInformation($"Shutting down the channel: {shutdownReason.Cause}");
     }
-    protected internal abstract void OnMessageReceived(RabbitMQMessage<TBody> message);
+    protected abstract Task OnMessageReceivedAsync(RabbitMQMessage<TBody> message);
     public override void Subscribe()
     {
-        Logger.LogDebug($"Suscribing to queue '{_queueName}'");
-
         var consumerTask = _channel.BasicConsumeAsync(arguments: default,
                                                       autoAck: false,
                                                       cancellationToken: default,
@@ -135,8 +124,6 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
     }
     public override void Unsubscribe()
     {
-        Logger.LogDebug($"Unsuscribing from queue '{_queueName}'");
-
         var cancelTask = _channel.BasicCancelAsync(_queueName);
 
         cancelTask.Wait();

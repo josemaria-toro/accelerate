@@ -1,6 +1,5 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Zetatech.Accelerate.Http.Abstractions;
 
@@ -8,14 +7,6 @@ namespace Zetatech.Accelerate.Http.Abstractions;
 public abstract class BaseApiController : ControllerBase, IDisposable
 {
     private Boolean _disposed;
-    private readonly ILogger _logger;
-
-    protected BaseApiController(ILoggerFactory loggerFactory)
-    {
-        _logger = loggerFactory.CreateLogger(GetType().Name);
-    }
-
-    protected ILogger Logger => _logger;
 
     public void Dispose()
     {

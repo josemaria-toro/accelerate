@@ -76,9 +76,6 @@ public sealed class ExceptionsHandlerMiddleware
                                    .CreateLogger<ExceptionsHandlerMiddleware>()?
                                    .LogError(exception, errorMessage);
 
-        httpContext.Response.Body?.SetLength(0);
-        httpContext.Response.ContentType = "application/json";
-        httpContext.Response.Headers.Clear();
         httpContext.Response.StatusCode = statusCode;
     }
 }

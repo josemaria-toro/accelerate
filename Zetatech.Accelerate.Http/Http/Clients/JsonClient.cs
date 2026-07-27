@@ -5,8 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Serialization;
 
@@ -93,25 +91,12 @@ public sealed class JsonClient : HttpClient
             BuildHttpRequestMessage(uri, HttpMethod.Delete, body, headers)
         );
     }
-    public async Task<HttpResponseMessage> DeleteAsync<TBody>(Uri uri,
-                                                              TBody body = null,
-                                                              IDictionary<String, String> headers = null,
-                                                              CancellationToken cancellationToken = default) where TBody : class
-    {
-        return await Task.Run(() => Delete(uri, body, headers), cancellationToken);
-    }
     public HttpResponseMessage Get(Uri uri,
                                    IDictionary<String, String> headers = null)
     {
         return base.Send(
             BuildHttpRequestMessage(uri, HttpMethod.Get, null, headers)
         );
-    }
-    public async Task<HttpResponseMessage> GetAsync(Uri uri,
-                                                    IDictionary<String, String> headers = null,
-                                                    CancellationToken cancellationToken = default)
-    {
-        return await Task.Run(() => Get(uri, headers), cancellationToken);
     }
     public HttpResponseMessage Patch<TBody>(Uri uri,
                                             TBody body = null,
@@ -121,13 +106,6 @@ public sealed class JsonClient : HttpClient
             BuildHttpRequestMessage(uri, HttpMethod.Patch, body, headers)
         );
     }
-    public async Task<HttpResponseMessage> PatchAsync<TBody>(Uri uri,
-                                                             TBody body = null,
-                                                             IDictionary<String, String> headers = null,
-                                                             CancellationToken cancellationToken = default) where TBody : class
-    {
-        return await Task.Run(() => Patch(uri, body, headers), cancellationToken);
-    }
     public HttpResponseMessage Post<TBody>(Uri uri,
                                            TBody body = null,
                                            IDictionary<String, String> headers = null) where TBody : class
@@ -136,13 +114,6 @@ public sealed class JsonClient : HttpClient
             BuildHttpRequestMessage(uri, HttpMethod.Post, body, headers)
         );
     }
-    public async Task<HttpResponseMessage> PostAsync<TBody>(Uri uri,
-                                                            TBody body = null,
-                                                            IDictionary<String, String> headers = null,
-                                                            CancellationToken cancellationToken = default) where TBody : class
-    {
-        return await Task.Run(() => Post(uri, body, headers), cancellationToken);
-    }
     public HttpResponseMessage Put<TBody>(Uri uri,
                                           TBody body = null,
                                           IDictionary<String, String> headers = null) where TBody : class
@@ -150,12 +121,5 @@ public sealed class JsonClient : HttpClient
         return base.Send(
             BuildHttpRequestMessage(uri, HttpMethod.Put, body, headers)
         );
-    }
-    public async Task<HttpResponseMessage> PutAsync<TBody>(Uri uri,
-                                                           TBody body = null,
-                                                           IDictionary<String, String> headers = null,
-                                                           CancellationToken cancellationToken = default) where TBody : class
-    {
-        return await Task.Run(() => Put(uri, body, headers), cancellationToken);
     }
 }

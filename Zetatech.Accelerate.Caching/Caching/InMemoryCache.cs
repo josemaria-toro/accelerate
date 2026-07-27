@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Zetatech.Accelerate.Caching;
@@ -12,15 +11,12 @@ internal sealed class InMemoryCache : ICache
 {
     private ConcurrentDictionary<String, InMemoryCacheItem> _dictionary;
     private Boolean _disposed;
-    private readonly ILogger _logger;
     private readonly InMemoryCacheOptions _options;
     private PeriodicTimer _timer;
 
-    public InMemoryCache(IOptions<InMemoryCacheOptions> options,
-                         ILoggerFactory loggerFactory)
+    public InMemoryCache(IOptions<InMemoryCacheOptions> options)
     {
         _dictionary = new();
-        _logger = loggerFactory.CreateLogger(GetType().Name);
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
         _timer = new PeriodicTimer(TimeSpan.FromSeconds(15));
         _ = ClearExpiredObjectsAsync();
@@ -45,8 +41,6 @@ internal sealed class InMemoryCache : ICache
             throw new OverflowException("The number of items in the cache is upper than the maximum allowed");
         }
 
-        _logger.LogDebug($"Adding item with key '{key}'");
-
         return _dictionary.TryAdd(key, new InMemoryCacheItem
         {
             CreatedAt = DateTime.UtcNow,
@@ -57,7 +51,6 @@ internal sealed class InMemoryCache : ICache
     }
     public void Clear()
     {
-        _logger.LogDebug("Removing all existing items");
         _dictionary.Clear();
     }
     private async Task ClearExpiredObjectsAsync()
@@ -66,14 +59,11 @@ internal sealed class InMemoryCache : ICache
         {
             while (await _timer.WaitForNextTickAsync())
             {
-                _logger.LogDebug("Removing expired items");
-
                 var expiredObjects = _dictionary.Values.Where(x => x.IsExpired);
 
                 foreach (var expiredObject in expiredObjects)
                 {
                     _ = _dictionary.TryRemove(expiredObject.Key, out var _);
-                    _logger.LogDebug($"Item with key '{expiredObject.Key}' was removed");
                 }
             }
         }
@@ -88,8 +78,6 @@ internal sealed class InMemoryCache : ICache
         {
             throw new ArgumentException("The provided key is invalid", nameof(key));
         }
-
-        _logger.LogDebug($"Checking if item with key '{key}' exists");
 
         return _dictionary.ContainsKey(key) && !_dictionary[key].IsExpired;
     }
@@ -113,24 +101,14 @@ internal sealed class InMemoryCache : ICache
             throw new ArgumentException("The provided key is invalid", nameof(key));
         }
 
-        _logger.LogDebug($"Getting item with key '{key}'");
-
         var value = default(TValue);
 
         if (_dictionary.TryGetValue(key, out var cacheObject))
         {
-            if (cacheObject.IsExpired)
-            {
-                _logger.LogDebug($"The item with key '{key}' is expired");
-            }
-            else
+            if (!cacheObject.IsExpired)
             {
                 value = (TValue)cacheObject.Value;
             }
-        }
-        else
-        {
-            _logger.LogDebug($"Item with key '{key}' cannot be found");
         }
 
         return value;
@@ -158,17 +136,6 @@ internal sealed class InMemoryCache : ICache
             throw new ArgumentException("The provided key is invalid", nameof(key));
         }
 
-        _logger.LogDebug($"Removing item with key '{key}'");
-
-        if (_dictionary.TryRemove(key, out var _))
-        {
-            _logger.LogDebug($"Item with key '{key}' was removed");
-            return true;
-        }
-        else
-        {
-            _logger.LogDebug($"Item with key '{key}' cannot be found");
-            return false;
-        }
+        return _dictionary.TryRemove(key, out var _);
     }
 }

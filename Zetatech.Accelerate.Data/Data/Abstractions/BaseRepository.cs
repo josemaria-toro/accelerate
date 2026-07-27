@@ -5,7 +5,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Zetatech.Accelerate.Data.Abstractions;
@@ -15,19 +14,14 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
     private Boolean _disposed;
     private RepositoryContext<TEntity> _context;
     private DbSet<TEntity> _entities;
-    private readonly ILogger _logger;
     private SemaphoreSlim _semaphore;
 
-    protected BaseRepository(IOptions<RepositoryOptions> options,
-                             ILoggerFactory loggerFactory)
+    protected BaseRepository(IOptions<RepositoryOptions> options)
     {
         _context = new RepositoryContext<TEntity>(options);
         _entities = _context.Set<TEntity>();
-        _logger = loggerFactory.CreateLogger(GetType().Name);
         _semaphore = new SemaphoreSlim(1, 1);
     }
-
-    protected ILogger Logger => _logger;
 
     public void Delete(TEntity entity)
     {
@@ -35,8 +29,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
         {
             throw new ArgumentException("The provided entity to delete must be a valid instance", nameof(entity));
         }
-
-        _logger.LogDebug($"Deleting the entity with id '{entity.Id}'");
 
         try
         {
@@ -65,14 +57,10 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
             throw new ArgumentException("The provided list of entities to delete must be a valid instance", nameof(entities));
         }
 
-        _logger.LogDebug("Deleting a list of entities");
-
         try
         {
             foreach (var entity in entities)
             {
-                _logger.LogDebug($"Deleting the entity with id '{entity.Id}'");
-
                 if (_entities.Entry(entity).State == EntityState.Detached)
                 {
                     _entities.Attach(entity);
@@ -99,8 +87,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
             throw new ArgumentException("The provided expression to determine the set of entities to delete must be a valid instance", nameof(expression));
         }
 
-        _logger.LogDebug("Deleting a set of entities after filtering the data source using a expression");
-
         try
         {
             var entities = _entities.Where(expression)
@@ -110,8 +96,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
             {
                 foreach (var entity in entities)
                 {
-                    _logger.LogDebug($"Deleting the entity with id '{entity.Id}'");
-
                     if (_entities.Entry(entity).State == EntityState.Detached)
                     {
                         _entities.Attach(entity);
@@ -168,7 +152,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
             entity.Id = Guid.NewGuid();
         }
 
-        _logger.LogDebug($"Inserting a new entity with id '{entity.Id}'");
         _entities.Add(entity);
 
         SavePendingChanges(true);
@@ -180,8 +163,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
             throw new ArgumentException("The provided collection of entities to insert must be a valid instance", nameof(entities));
         }
 
-        _logger.LogDebug($"Inserting a set of entities");
-
         foreach (var entity in entities)
         {
             entity.CreatedAt = DateTime.UtcNow;
@@ -192,7 +173,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
                 entity.Id = Guid.NewGuid();
             }
 
-            _logger.LogDebug($"Inserting a new entity with id '{entity.Id}'");
             _entities.Add(entity);
         }
 
@@ -201,8 +181,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
 
     private void RollbackPendingChanges()
     {
-        _logger.LogDebug("Undoing pending changes");
-
         try
         {
             var entityEntries = _context.ChangeTracker.Entries()
@@ -237,9 +215,7 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
     }
     private void SavePendingChanges(Boolean performRollbackOnFailure)
     {
-        _logger.LogDebug("Waiting the green in the semaphore");
         _semaphore.Wait();
-        _logger.LogDebug("Saving pending changes");
 
         try
         {
@@ -270,8 +246,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
                                       Int32? skip = null,
                                       Int32? take = null)
     {
-        _logger.LogDebug("Selecting entities from the data source");
-
         try
         {
             var entities = _entities.AsQueryable();
@@ -292,8 +266,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
     public TEntity Single(Expression<Func<TEntity, Boolean>> expression = null,
                           Int32? skip = null)
     {
-        _logger.LogDebug("Selecting the first entity in the data source");
-
         try
         {
             var entities = _entities.AsQueryable();
@@ -317,8 +289,6 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
         {
             throw new ArgumentException("The provided entity to update must be a valid instance", nameof(entity));
         }
-
-        _logger.LogDebug($"Updating the entity with id {entity.Id}");
 
         try
         {
@@ -349,14 +319,10 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
             throw new ArgumentException("The provided list of entities to update must be a valid instance", nameof(entities));
         }
 
-        _logger.LogDebug("Updating a set of entities");
-
         try
         {
             foreach (var entity in entities)
             {
-                _logger.LogDebug($"Updating the entity with id {entity.Id}");
-
                 if (_entities.Entry(entity).State == EntityState.Detached)
                 {
                     _entities.Attach(entity);

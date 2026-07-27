@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -18,8 +17,7 @@ public abstract class BaseRabbitMQPublisher : BaseMessagePublisher
     private readonly String _queueName;
 
     protected BaseRabbitMQPublisher(IOptions<RabbitMQOptions> options,
-                                    IRabbitMQChannelFactory channelFactory,
-                                    ILoggerFactory loggerFactory) : base(loggerFactory)
+                                    IRabbitMQChannelFactory channelFactory)
     {
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
         _channel = channelFactory.CreateChannel(_options.ConnectionString,
@@ -66,8 +64,6 @@ public abstract class BaseRabbitMQPublisher : BaseMessagePublisher
             var traceflag = activity.ActivityTraceFlags == ActivityTraceFlags.Recorded ? "01" : "00";
             message.W3CTraceSpan = $"00-{activity.TraceId}-{activity.SpanId}-{traceflag}";
         }
-
-        Logger.LogDebug($"Publishing message with id '{message.Id}' to '{queueName}({_exchangeName})'");
 
         var jsonMessage = Json.ToString(message);
         var messageBuffer = Encoding.UTF8.GetBytes(jsonMessage);
