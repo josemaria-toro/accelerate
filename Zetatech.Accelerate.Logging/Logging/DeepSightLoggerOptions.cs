@@ -1,0 +1,12 @@
+using System;
+using Zetatech.Accelerate.Logging.Abstractions;
+
+namespace Zetatech.Accelerate.Logging;
+
+public sealed class DeepSightLoggerOptions : BaseLoggerOptions
+{
+    public String AppName { get; set; }
+    public Version AppVersion { get; set; }
+    public Guid Tenant { get; set; }
+    public Uri Uri { get; set; }
+}
