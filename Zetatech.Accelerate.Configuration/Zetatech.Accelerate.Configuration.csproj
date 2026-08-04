@@ -4,7 +4,7 @@
         <AssemblyName>Zetatech.Accelerate.Configuration</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
         <AssemblyTitle>Library with extension methods to load the configuration sources</AssemblyTitle>
-        <AssemblyVersion>10.2608.0</AssemblyVersion>
+        <AssemblyVersion>10.2609.0</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
         <CodeAnalysisOutputToConsole>true</CodeAnalysisOutputToConsole>
@@ -17,7 +17,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <FileVersion>10.2608.0</FileVersion>
+        <FileVersion>10.2609.0</FileVersion>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -26,7 +26,7 @@
         <IncludeContentInPack>true</IncludeContentInPack>
         <IncludeSource>false</IncludeSource>
         <IncludeSymbols>true</IncludeSymbols>
-        <InformationalVersion>10.2608.0</InformationalVersion>
+        <InformationalVersion>10.2609.0</InformationalVersion>
         <IsPackable>true</IsPackable>
         <IsPublishable>false</IsPublishable>
         <IsTestProject>false</IsTestProject>
@@ -42,7 +42,7 @@
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Accelerate Configuration DependencyInjection Zetatech</PackageTags>
-        <PackageVersion>10.2608.0</PackageVersion>
+        <PackageVersion>10.2609.0</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
         <PublishDocumentationFiles>false</PublishDocumentationFiles>

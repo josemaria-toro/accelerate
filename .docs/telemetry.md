@@ -23,6 +23,8 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 }
 ```
 ## Control de versiones
+### v10.2609.0
+- Se eliminan los componentes relacionados con DeepSight
 ### v10.2608.0
 - Versión inicial de la librería en la que se incluye:
   - Implementación especializada para el envío de información al sistema DeepSight.
