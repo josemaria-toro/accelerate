@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AnalysisLevel>5.0</AnalysisLevel>
-        <AssemblyName>Zetatech.Accelerate</AssemblyName>
+        <AssemblyName>Zetatech.Accelerate.RabbitMQ</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
-        <AssemblyTitle>Library with the framework core components</AssemblyTitle>
+        <AssemblyTitle>Library with the messaging components based on RabbitMQ</AssemblyTitle>
         <AssemblyVersion>10.2609.0</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
@@ -13,7 +13,7 @@
         <ContentTargetFolders>content</ContentTargetFolders>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <Copyright>Zeta Technologies © 2026</Copyright>
-        <Description>Library with the framework core components</Description>
+        <Description>Library with the messaging components based on RabbitMQ</Description>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -34,14 +34,14 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <Nullable>disable</Nullable>
         <OutputType>library</OutputType>
-        <PackageDescription>Library with the framework core components</PackageDescription>
+        <PackageDescription>Library with the messaging components based on RabbitMQ</PackageDescription>
         <PackageIcon>PackageIcon.png</PackageIcon>
-        <PackageId>Zetatech.Accelerate</PackageId>
+        <PackageId>Zetatech.Accelerate.RabbitMQ</PackageId>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageTags>Accelerate Application Caching Data DependencyInjection Domain Exceptions Extensions Http Jobs Logging Messaging Serialization Telemetry Zetatech</PackageTags>
+        <PackageTags>Accelerate Messaging RabbitMQ Zetatech</PackageTags>
         <PackageVersion>10.2609.0-preview1</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
@@ -71,9 +71,12 @@
     <ItemGroup>
         <Content Include="$(SolutionDir)/License.txt" Pack="true" PackagePath="License.txt" />
         <Content Include="$(SolutionDir)/PackageIcon.png" Pack="true" PackagePath="PackageIcon.png" />
-        <Content Include="$(SolutionDir)/.docs/accelerate.md" Pack="true" PackagePath="Readme.md" />
+        <Content Include="$(SolutionDir)/.docs/rabbitmq.md" Pack="true" PackagePath="Readme.md" />
     </ItemGroup>
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate/Zetatech.Accelerate.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="RabbitMQ.Client" Version="7.2.2" />
     </ItemGroup>
 </Project>
