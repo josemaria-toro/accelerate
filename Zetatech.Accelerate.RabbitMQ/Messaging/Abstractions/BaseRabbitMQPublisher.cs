@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Zetatech.Accelerate.Exceptions;
@@ -33,7 +35,9 @@ public abstract class BaseRabbitMQPublisher : BaseMessagePublisher
             _queueName = _options.QueueName;
         }
     }
-    public override Guid Publish<TBody>(TBody body, String queueName = null) where TBody : class
+    public override async Task<Guid> PublishAsync<TBody>(TBody body,
+                                                         String queueName = null,
+                                                         CancellationToken cancellationToken = default) where TBody : class
     {
         if (body == null)
         {
@@ -67,11 +71,15 @@ public abstract class BaseRabbitMQPublisher : BaseMessagePublisher
 
         var jsonMessage = Json.ToString(message);
         var messageBuffer = Encoding.UTF8.GetBytes(jsonMessage);
-        var publishTask = _channel.BasicPublishAsync(_exchangeName, queueName, messageBuffer);
 
-        if (publishTask.IsFaulted)
+        try
         {
-            throw new MessagingException($"Error publishing message with id '{message.Id}' to '{queueName}({_exchangeName})'");
+            await _channel.BasicPublishAsync(_exchangeName, queueName, messageBuffer, cancellationToken)
+                          .ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            throw new MessagingException($"Error publishing message with id '{message.Id}' to '{queueName}({_exchangeName})'", ex);
         }
 
         return message.Id;

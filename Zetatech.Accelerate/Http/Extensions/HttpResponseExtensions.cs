@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Zetatech.Accelerate.Serialization;
@@ -24,7 +25,8 @@ public static class HttpResponseExtensions
 
         return jsonContentTypes.Any(x => httpResponse.ContentType.Contains(x, StringComparison.InvariantCultureIgnoreCase));
     }
-    public static async Task<Byte[]> ReadBodyAsBufferAsync(this HttpResponse httpResponse)
+    public static async Task<Byte[]> ReadBodyAsBufferAsync(this HttpResponse httpResponse,
+                                                           CancellationToken cancellationToken = default)
     {
         if (httpResponse == null)
         {
@@ -38,13 +40,15 @@ public static class HttpResponseExtensions
             if (httpResponse.ContentLength.HasValue)
             {
                 buffer = new Byte[httpResponse.ContentLength.Value];
-                await httpResponse.Body.ReadAsync(buffer.AsMemory());
+                await httpResponse.Body.ReadAsync(buffer.AsMemory(), cancellationToken)
+                                       .ConfigureAwait(false);
             }
             else
             {
                 var bytesSize = 65535;
                 var bytes = new Byte[bytesSize];
-                var bytesReaded = await httpResponse.Body.ReadAsync(buffer.AsMemory());
+                var bytesReaded = await httpResponse.Body.ReadAsync(buffer.AsMemory(), cancellationToken)
+                                                         .ConfigureAwait(false);
 
                 while (bytesReaded >= bytes.Length)
                 {
@@ -58,7 +62,8 @@ public static class HttpResponseExtensions
 
         return buffer;
     }
-    public static async Task<TBody> ReadBodyAsJsonAsync<TBody>(this HttpResponse httpResponse) where TBody : class, new()
+    public static async Task<TBody> ReadBodyAsJsonAsync<TBody>(this HttpResponse httpResponse,
+                                                               CancellationToken cancellationToken = default) where TBody : class, new()
     {
         if (httpResponse == null)
         {
@@ -69,7 +74,8 @@ public static class HttpResponseExtensions
 
         if (httpResponse.IsBodyInJsonFormat())
         {
-            var buffer = await httpResponse.ReadBodyAsBufferAsync();
+            var buffer = await httpResponse.ReadBodyAsBufferAsync(cancellationToken)
+                                           .ConfigureAwait(false);
 
             if (buffer.Any())
             {
@@ -79,7 +85,8 @@ public static class HttpResponseExtensions
 
         return jsonObject;
     }
-    public static async Task<String> ReadBodyAsStringAsync(this HttpResponse httpResponse)
+    public static async Task<String> ReadBodyAsStringAsync(this HttpResponse httpResponse,
+                                                           CancellationToken cancellationToken = default)
     {
         if (httpResponse == null)
         {
@@ -87,7 +94,8 @@ public static class HttpResponseExtensions
         }
 
         var bodyString = String.Empty;
-        var buffer = await httpResponse.ReadBodyAsBufferAsync();
+        var buffer = await httpResponse.ReadBodyAsBufferAsync(cancellationToken)
+                                       .ConfigureAwait(false);
 
         if (buffer.Any())
         {

@@ -34,13 +34,14 @@ public sealed class TrackRequestMiddleware
             var duration = (DateTime.UtcNow - utcnow).TotalMilliseconds;
             var telemetryService = httpContext.RequestServices.GetRequiredService<ITelemetry>();
 
-            telemetryService.TrackRequest($"{httpContext.Request.Method} {httpContext.Request.Path}",
-                                          httpContext.Request.GetDisplayUrl(),
-                                          "HTTP",
-                                          httpContext.Response.StatusCode < 400,
-                                          duration,
-                                          httpContext.Connection.RemoteIpAddress,
-                                          httpContext.Response.StatusCode);
+            await telemetryService.TrackRequestAsync($"{httpContext.Request.Method} {httpContext.Request.Path}",
+                                                     httpContext.Request.GetDisplayUrl(),
+                                                     "HTTP",
+                                                     httpContext.Response.StatusCode < 400,
+                                                     duration,
+                                                     httpContext.Connection.RemoteIpAddress,
+                                                     httpContext.Response.StatusCode)
+                                   .ConfigureAwait(false);
         }
     }
 }

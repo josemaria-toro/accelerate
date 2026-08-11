@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Data.Contexts;
@@ -24,7 +25,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
         _semaphore = new SemaphoreSlim(1, 1);
     }
 
-    public void Delete(TEntity entity)
+    public async Task DeleteAsync(TEntity entity,
+                                  CancellationToken cancellationToken = default)
     {
         if (entity == null)
         {
@@ -40,7 +42,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
 
             _entities.Remove(entity);
 
-            SavePendingChanges(true);
+            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
         }
         catch (DataException)
         {
@@ -51,7 +53,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             throw new DataException($"Unexpected error was thrown while deleting the entity with id '{entity.Id}'", ex);
         }
     }
-    public void Delete(IList<TEntity> entities)
+    public async Task DeleteAsync(IList<TEntity> entities,
+                                  CancellationToken cancellationToken = default)
     {
         if (entities == null)
         {
@@ -70,7 +73,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
                 _entities.Remove(entity);
             }
 
-            SavePendingChanges(true);
+            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
         }
         catch (DataException)
         {
@@ -81,7 +84,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             throw new DataException("Unexpected error was thrown while deleting a list of entities", ex);
         }
     }
-    public void Delete(Expression<Func<TEntity, Boolean>> expression)
+    public async Task DeleteAsync(Expression<Func<TEntity, Boolean>> expression,
+                                  CancellationToken cancellationToken = default)
     {
         if (expression == null)
         {
@@ -90,8 +94,9 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
 
         try
         {
-            var entities = _entities.Where(expression)
-                                    .ToList();
+            var entities = await _entities.Where(expression)
+                                          .ToListAsync(cancellationToken)
+                                          .ConfigureAwait(false);
 
             if (entities.Any())
             {
@@ -105,7 +110,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
                     _entities.Remove(entity);
                 }
 
-                SavePendingChanges(true);
+                await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (DataException)
@@ -138,7 +143,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             _semaphore = null;
         }
     }
-    public void Insert(TEntity entity)
+    public async Task InsertAsync(TEntity entity,
+                                  CancellationToken cancellationToken = default)
     {
         if (entity == null)
         {
@@ -153,11 +159,12 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             entity.Id = Guid.NewGuid();
         }
 
-        _entities.Add(entity);
-
-        SavePendingChanges(true);
+        await _entities.AddAsync(entity, cancellationToken)
+                       .ConfigureAwait(false);
+        await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
     }
-    public void Insert(IList<TEntity> entities)
+    public async Task InsertAsync(IList<TEntity> entities,
+                                  CancellationToken cancellationToken = default)
     {
         if (entities == null)
         {
@@ -174,13 +181,14 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
                 entity.Id = Guid.NewGuid();
             }
 
-            _entities.Add(entity);
+            await _entities.AddAsync(entity, cancellationToken)
+                           .ConfigureAwait(false);
         }
 
-        SavePendingChanges(true);
+        await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
     }
 
-    private void RollbackPendingChanges()
+    private async Task RollbackPendingChangesAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -203,7 +211,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
                 }
             }
 
-            _context.SaveChanges(true);
+            await _context.SaveChangesAsync(true, cancellationToken)
+                          .ConfigureAwait(false);
         }
         catch (DbUpdateException ex)
         {
@@ -214,13 +223,16 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             throw new DataException("Unexpected error was thrown while undoing pending changes", ex);
         }
     }
-    private void SavePendingChanges(Boolean performRollbackOnFailure)
+    private async Task SavePendingChangesAsync(Boolean performRollbackOnFailure,
+                                               CancellationToken cancellationToken = default)
     {
-        _semaphore.Wait();
+        await _semaphore.WaitAsync(cancellationToken)
+                        .ConfigureAwait(false);
 
         try
         {
-            _context.SaveChanges(true);
+            await _context.SaveChangesAsync(true, cancellationToken)
+                          .ConfigureAwait(false);
         }
         catch (Exception cex)
         {
@@ -228,7 +240,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             {
                 try
                 {
-                    RollbackPendingChanges();
+                    await RollbackPendingChangesAsync(cancellationToken).ConfigureAwait(false);
                 }
                 catch (DataException rex)
                 {
@@ -243,13 +255,17 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             _semaphore.Release();
         }
     }
-    public IQueryable<TEntity> Select(Expression<Func<TEntity, Boolean>> expression = null,
-                                      Int32? skip = null,
-                                      Int32? take = null)
+    public async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression = null,
+                                                       Int32? skip = null,
+                                                       Int32? take = null,
+                                                       CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
-            var entities = _entities.AsQueryable();
+            var entities = _entities.AsNoTracking()
+                                    .AsQueryable();
 
             if (expression != null)
             {
@@ -264,27 +280,31 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             throw new DataException("Unexpected error was thrown while selecting entities from the data source", ex);
         }
     }
-    public TEntity Single(Expression<Func<TEntity, Boolean>> expression = null,
-                          Int32? skip = null)
+    public async Task<TEntity> SingleAsync(Expression<Func<TEntity, Boolean>> expression = null,
+                                           Int32? skip = null,
+                                           CancellationToken cancellationToken = default)
     {
         try
         {
-            var entities = _entities.AsQueryable();
+            var entities = _entities.AsNoTracking()
+                                    .AsQueryable();
 
             if (expression != null)
             {
                 entities = entities.Where(expression);
             }
 
-            return entities.Skip<TEntity>(skip ?? 0)
-                           .FirstOrDefault();
+            return await entities.Skip<TEntity>(skip ?? 0)
+                                 .FirstOrDefaultAsync(cancellationToken)
+                                 .ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             throw new DataException("Unexpected error was thrown while selecting the first entity in the data source", ex);
         }
     }
-    public void Update(TEntity entity)
+    public async Task UpdateAsync(TEntity entity,
+                                  CancellationToken cancellationToken = default)
     {
         if (entity == null)
         {
@@ -302,7 +322,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
 
             _entities.Update(entity);
 
-            SavePendingChanges(true);
+            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
         }
         catch (DataException)
         {
@@ -313,7 +333,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             throw new DataException($"Unexpected error was thrown while updating the entity with id {entity.Id}", ex);
         }
     }
-    public void Update(IList<TEntity> entities)
+    public async Task UpdateAsync(IList<TEntity> entities,
+                                  CancellationToken cancellationToken = default)
     {
         if (entities == null)
         {
@@ -334,7 +355,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
                 _entities.Update(entity);
             }
 
-            SavePendingChanges(true);
+            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
         }
         catch (DataException)
         {

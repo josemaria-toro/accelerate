@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Zetatech.Accelerate.Serialization;
@@ -24,7 +25,8 @@ public static class HttpRequestExtensions
 
         return jsonContentTypes.Any(x => httpRequest.ContentType.Contains(x, StringComparison.InvariantCultureIgnoreCase));
     }
-    public static async Task<Byte[]> ReadBodyAsBufferAsync(this HttpRequest httpRequest)
+    public static async Task<Byte[]> ReadBodyAsBufferAsync(this HttpRequest httpRequest,
+                                                           CancellationToken cancellationToken = default)
     {
         if (httpRequest == null)
         {
@@ -38,18 +40,21 @@ public static class HttpRequestExtensions
             if (httpRequest.ContentLength.HasValue)
             {
                 buffer = new Byte[httpRequest.ContentLength.Value];
-                await httpRequest.Body.ReadAsync(buffer.AsMemory());
+                await httpRequest.Body.ReadAsync(buffer.AsMemory(), cancellationToken)
+                                      .ConfigureAwait(false);
             }
             else
             {
                 var bytesSize = 65535;
                 var bytes = new Byte[bytesSize];
-                var bytesReaded = await httpRequest.Body.ReadAsync(buffer.AsMemory());
+                var bytesReaded = await httpRequest.Body.ReadAsync(buffer.AsMemory(), cancellationToken)
+                                                        .ConfigureAwait(false);
 
                 while (bytesReaded >= bytes.Length)
                 {
                     Array.Resize(ref bytes, bytes.Length + bytesSize);
-                    bytesReaded += await httpRequest.Body.ReadAsync(buffer.AsMemory(bytesReaded));
+                    bytesReaded += await httpRequest.Body.ReadAsync(buffer.AsMemory(bytesReaded), cancellationToken)
+                                                         .ConfigureAwait(false);
                 }
 
                 Array.Resize(ref bytes, bytesReaded);
@@ -58,7 +63,8 @@ public static class HttpRequestExtensions
 
         return buffer;
     }
-    public static async Task<TBody> ReadBodyAsJsonAsync<TBody>(this HttpRequest httpRequest) where TBody : class, new()
+    public static async Task<TBody> ReadBodyAsJsonAsync<TBody>(this HttpRequest httpRequest,
+                                                               CancellationToken cancellationToken = default) where TBody : class, new()
     {
         if (httpRequest == null)
         {
@@ -69,7 +75,8 @@ public static class HttpRequestExtensions
 
         if (httpRequest.IsBodyInJsonFormat())
         {
-            var buffer = await httpRequest.ReadBodyAsBufferAsync();
+            var buffer = await httpRequest.ReadBodyAsBufferAsync(cancellationToken)
+                                          .ConfigureAwait(false);
 
             if (buffer.Any())
             {
@@ -79,7 +86,8 @@ public static class HttpRequestExtensions
 
         return jsonObject;
     }
-    public static async Task<String> ReadBodyAsStringAsync(this HttpRequest httpRequest)
+    public static async Task<String> ReadBodyAsStringAsync(this HttpRequest httpRequest,
+                                                           CancellationToken cancellationToken = default)
     {
         if (httpRequest == null)
         {
@@ -87,7 +95,8 @@ public static class HttpRequestExtensions
         }
 
         var bodyString = String.Empty;
-        var buffer = await httpRequest.ReadBodyAsBufferAsync();
+        var buffer = await httpRequest.ReadBodyAsBufferAsync(cancellationToken)
+                                      .ConfigureAwait(false);
 
         if (buffer.Any())
         {

@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Zetatech.Accelerate.Messaging.Abstractions;
 
@@ -20,6 +22,6 @@ public abstract class BaseMessageSubscriber<TBody> : IMessageSubscriber<TBody> w
 
         _disposed = true;
     }
-    public abstract void Subscribe();
-    public abstract void Unsubscribe();
+    public abstract Task SubscribeAsync(CancellationToken cancellationToken = default);
+    public abstract Task UnsubscribeAsync(CancellationToken cancellationToken = default);
 }

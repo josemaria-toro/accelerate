@@ -13,4 +13,6 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2609.0
+- Se revisan las implementaciones de los métodos asíncronos.
+### v10.2608.0
 - Se incluyen las clases base para componentes de publicación y suscripción de mensajes especializados en RabbitMQ.

@@ -37,14 +37,17 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
     public virtual async Task HandleBasicCancelAsync(String queueName,
                                                      CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
     }
     public virtual async Task HandleBasicCancelOkAsync(String queueName,
                                                        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
     }
     public virtual async Task HandleBasicConsumeOkAsync(String queueName,
                                                         CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
     }
     public async Task HandleBasicDeliverAsync(String queueName,
                                               UInt64 deliveryTag,
@@ -55,6 +58,8 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
                                               ReadOnlyMemory<Byte> body,
                                               CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         try
         {
             var activity = new Activity(GetType().Name);
@@ -82,56 +87,64 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
 
             try
             {
-                await OnMessageReceivedAsync(message);
+                await OnMessageReceivedAsync(message, cancellationToken);
             }
             finally
             {
                 activity.Stop();
             }
 
-            await _channel.BasicAckAsync(deliveryTag, false, cancellationToken);
+            await _channel.BasicAckAsync(deliveryTag, false, cancellationToken)
+                          .ConfigureAwait(false);
         }
         catch (JsonException)
         {
-            await _channel.BasicNackAsync(deliveryTag, false, false, cancellationToken);
+            await _channel.BasicNackAsync(deliveryTag, false, false, cancellationToken)
+                          .ConfigureAwait(false);
         }
         catch (Exception)
         {
-            await _channel.BasicNackAsync(deliveryTag, false, !redelivered, cancellationToken);
+            await _channel.BasicNackAsync(deliveryTag, false, !redelivered, cancellationToken)
+                          .ConfigureAwait(false);
         }
     }
     public virtual async Task HandleChannelShutdownAsync(Object channel,
                                                          ShutdownEventArgs shutdownReason)
     {
     }
-    protected abstract Task OnMessageReceivedAsync(RabbitMQMessage<TBody> message);
-    public override void Subscribe()
+    protected abstract Task OnMessageReceivedAsync(RabbitMQMessage<TBody> message,
+                                                   CancellationToken cancellationToken = default);
+    public override async Task SubscribeAsync(CancellationToken cancellationToken = default)
     {
-        var consumerTask = _channel.BasicConsumeAsync(arguments: default,
-                                                      autoAck: false,
-                                                      cancellationToken: default,
-                                                      consumer: this,
-                                                      consumerTag: _queueName,
-                                                      exclusive: false,
-                                                      noLocal: false,
-                                                      queue: _queueName);
-
-        consumerTask.Wait();
-
-        if (!consumerTask.IsCompletedSuccessfully)
+        try
         {
-            throw new MessagingException("Error creating queue message consumer with RabbitMQ server", consumerTask.Exception);
+            await _channel.BasicConsumeAsync(arguments: default,
+                                             autoAck: false,
+                                             cancellationToken: cancellationToken,
+                                             consumer: this,
+                                             consumerTag: _queueName,
+                                             exclusive: false,
+                                             noLocal: false,
+                                             queue: _queueName)
+                          .ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            throw new MessagingException("Error creating queue message consumer with RabbitMQ server", ex);
         }
     }
-    public override void Unsubscribe()
+    public override async Task UnsubscribeAsync(CancellationToken cancellationToken = default)
     {
-        var cancelTask = _channel.BasicCancelAsync(_queueName);
-
-        cancelTask.Wait();
-
-        if (!cancelTask.IsCompletedSuccessfully)
+        try
         {
-            throw new MessagingException("Error removing queue message consumer with RabbitMQ server", cancelTask.Exception);
+            await _channel.BasicCancelAsync(cancellationToken: cancellationToken,
+                                            consumerTag: _queueName,
+                                            noWait: false)
+                          .ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            throw new MessagingException("Error removing queue message consumer with RabbitMQ server", ex);
         }
     }
 }

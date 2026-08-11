@@ -50,7 +50,7 @@ public abstract class BaseTimerJob : BackgroundService, ITimerJob
 
                 try
                 {
-                    Execute();
+                    await OnExecuteAsync(cancellationToken);
                 }
                 finally
                 {
@@ -63,5 +63,5 @@ public abstract class BaseTimerJob : BackgroundService, ITimerJob
             _timer.Dispose();
         }
     }
-    protected abstract void Execute();
+    protected abstract Task OnExecuteAsync(CancellationToken cancellationToken);
 }

@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Serialization;
 
@@ -83,43 +85,53 @@ public sealed class JsonClient : HttpClient
 
         return httpRequestMessage;
     }
-    public HttpResponseMessage Delete<TBody>(Uri uri,
-                                             TBody body = null,
-                                             IDictionary<String, String> headers = null) where TBody : class
+    public async Task<HttpResponseMessage> DeleteAsync<TBody>(Uri uri,
+                                                              TBody body = null,
+                                                              IDictionary<String, String> headers = null,
+                                                              CancellationToken cancellationToken = default) where TBody : class
     {
-        return base.Send(
-            BuildHttpRequestMessage(uri, HttpMethod.Delete, body, headers)
-        );
+        var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Delete, body, headers);
+
+        return await base.SendAsync(httpRequestMessage, cancellationToken)
+                         .ConfigureAwait(false);
     }
-    public HttpResponseMessage Get(Uri uri,
-                                   IDictionary<String, String> headers = null)
+    public async Task<HttpResponseMessage> GetAsync(Uri uri,
+                                                    IDictionary<String, String> headers = null,
+                                                    CancellationToken cancellationToken = default)
     {
-        return base.Send(
-            BuildHttpRequestMessage(uri, HttpMethod.Get, null, headers)
-        );
+        var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Get, null, headers);
+
+        return await base.SendAsync(httpRequestMessage, cancellationToken)
+                         .ConfigureAwait(false);
     }
-    public HttpResponseMessage Patch<TBody>(Uri uri,
-                                            TBody body = null,
-                                            IDictionary<String, String> headers = null) where TBody : class
+    public async Task<HttpResponseMessage> PatchAsync<TBody>(Uri uri,
+                                                             TBody body = null,
+                                                             IDictionary<String, String> headers = null,
+                                                             CancellationToken cancellationToken = default) where TBody : class
     {
-        return base.Send(
-            BuildHttpRequestMessage(uri, HttpMethod.Patch, body, headers)
-        );
+        var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Patch, body, headers);
+
+        return await base.SendAsync(httpRequestMessage, cancellationToken)
+                         .ConfigureAwait(false);
     }
-    public HttpResponseMessage Post<TBody>(Uri uri,
-                                           TBody body = null,
-                                           IDictionary<String, String> headers = null) where TBody : class
+    public async Task<HttpResponseMessage> PostAsync<TBody>(Uri uri,
+                                                            TBody body = null,
+                                                            IDictionary<String, String> headers = null,
+                                                            CancellationToken cancellationToken = default) where TBody : class
     {
-        return base.Send(
-            BuildHttpRequestMessage(uri, HttpMethod.Post, body, headers)
-        );
+        var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Post, body, headers);
+
+        return await base.SendAsync(httpRequestMessage, cancellationToken)
+                         .ConfigureAwait(false);
     }
-    public HttpResponseMessage Put<TBody>(Uri uri,
-                                          TBody body = null,
-                                          IDictionary<String, String> headers = null) where TBody : class
+    public async Task<HttpResponseMessage> PutAsync<TBody>(Uri uri,
+                                                           TBody body = null,
+                                                           IDictionary<String, String> headers = null,
+                                                           CancellationToken cancellationToken = default) where TBody : class
     {
-        return base.Send(
-            BuildHttpRequestMessage(uri, HttpMethod.Put, body, headers)
-        );
+        var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Put, body, headers);
+
+        return await base.SendAsync(httpRequestMessage, cancellationToken)
+                         .ConfigureAwait(false);
     }
 }

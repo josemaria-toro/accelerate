@@ -174,6 +174,8 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2609.0
+- Se revisan las implementaciones de los métodos asíncronos.
+### v10.2608.0
 - Se incluyen los contratos y clases base para los componentes de la capa de aplicación.
 - Se incluyen los contratos de los componentes que permiten la gestión de la caché.
 - Se incluyen las clases especializadas para la gestión de caché en memoria.
