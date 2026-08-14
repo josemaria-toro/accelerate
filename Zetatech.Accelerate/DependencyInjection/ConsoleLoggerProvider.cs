@@ -16,7 +16,7 @@ public static partial class DependencyInjection
         serviceCollection.AddOptions<ConsoleLoggerOptions>()
                          .Configure<IConfiguration>((options, configService) =>
                          {
-                             options.LogLevel = configService.GetValue<LogLevel>("logging:console:logLevel", LogLevel.Warning);
+                             options.LogLevel = configService.GetValue<LogLevel>("logging:logLevel:console", LogLevel.Warning);
                          });
 
         return serviceCollection;

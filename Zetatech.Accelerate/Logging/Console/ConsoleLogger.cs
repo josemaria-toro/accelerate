@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Logging.Abstractions;
 
+using Shell = System.Console;
+
 namespace Zetatech.Accelerate.Logging.Console;
 
 public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
@@ -41,19 +43,12 @@ public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
 
             _semaphore.Wait();
 
-            System.Console.ForegroundColor = GetConsoleColor(logLevel);
-
-            var scopes = GetScopeInfo();
-
-            foreach (var scope in scopes)
-            {
-                TrackTrace(logLevel, scope, activity);
-            }
+            Shell.ForegroundColor = GetConsoleColor(logLevel);
 
             TrackTrace(logLevel, $"{state}", activity);
             TrackExceptions(logLevel, exception, activity);
 
-            System.Console.ResetColor();
+            Shell.ResetColor();
 
             _semaphore.Release();
         }
@@ -64,43 +59,43 @@ public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
     {
         while (exception != null)
         {
-            System.Console.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-            System.Console.Write($" | ");
+            Shell.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
+            Shell.Write($" | ");
 
             if (activity != null)
             {
-                System.Console.Write($"{activity.TraceId}");
-                System.Console.Write($" | ");
-                System.Console.Write($"{activity.SpanId}");
-                System.Console.Write($" | ");
+                Shell.Write($"{activity.TraceId}");
+                Shell.Write($" | ");
+                Shell.Write($"{activity.SpanId}");
+                Shell.Write($" | ");
             }
 
-            System.Console.Write($"{Category}");
-            System.Console.Write($" | ");
-            System.Console.Write($"{logLevel}");
-            System.Console.Write($" | ");
-            System.Console.Write($"{exception.GetType().Name}");
-            System.Console.Write($" | ");
-            System.Console.WriteLine(exception.Message);
+            Shell.Write($"{Category}");
+            Shell.Write($" | ");
+            Shell.Write($"{logLevel}");
+            Shell.Write($" | ");
+            Shell.Write($"{exception.GetType().Name}");
+            Shell.Write($" | ");
+            Shell.WriteLine(exception.Message);
 
-            System.Console.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-            System.Console.Write($" | ");
+            Shell.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
+            Shell.Write($" | ");
 
             if (activity != null)
             {
-                System.Console.Write($"{activity.TraceId}");
-                System.Console.Write($" | ");
-                System.Console.Write($"{activity.SpanId}");
-                System.Console.Write($" | ");
+                Shell.Write($"{activity.TraceId}");
+                Shell.Write($" | ");
+                Shell.Write($"{activity.SpanId}");
+                Shell.Write($" | ");
             }
 
-            System.Console.Write($"{Category}");
-            System.Console.Write($" | ");
-            System.Console.Write($"{logLevel}");
-            System.Console.Write($" | ");
-            System.Console.Write($"{exception.GetType().Name}");
-            System.Console.Write($" | ");
-            System.Console.WriteLine(exception.StackTrace);
+            Shell.Write($"{Category}");
+            Shell.Write($" | ");
+            Shell.Write($"{logLevel}");
+            Shell.Write($" | ");
+            Shell.Write($"{exception.GetType().Name}");
+            Shell.Write($" | ");
+            Shell.WriteLine(exception.StackTrace);
 
             exception = exception.InnerException;
         }
@@ -109,21 +104,21 @@ public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
                             String message,
                             Activity activity)
     {
-        System.Console.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-        System.Console.Write($" | ");
+        Shell.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
+        Shell.Write($" | ");
 
         if (activity != null)
         {
-            System.Console.Write($"{activity.TraceId}");
-            System.Console.Write($" | ");
-            System.Console.Write($"{activity.SpanId}");
-            System.Console.Write($" | ");
+            Shell.Write($"{activity.TraceId}");
+            Shell.Write($" | ");
+            Shell.Write($"{activity.SpanId}");
+            Shell.Write($" | ");
         }
 
-        System.Console.Write($"{Category}");
-        System.Console.Write($" | ");
-        System.Console.Write($"{logLevel}");
-        System.Console.Write($" | ");
-        System.Console.WriteLine(message);
+        Shell.Write($"{Category}");
+        Shell.Write($" | ");
+        Shell.Write($"{logLevel}");
+        Shell.Write($" | ");
+        Shell.WriteLine(message);
     }
 }
