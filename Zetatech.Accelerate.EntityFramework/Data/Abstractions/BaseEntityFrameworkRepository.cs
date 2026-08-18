@@ -17,6 +17,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
     private EntityFrameworkContext<TEntity> _context;
     private DbSet<TEntity> _entities;
     private SemaphoreSlim _semaphore;
+    private String _sqlCreationScript;
 
     protected BaseEntityFrameworkRepository(IOptions<EntityFrameworkRepositoryOptions> options)
     {
@@ -24,6 +25,10 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
         _entities = _context.Set<TEntity>();
         _semaphore = new SemaphoreSlim(1, 1);
     }
+
+    protected EntityFrameworkContext<TEntity> Context { get => _context; }
+    protected DbSet<TEntity> Entities { get => _entities; }
+    protected String SqlCreationScript { get => _sqlCreationScript ??= _context.Database.GenerateCreateScript(); }
 
     public async Task DeleteAsync(TEntity entity,
                                   CancellationToken cancellationToken = default)
@@ -141,6 +146,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity> : IRepository<TEnti
             _context = null;
             _entities = null;
             _semaphore = null;
+            _sqlCreationScript = null;
         }
     }
     public async Task InsertAsync(TEntity entity,

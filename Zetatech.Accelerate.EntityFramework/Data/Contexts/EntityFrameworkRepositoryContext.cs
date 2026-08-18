@@ -6,7 +6,7 @@ using Zetatech.Accelerate.Data.Enums;
 
 namespace Zetatech.Accelerate.Data.Contexts;
 
-internal sealed class EntityFrameworkContext<TEntity> : DbContext where TEntity : class, IEntity, new()
+public sealed class EntityFrameworkContext<TEntity> : DbContext where TEntity : class, IEntity, new()
 {
     private Boolean _disposed;
     private readonly EntityFrameworkRepositoryOptions _options;
