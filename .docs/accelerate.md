@@ -176,6 +176,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ### v10.2609.0
 - Se revisan las implementaciones de los métodos asíncronos.
 - Se suprime la escritura del contenido del scope en el ConsoleLogger.
+- Se añade en los procesos en segundo plano, la opción de ejecutar el proceso al inicio.
 ### v10.2608.0
 - Se incluyen los contratos y clases base para los componentes de la capa de aplicación.
 - Se incluyen los contratos de los componentes que permiten la gestión de la caché.

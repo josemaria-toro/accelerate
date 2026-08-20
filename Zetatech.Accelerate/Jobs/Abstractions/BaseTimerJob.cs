@@ -9,10 +9,13 @@ namespace Zetatech.Accelerate.Jobs.Abstractions;
 public abstract class BaseTimerJob : BackgroundService, ITimerJob
 {
     private Boolean _disposed;
+    private Boolean _runOnStartup;
     private PeriodicTimer _timer;
 
-    protected BaseTimerJob(TimeSpan interval)
+    protected BaseTimerJob(TimeSpan interval,
+                           Boolean runOnStartup = false)
     {
+        _runOnStartup = runOnStartup;
         _timer = new PeriodicTimer(interval);
     }
 
@@ -41,8 +44,10 @@ public abstract class BaseTimerJob : BackgroundService, ITimerJob
     {
         try
         {
-            while (await _timer.WaitForNextTickAsync(cancellationToken))
+            while (_runOnStartup || await _timer.WaitForNextTickAsync(cancellationToken))
             {
+                _runOnStartup = false;
+
                 var activity = new Activity(GetType().Name);
 
                 activity.SetIdFormat(ActivityIdFormat.W3C);
@@ -58,7 +63,7 @@ public abstract class BaseTimerJob : BackgroundService, ITimerJob
                 }
             }
         }
-        catch (OperationCanceledException)
+        finally
         {
             _timer.Dispose();
         }
