@@ -25,11 +25,7 @@ public sealed class TrackRequestMiddleware
 
         var utcnow = DateTime.UtcNow;
 
-        try
-        {
-            await _next(httpContext);
-        }
-        finally
+        httpContext.Response.OnCompleted(async () =>
         {
             var duration = (DateTime.UtcNow - utcnow).TotalMilliseconds;
             var telemetryService = httpContext.RequestServices.GetRequiredService<ITelemetry>();
@@ -42,6 +38,8 @@ public sealed class TrackRequestMiddleware
                                                      httpContext.Connection.RemoteIpAddress,
                                                      httpContext.Response.StatusCode)
                                    .ConfigureAwait(false);
-        }
+        });
+
+        await _next(httpContext);
     }
 }
