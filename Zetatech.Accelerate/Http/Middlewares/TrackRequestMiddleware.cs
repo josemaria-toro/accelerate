@@ -32,7 +32,7 @@ public sealed class TrackRequestMiddleware
 
             await telemetryService.TrackRequestAsync($"{httpContext.Request.Method} {httpContext.Request.Path}",
                                                      httpContext.Request.GetDisplayUrl(),
-                                                     "HTTP",
+                                                     "http",
                                                      httpContext.Response.StatusCode < 400,
                                                      duration,
                                                      httpContext.Connection.RemoteIpAddress,

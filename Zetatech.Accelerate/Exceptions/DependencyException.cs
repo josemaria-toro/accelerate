@@ -10,14 +10,18 @@ public class DependencyException : Exception
     public DependencyException(String message) : base(message)
     {
     }
-    public DependencyException(String message, String name) : base(message)
+    public DependencyException(String message,
+                               String name) : base(message)
     {
         Name = name;
     }
-    public DependencyException(String message, Exception innerException) : base(message, innerException)
+    public DependencyException(String message,
+                               Exception innerException) : base(message, innerException)
     {
     }
-    public DependencyException(String message, Exception innerException, String name) : base(message, innerException)
+    public DependencyException(String message,
+                               Exception innerException,
+                               String name) : base(message, innerException)
     {
         Name = name;
     }

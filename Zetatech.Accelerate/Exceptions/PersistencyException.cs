@@ -10,7 +10,8 @@ public class PersistencyException : Exception
     public PersistencyException(String message) : base(message)
     {
     }
-    public PersistencyException(String message, Exception innerException) : base(message, innerException)
+    public PersistencyException(String message,
+                                Exception innerException) : base(message, innerException)
     {
     }
 }

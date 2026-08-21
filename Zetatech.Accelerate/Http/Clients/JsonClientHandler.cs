@@ -35,7 +35,7 @@ internal sealed class JsonClientHandler : HttpClientHandler
             UseProxy = _options.UseProxy;
         }
     }
-    protected override void Dispose(bool disposing)
+    protected override void Dispose(Boolean disposing)
     {
         base.Dispose(disposing);
 

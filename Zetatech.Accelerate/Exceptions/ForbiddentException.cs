@@ -10,7 +10,8 @@ public class ForbiddenException : Exception
     public ForbiddenException(String message) : base(message)
     {
     }
-    public ForbiddenException(String message, Exception innerException) : base(message, innerException)
+    public ForbiddenException(String message,
+                              Exception innerException) : base(message, innerException)
     {
     }
 }

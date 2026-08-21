@@ -68,7 +68,9 @@ public sealed class ExceptionsHandlerMiddleware
             Handle(httpContext, ex, StatusCodes.Status500InternalServerError);
         }
     }
-    private static void Handle(HttpContext httpContext, Exception exception, Int32 statusCode)
+    private static void Handle(HttpContext httpContext,
+                               Exception exception,
+                               Int32 statusCode)
     {
         var errorMessage = $"An error of type '{exception.GetType()}' was raised: {exception.Message}";
 

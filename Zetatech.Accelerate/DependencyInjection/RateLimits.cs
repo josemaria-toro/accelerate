@@ -1,6 +1,7 @@
 using System;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +40,14 @@ public static partial class DependencyInjection
 
         if (featureEnabled)
         {
-            applicationBuilder.UseRateLimiter();
+            applicationBuilder.UseRateLimiter(new
+            {
+                OnRejected = async (context, cancellationToken) =>
+                {
+                    context.HttpContext.Response.StatusCode = 429;
+                    await context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", cancellationToken);
+                }
+            });
         }
 
         return applicationBuilder;

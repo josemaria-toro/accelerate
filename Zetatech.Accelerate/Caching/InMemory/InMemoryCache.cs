@@ -53,11 +53,11 @@ public sealed class InMemoryCache : ICache
     {
         _dictionary.Clear();
     }
-    private async Task ClearExpiredObjectsAsync()
+    private async Task ClearExpiredObjectsAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            while (await _timer.WaitForNextTickAsync())
+            while (await _timer.WaitForNextTickAsync(cancellationToken))
             {
                 var expiredObjects = _dictionary.Values.Where(x => x.IsExpired);
 

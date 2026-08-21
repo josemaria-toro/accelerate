@@ -10,7 +10,8 @@ public class ConflictException : Exception
     public ConflictException(String message) : base(message)
     {
     }
-    public ConflictException(String message, Exception innerException) : base(message, innerException)
+    public ConflictException(String message,
+                             Exception innerException) : base(message, innerException)
     {
     }
 }

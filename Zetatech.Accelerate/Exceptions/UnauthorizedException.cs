@@ -10,7 +10,8 @@ public class UnauthorizedException : Exception
     public UnauthorizedException(String message) : base(message)
     {
     }
-    public UnauthorizedException(String message, Exception innerException) : base(message, innerException)
+    public UnauthorizedException(String message,
+                                 Exception innerException) : base(message, innerException)
     {
     }
 }

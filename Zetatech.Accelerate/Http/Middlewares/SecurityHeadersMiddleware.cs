@@ -23,11 +23,15 @@ public sealed class SecurityHeadersMiddleware
 
         httpContext.Response.OnStarting(() =>
         {
+            httpContext.Response.Headers.TryAdd("Content-Security-Policy", "frame-ancestors 'self'");
             httpContext.Response.Headers.TryAdd("Referrer-Policy", "strict-origin-when-cross-origin");
-            httpContext.Response.Headers.TryAdd("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
             httpContext.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");
             httpContext.Response.Headers.TryAdd("X-Frame-Options", "SAMEORIGIN");
-            httpContext.Response.Headers.TryAdd("X-XSS-Protection", "1; mode=block");
+
+            if (httpContext.Request.IsHttps)
+            {
+                httpContext.Response.Headers.TryAdd("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+            }
 
             return Task.CompletedTask;
         });
