@@ -25,10 +25,13 @@
                 "command": "find .nuget/packages -mindepth 1 -maxdepth 1 -exec rm -rf {} +"
             },
             "problemMatcher": [],
-            "type": "shell"
+            "type": "shell",
+            "windows": {
+                "command": "rd /s /q .nuget\\packages"
+            }
         },
         {
-            "command": "dotnet-outdated --no-restore --recursive --upgrade:auto --version-lock major Zetatech.Accelerate.sln",
+            "command": "dotnet-outdated --maximum-version 10.0 --no-restore --recursive --upgrade:auto --version-lock none Zetatech.Accelerate.sln",
             "dependsOn": [],
             "dependsOrder": "sequence",
             "group": {
