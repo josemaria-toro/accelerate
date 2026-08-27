@@ -40,7 +40,7 @@ public static partial class DependencyInjection
 
         if (featureEnabled)
         {
-            applicationBuilder.UseRateLimiter(new
+            applicationBuilder.UseRateLimiter(new RateLimiterOptions
             {
                 OnRejected = async (context, cancellationToken) =>
                 {

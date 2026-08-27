@@ -173,6 +173,8 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 }
 ```
 ## Control de versiones
+### v10.2609.1
+- Se corrige el uso de expresiones lambda sobre tipos anónimos.
 ### v10.2609.0
 - Se revisan las implementaciones de los métodos asíncronos.
 - Se suprime la escritura del contenido del scope en el ConsoleLogger.
