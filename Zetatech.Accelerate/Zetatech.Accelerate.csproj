@@ -42,7 +42,7 @@
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Accelerate Application Caching Data DependencyInjection Domain Exceptions Extensions Http Jobs Logging Messaging Serialization Telemetry Zetatech</PackageTags>
-        <PackageVersion>10.2609.0-preview4</PackageVersion>
+        <PackageVersion>10.2609.0</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
         <PublishDocumentationFiles>false</PublishDocumentationFiles>
