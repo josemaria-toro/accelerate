@@ -4,7 +4,7 @@
         <AssemblyName>Zetatech.Accelerate</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
         <AssemblyTitle>Library with the framework core components</AssemblyTitle>
-        <AssemblyVersion>10.2609.0</AssemblyVersion>
+        <AssemblyVersion>10.2609.1</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
         <CodeAnalysisOutputToConsole>true</CodeAnalysisOutputToConsole>
@@ -17,7 +17,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <FileVersion>10.2609.0</FileVersion>
+        <FileVersion>10.2609.1</FileVersion>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -26,7 +26,7 @@
         <IncludeContentInPack>true</IncludeContentInPack>
         <IncludeSource>false</IncludeSource>
         <IncludeSymbols>true</IncludeSymbols>
-        <InformationalVersion>10.2609.0</InformationalVersion>
+        <InformationalVersion>10.2609.1</InformationalVersion>
         <IsPackable>true</IsPackable>
         <IsPublishable>false</IsPublishable>
         <IsTestProject>false</IsTestProject>
@@ -42,7 +42,7 @@
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Accelerate Application Caching Data DependencyInjection Domain Exceptions Extensions Http Jobs Logging Messaging Serialization Telemetry Zetatech</PackageTags>
-        <PackageVersion>10.2609.0</PackageVersion>
+        <PackageVersion>10.2609.1</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
         <PublishDocumentationFiles>false</PublishDocumentationFiles>
