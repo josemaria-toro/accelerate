@@ -6,15 +6,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Logging.Abstractions;
 
-namespace Zetatech.Accelerate.Logging.Console;
+namespace Zetatech.Accelerate.Logging.FlatFile;
 
-public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
+public sealed class FlatFileLogger : BaseLogger<FlatFileLoggerOptions>
 {
-    private readonly ChannelWriter<ConsoleLoggerEntry> _channelWriter;
+    private readonly ChannelWriter<FlatFileLoggerEntry> _channelWriter;
 
-    public ConsoleLogger(IOptions<ConsoleLoggerOptions> options,
-                         String category,
-                         ChannelWriter<ConsoleLoggerEntry> channelWriter) : base(options, category)
+    public FlatFileLogger(IOptions<FlatFileLoggerOptions> options,
+                          String category,
+                          ChannelWriter<FlatFileLoggerEntry> channelWriter) : base(options, category)
     {
         _channelWriter = channelWriter ?? throw new ArgumentException("The provided channel writer must be a valid instance", nameof(channelWriter));
     }
@@ -35,10 +35,9 @@ public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
 
             if (stringBuilder.Length > 0)
             {
-                await _channelWriter.WriteAsync(new ConsoleLoggerEntry
+                await _channelWriter.WriteAsync(new FlatFileLoggerEntry
                 {
-                    Message = stringBuilder.ToString(),
-                    Severity = logLevel
+                    Message = stringBuilder.ToString()
                 });
             }
         }

@@ -4,20 +4,20 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Zetatech.Accelerate.Logging.Console;
+namespace Zetatech.Accelerate.Logging.FlatFile;
 
-public sealed class ConsoleLoggerProvider : ILoggerProvider
+public sealed class FlatFileLoggerProvider : ILoggerProvider
 {
-    private readonly Channel<ConsoleLoggerEntry> _channel;
+    private readonly Channel<FlatFileLoggerEntry> _channel;
     private Boolean _disposed;
-    private ConcurrentDictionary<String, ConsoleLogger> _loggers;
-    private readonly IOptions<ConsoleLoggerOptions> _options;
+    private ConcurrentDictionary<String, FlatFileLogger> _loggers;
+    private readonly IOptions<FlatFileLoggerOptions> _options;
 
-    public ConsoleLoggerProvider(IOptions<ConsoleLoggerOptions> options,
-                                 Channel<ConsoleLoggerEntry> channel)
+    public FlatFileLoggerProvider(IOptions<FlatFileLoggerOptions> options,
+                                  Channel<FlatFileLoggerEntry> channel)
     {
         _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(options));
-        _loggers = new ConcurrentDictionary<String, ConsoleLogger>();
+        _loggers = new ConcurrentDictionary<String, FlatFileLogger>();
         _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
     }
 
@@ -28,7 +28,7 @@ public sealed class ConsoleLoggerProvider : ILoggerProvider
             throw new ArgumentException("The provided category is invalid", nameof(category));
         }
 
-        return _loggers.GetOrAdd(category, x => new ConsoleLogger(_options, x, _channel.Writer));
+        return _loggers.GetOrAdd(category, x => new FlatFileLogger(_options, x, _channel.Writer));
     }
     public void Dispose()
     {
