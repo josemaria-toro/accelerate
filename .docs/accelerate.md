@@ -173,6 +173,10 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 }
 ```
 ## Control de versiones
+### v10.2609.2
+- Se crea componente base para todos los procesos en segundo plano.
+- Se renombra el componente para los procesos en segundo plano, temporizados.
+- Se crean componentes de logging basados en ficheros de texto plano.
 ### v10.2609.1
 - Se corrige el uso de expresiones lambda sobre tipos anónimos.
 ### v10.2609.0

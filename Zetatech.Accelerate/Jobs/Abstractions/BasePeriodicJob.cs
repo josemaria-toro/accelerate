@@ -2,31 +2,23 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
 
 namespace Zetatech.Accelerate.Jobs.Abstractions;
 
-public abstract class BaseTimerJob : BackgroundService, ITimerJob
+public abstract class BasePeriodicJob : BaseJob
 {
     private Boolean _disposed;
     private Boolean _runOnStartup;
     private PeriodicTimer _timer;
 
-    protected BaseTimerJob(TimeSpan interval,
-                           Boolean runOnStartup = false)
+    protected BasePeriodicJob(TimeSpan interval,
+                              Boolean runOnStartup = false)
     {
         _runOnStartup = runOnStartup;
         _timer = new PeriodicTimer(interval);
     }
 
-    public override void Dispose()
-    {
-        base.Dispose();
-
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-    protected virtual void Dispose(Boolean disposing)
+    protected override void Dispose(Boolean disposing)
     {
         if (_disposed)
         {
@@ -34,6 +26,8 @@ public abstract class BaseTimerJob : BackgroundService, ITimerJob
         }
 
         _disposed = true;
+
+        base.Dispose(disposing);
 
         if (disposing)
         {
@@ -68,5 +62,4 @@ public abstract class BaseTimerJob : BackgroundService, ITimerJob
             _timer.Dispose();
         }
     }
-    protected abstract Task OnExecuteAsync(CancellationToken cancellationToken);
 }

@@ -3,6 +3,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace Zetatech.Accelerate.Jobs;
 
-public interface ITimerJob : IHostedService, IDisposable
+public interface IJob : IHostedService, IDisposable
 {
 }
