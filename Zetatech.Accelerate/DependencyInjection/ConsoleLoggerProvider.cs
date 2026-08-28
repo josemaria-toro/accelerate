@@ -1,3 +1,4 @@
+using System.Threading.Channels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,16 @@ public static partial class DependencyInjection
 {
     public static IServiceCollection AddConsoleLoggerProvider(this IServiceCollection serviceCollection)
     {
-        return serviceCollection.AddSingleton<ILoggerProvider, ConsoleLoggerProvider>();
+        var boundedChannel = Channel.CreateBounded<ConsoleLoggerEntry>(new BoundedChannelOptions(1000)
+        {
+            FullMode = BoundedChannelFullMode.Wait,
+            SingleReader = true
+        });
+
+        serviceCollection.AddSingleton(boundedChannel)
+                         .AddSingleton<ILoggerProvider, ConsoleLoggerProvider>();
+
+        return serviceCollection.AddHostedService<ConsoleLoggerJob>();
     }
     public static IServiceCollection AddConsoleLoggerProviderOptions(this IServiceCollection serviceCollection)
     {

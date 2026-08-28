@@ -10,20 +10,20 @@ namespace Zetatech.Accelerate.Logging.FlatFile;
 
 public sealed class FlatFileLogger : BaseLogger<FlatFileLoggerOptions>
 {
-    private readonly ChannelWriter<String> _channelWriter;
+    private readonly ChannelWriter<FlatFileLoggerEntry> _channelWriter;
 
     public FlatFileLogger(IOptions<FlatFileLoggerOptions> options,
                           String category,
-                          ChannelWriter<String> channelWriter) : base(options, category)
+                          ChannelWriter<FlatFileLoggerEntry> channelWriter) : base(options, category)
     {
         _channelWriter = channelWriter ?? throw new ArgumentException("The provided channel writer must be a valid instance", nameof(channelWriter));
     }
 
-    public override void Log<TState>(LogLevel logLevel,
-                                     EventId eventId,
-                                     TState state,
-                                     Exception exception,
-                                     Func<TState, Exception, String> formatter)
+    public override async void Log<TState>(LogLevel logLevel,
+                                           EventId eventId,
+                                           TState state,
+                                           Exception exception,
+                                           Func<TState, Exception, String> formatter)
     {
         if (IsEnabled(logLevel))
         {
@@ -35,7 +35,10 @@ public sealed class FlatFileLogger : BaseLogger<FlatFileLoggerOptions>
 
             if (stringBuilder.Length > 0)
             {
-                _channelWriter.TryWrite(stringBuilder.ToString());
+                await _channelWriter.WriteAsync(new FlatFileLoggerEntry
+                {
+                    Message = stringBuilder.ToString()
+                });
             }
         }
     }
@@ -44,32 +47,30 @@ public sealed class FlatFileLogger : BaseLogger<FlatFileLoggerOptions>
                                 Exception exception,
                                 Activity activity)
     {
-        stringBuilder.Append($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-        stringBuilder.Append($" | ");
-        stringBuilder.Append($" E ");
-        stringBuilder.Append($" | ");
-
-        if (activity != null)
+        if (exception != null)
         {
-            stringBuilder.Append($"{activity.TraceId}");
+            stringBuilder.Append($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fffff zzz}");
             stringBuilder.Append($" | ");
-            stringBuilder.Append($"{activity.SpanId}");
+            stringBuilder.Append($" E ");
             stringBuilder.Append($" | ");
-        }
+            stringBuilder.Append($"{activity?.TraceId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{activity?.SpanId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{Category}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{logLevel}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append(exception.Message);
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{exception.GetType().Name}");
+            stringBuilder.Append($" | ");
+            stringBuilder.AppendLine(exception.StackTrace);
 
-        stringBuilder.Append($"{Category}");
-        stringBuilder.Append($" | ");
-        stringBuilder.Append($"{logLevel}");
-        stringBuilder.Append($" | ");
-        stringBuilder.Append(exception.Message);
-        stringBuilder.Append($" | ");
-        stringBuilder.Append($"{exception.GetType().Name}");
-        stringBuilder.Append($" | ");
-        stringBuilder.AppendLine(exception.StackTrace);
-
-        if (exception.InnerException != null)
-        {
-            TrackException(stringBuilder, logLevel, exception.InnerException, activity);
+            if (exception.InnerException != null)
+            {
+                TrackException(stringBuilder, logLevel, exception.InnerException, activity);
+            }
         }
     }
     private void TrackTrace(StringBuilder stringBuilder,
@@ -77,23 +78,21 @@ public sealed class FlatFileLogger : BaseLogger<FlatFileLoggerOptions>
                             String message,
                             Activity activity)
     {
-        stringBuilder.Append($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-        stringBuilder.Append($" | ");
-        stringBuilder.Append($" T ");
-        stringBuilder.Append($" | ");
-
-        if (activity != null)
+        if (!String.IsNullOrEmpty(message))
         {
-            stringBuilder.Append($"{activity.TraceId}");
+            stringBuilder.Append($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fffff zzz}");
             stringBuilder.Append($" | ");
-            stringBuilder.Append($"{activity.SpanId}");
+            stringBuilder.Append($" T ");
             stringBuilder.Append($" | ");
+            stringBuilder.Append($"{activity?.TraceId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{activity?.SpanId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{Category}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{logLevel}");
+            stringBuilder.Append($" | ");
+            stringBuilder.AppendLine(message);
         }
-
-        stringBuilder.Append($"{Category}");
-        stringBuilder.Append($" | ");
-        stringBuilder.Append($"{logLevel}");
-        stringBuilder.Append($" | ");
-        stringBuilder.AppendLine(message);
     }
 }

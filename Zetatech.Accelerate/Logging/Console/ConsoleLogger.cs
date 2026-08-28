@@ -1,124 +1,99 @@
 using System;
 using System.Diagnostics;
-using System.Threading;
+using System.Text;
+using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Logging.Abstractions;
-
-using Shell = System.Console;
 
 namespace Zetatech.Accelerate.Logging.Console;
 
 public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
 {
-    private readonly SemaphoreSlim _semaphore;
+    private readonly ChannelWriter<ConsoleLoggerEntry> _channelWriter;
 
     public ConsoleLogger(IOptions<ConsoleLoggerOptions> options,
                          String category,
-                         SemaphoreSlim semaphore) : base(options, category)
+                         ChannelWriter<ConsoleLoggerEntry> channelWriter) : base(options, category)
     {
-        _semaphore = semaphore ?? throw new ArgumentException("The provided semaphore must be a valid instance", nameof(semaphore));
+        _channelWriter = channelWriter ?? throw new ArgumentException("The provided channel writer must be a valid instance", nameof(channelWriter));
     }
 
-    private static ConsoleColor GetConsoleColor(LogLevel logLevel)
-    {
-        return logLevel switch
-        {
-            LogLevel.Critical => ConsoleColor.DarkRed,
-            LogLevel.Debug => ConsoleColor.Gray,
-            LogLevel.Error => ConsoleColor.Red,
-            LogLevel.Warning => ConsoleColor.DarkYellow,
-            _ => ConsoleColor.White
-        };
-    }
-    public override void Log<TState>(LogLevel logLevel,
-                                     EventId eventId,
-                                     TState state,
-                                     Exception exception,
-                                     Func<TState, Exception, String> formatter)
+    public override async void Log<TState>(LogLevel logLevel,
+                                           EventId eventId,
+                                           TState state,
+                                           Exception exception,
+                                           Func<TState, Exception, String> formatter)
     {
         if (IsEnabled(logLevel))
         {
             var activity = Activity.Current;
+            var stringBuilder = new StringBuilder();
 
-            _semaphore.Wait();
+            TrackTrace(stringBuilder, logLevel, $"{state}", activity);
+            TrackException(stringBuilder, logLevel, exception, activity);
 
-            Shell.ForegroundColor = GetConsoleColor(logLevel);
-
-            TrackTrace(logLevel, $"{state}", activity);
-            TrackExceptions(logLevel, exception, activity);
-
-            Shell.ResetColor();
-
-            _semaphore.Release();
+            if (stringBuilder.Length > 0)
+            {
+                await _channelWriter.WriteAsync(new ConsoleLoggerEntry
+                {
+                    Message = stringBuilder.ToString(),
+                    Severity = logLevel
+                });
+            }
         }
     }
-    private void TrackExceptions(LogLevel logLevel,
-                                 Exception exception,
-                                 Activity activity)
+    private void TrackException(StringBuilder stringBuilder,
+                                LogLevel logLevel,
+                                Exception exception,
+                                Activity activity)
     {
-        while (exception != null)
+        if (exception != null)
         {
-            Shell.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-            Shell.Write($" | ");
+            stringBuilder.Append($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fffff zzz}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($" E ");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{activity?.TraceId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{activity?.SpanId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{Category}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{logLevel}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append(exception.Message);
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{exception.GetType().Name}");
+            stringBuilder.Append($" | ");
+            stringBuilder.AppendLine(exception.StackTrace);
 
-            if (activity != null)
+            if (exception.InnerException != null)
             {
-                Shell.Write($"{activity.TraceId}");
-                Shell.Write($" | ");
-                Shell.Write($"{activity.SpanId}");
-                Shell.Write($" | ");
+                TrackException(stringBuilder, logLevel, exception.InnerException, activity);
             }
-
-            Shell.Write($"{Category}");
-            Shell.Write($" | ");
-            Shell.Write($"{logLevel}");
-            Shell.Write($" | ");
-            Shell.Write($"{exception.GetType().Name}");
-            Shell.Write($" | ");
-            Shell.WriteLine(exception.Message);
-
-            Shell.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-            Shell.Write($" | ");
-
-            if (activity != null)
-            {
-                Shell.Write($"{activity.TraceId}");
-                Shell.Write($" | ");
-                Shell.Write($"{activity.SpanId}");
-                Shell.Write($" | ");
-            }
-
-            Shell.Write($"{Category}");
-            Shell.Write($" | ");
-            Shell.Write($"{logLevel}");
-            Shell.Write($" | ");
-            Shell.Write($"{exception.GetType().Name}");
-            Shell.Write($" | ");
-            Shell.WriteLine(exception.StackTrace);
-
-            exception = exception.InnerException;
         }
     }
-    private void TrackTrace(LogLevel logLevel,
+    private void TrackTrace(StringBuilder stringBuilder,
+                            LogLevel logLevel,
                             String message,
                             Activity activity)
     {
-        Shell.Write($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff zzz}");
-        Shell.Write($" | ");
-
-        if (activity != null)
+        if (!String.IsNullOrEmpty(message))
         {
-            Shell.Write($"{activity.TraceId}");
-            Shell.Write($" | ");
-            Shell.Write($"{activity.SpanId}");
-            Shell.Write($" | ");
+            stringBuilder.Append($"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fffff zzz}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($" T ");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{activity?.TraceId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{activity?.SpanId}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{Category}");
+            stringBuilder.Append($" | ");
+            stringBuilder.Append($"{logLevel}");
+            stringBuilder.Append($" | ");
+            stringBuilder.AppendLine(message);
         }
-
-        Shell.Write($"{Category}");
-        Shell.Write($" | ");
-        Shell.Write($"{logLevel}");
-        Shell.Write($" | ");
-        Shell.WriteLine(message);
     }
 }

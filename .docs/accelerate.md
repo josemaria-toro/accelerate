@@ -25,6 +25,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
       ├─ Logging
          ├─ Abstraction           ' Clases base para los componentes que registran la actividad de diagnóstico de las aplicaciones.
          ├─ Console               ' Clases especializadas para el registro de actividad de diagnóstico en la consola del sistema.
+         ├─ FlatFile              ' Clases especializadas para el registro de actividad de diagnóstico en ficheros de texto plano.
       ├─ Messaging                ' Contratos de los componentes que realizan la publicación y suscripción a colas y tópicos de mensajería.
          ├─ Abstractions          ' Clases base para componentes que realizan la publicación y suscripción a colas y tópicos de mensajería.
       ├─ Serialization            ' Clases especializadas para la serialización / deserialización de objetos.
@@ -32,12 +33,28 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
          ├─ Abstractions          ' Clases base para componentes que realizan lel registro de datos de telemetría.
 ```
 ## Configuraciones
-### Console
+### Logging
+#### Console
 ``` json
 {
    "logging": {
       "logLevel": {
          "console": "debug | information | warning | error | critical"
+      }
+   }
+}
+```
+#### FlatFile
+``` json
+{
+   "logging": {
+      "flatFile": {
+         "fileName": "", // file name without extension
+         "maxSize": 0, // max size in megabytes
+         "path": ""
+      },
+      "logLevel": {
+         "flatFile": "debug | information | warning | error | critical"
       }
    }
 }
@@ -177,6 +194,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 - Se crea componente base para todos los procesos en segundo plano.
 - Se renombra el componente para los procesos en segundo plano, temporizados.
 - Se crean componentes de logging basados en ficheros de texto plano.
+- Se modifica el componente de logging basado en consola, para que utilice procesos en segundo plano.
 ### v10.2609.1
 - Se corrige el uso de expresiones lambda sobre tipos anónimos.
 ### v10.2609.0

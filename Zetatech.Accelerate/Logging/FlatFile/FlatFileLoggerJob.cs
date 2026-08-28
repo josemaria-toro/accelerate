@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading;
 using System.Threading.Channels;
@@ -11,12 +12,12 @@ namespace Zetatech.Accelerate.Logging.FlatFile;
 
 public sealed class FlatFileLoggerJob : BaseJob
 {
-    private readonly Channel<String> _channel;
+    private readonly Channel<FlatFileLoggerEntry> _channel;
     private readonly FlatFileLoggerOptions _options;
 
 
     public FlatFileLoggerJob(IOptions<FlatFileLoggerOptions> options,
-                             Channel<String> channel)
+                             Channel<FlatFileLoggerEntry> channel)
     {
         _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(channel));
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
@@ -35,19 +36,15 @@ public sealed class FlatFileLoggerJob : BaseJob
 
         try
         {
-            while (await _channel.Reader.WaitToReadAsync(cancellationToken)
-                                        .ConfigureAwait(false))
+            await foreach (var loggerEntry in _channel.Reader.ReadAllAsync(cancellationToken)
+                                                             .ConfigureAwait(false))
             {
-                await foreach (var contents in _channel.Reader.ReadAllAsync(cancellationToken)
-                                                              .ConfigureAwait(false))
-                {
-                    RotateFileIfNeeded(ref stream, fileName);
+                RotateFileIfNeeded(ref stream, fileName);
 
-                    await stream.WriteAsync(contents)
-                                .ConfigureAwait(false);
-                    await stream.FlushAsync(cancellationToken)
-                                .ConfigureAwait(false);
-                }
+                await stream.WriteAsync(loggerEntry.Message)
+                            .ConfigureAwait(false);
+                await stream.FlushAsync(cancellationToken)
+                            .ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException)
@@ -55,13 +52,11 @@ public sealed class FlatFileLoggerJob : BaseJob
         }
         finally
         {
-            while (_channel.Reader.TryRead(out var contents))
+            while (_channel.Reader.TryRead(out var loggerEntry))
             {
                 RotateFileIfNeeded(ref stream, fileName);
 
-                await stream.WriteAsync(contents)
-                            .ConfigureAwait(false);
-                await stream.FlushAsync(cancellationToken)
+                await stream.WriteAsync(loggerEntry.Message)
                             .ConfigureAwait(false);
             }
 

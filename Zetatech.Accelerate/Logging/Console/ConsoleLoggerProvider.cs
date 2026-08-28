@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
+using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -8,16 +8,17 @@ namespace Zetatech.Accelerate.Logging.Console;
 
 public sealed class ConsoleLoggerProvider : ILoggerProvider
 {
+    private readonly Channel<ConsoleLoggerEntry> _channel;
     private Boolean _disposed;
     private ConcurrentDictionary<String, ConsoleLogger> _loggers;
     private readonly IOptions<ConsoleLoggerOptions> _options;
-    private SemaphoreSlim _semaphore;
 
-    public ConsoleLoggerProvider(IOptions<ConsoleLoggerOptions> options)
+    public ConsoleLoggerProvider(IOptions<ConsoleLoggerOptions> options,
+                                 Channel<ConsoleLoggerEntry> channel)
     {
+        _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(options));
         _loggers = new ConcurrentDictionary<String, ConsoleLogger>();
         _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
-        _semaphore = new SemaphoreSlim(1, 1);
     }
 
     public ILogger CreateLogger(String category)
@@ -27,7 +28,7 @@ public sealed class ConsoleLoggerProvider : ILoggerProvider
             throw new ArgumentException("The provided category is invalid", nameof(category));
         }
 
-        return _loggers.GetOrAdd(category, x => new ConsoleLogger(_options, x, _semaphore));
+        return _loggers.GetOrAdd(category, x => new ConsoleLogger(_options, x, _channel.Writer));
     }
     public void Dispose()
     {
@@ -37,9 +38,8 @@ public sealed class ConsoleLoggerProvider : ILoggerProvider
         }
 
         _disposed = true;
-        _semaphore.Wait();
+        _channel.Writer.Complete();
         _loggers = null;
-        _semaphore = null;
 
         GC.SuppressFinalize(this);
     }
