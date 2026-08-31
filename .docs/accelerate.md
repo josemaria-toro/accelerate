@@ -28,11 +28,62 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
          ├─ FlatFile              ' Clases especializadas para el registro de actividad de diagnóstico en ficheros de texto plano.
       ├─ Messaging                ' Contratos de los componentes que realizan la publicación y suscripción a colas y tópicos de mensajería.
          ├─ Abstractions          ' Clases base para componentes que realizan la publicación y suscripción a colas y tópicos de mensajería.
+      ├─ Security
+         ├─ Middlewares           ' Clases especializadas para middlewares HTTP.
       ├─ Serialization            ' Clases especializadas para la serialización / deserialización de objetos.
       ├─ Telemetry                ' Contratos de los componentes que realizan el registro de datos de telemetría.
          ├─ Abstractions          ' Clases base para componentes que realizan lel registro de datos de telemetría.
+         ├─ Middlewares           ' Clases especializadas para middlewares HTTP.
 ```
 ## Configuraciones
+### ASP.NET
+#### Cors
+``` json
+{
+   "cors": {
+      "enabled": false,
+      "policies": {
+         "policy name": {
+            "headers": "", // list of headers, separated by pipes '|' or * to allow any header
+            "methods": "", // list of methods, separated by pipes '|' or * to allow any method
+            "origins": ""  // list of origins urls, separated by pipes '|' or * to allow any origin
+         }
+      }
+   }
+}
+```
+#### Rate Limits
+``` json
+{
+   "rateLimits": {
+      "enabled": false,
+      "maxRequests": 25,
+      "queueSize": 1000
+   }
+}
+```
+#### Static Assets
+``` json
+{
+   "staticAssets": {
+      "enabled": false,
+      "compress": true,
+      "requestPath": "",
+      "serveUnknownFileTypes": false
+   }
+}
+```
+### Caching
+#### InMemoryCache
+``` json
+{
+   "caching": {
+      "inMemory": {
+         "maxItems": 1000
+      }
+   }
+}
+```
 ### Logging
 #### Console
 ``` json
@@ -59,21 +110,6 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-### Cors
-``` json
-{
-   "cors": {
-      "enabled": false,
-      "policies": {
-         "policy name": {
-            "headers": "", // list of headers, separated by pipes '|' or * to allow any header
-            "methods": "", // list of methods, separated by pipes '|' or * to allow any method
-            "origins": ""  // list of origins urls, separated by pipes '|' or * to allow any origin
-         }
-      }
-   }
-}
-```
 ### JsonClient
 ``` json
 {
@@ -85,7 +121,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-#### JsonClient => AuthType: Basic
+#### AuthType: Basic
 ``` json
 {
    "jsonClient": {
@@ -98,7 +134,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-#### JsonClient => AuthType: Bearer Token
+#### AuthType: Bearer Token
 ``` json
 {
    "jsonClient": {
@@ -109,7 +145,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-#### JsonClient => AuthType: Mutual TLS usando el almacén de certificados (sólo para sistemas Windows)
+#### AuthType: Mutual TLS usando el almacén de certificados (sólo para sistemas Windows)
 ``` json
 {
    "jsonClient": {
@@ -122,7 +158,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-#### JsonClient => AuthType: Mutual TLS usando un archivo físico
+#### AuthType: Mutual TLS usando un archivo físico
 ``` json
 {
    "jsonClient": {
@@ -135,7 +171,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-#### JsonClient => AutoRedirect
+#### AutoRedirect
 ``` json
 {
    "jsonClient": {
@@ -144,7 +180,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-#### JsonClient => UseProxy
+#### UseProxy
 ``` json
 {
    "jsonClient": {
@@ -158,38 +194,10 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
    }
 }
 ```
-### InMemoryCache
-``` json
-{
-   "caching": {
-      "inMemory": {
-         "maxItems": 1000
-      }
-   }
-}
-```
-### Rate Limits
-``` json
-{
-   "rateLimits": {
-      "enabled": false,
-      "maxRequests": 25,
-      "queueSize": 1000
-   }
-}
-```
-### Static Assets
-``` json
-{
-   "staticAssets": {
-      "enabled": false,
-      "compress": true,
-      "requestPath": "",
-      "serveUnknownFileTypes": false
-   }
-}
-```
 ## Control de versiones
+### v10.2609.3
+- Se mueven de ubicación los middlewares RequiredHeaderMiddleware, SecurityHeadersMiddleware y TrackRequestMiddleware.
+- Se añade procesos en segundo plano para recoger datos sobre el consumo de CPU y RAM.
 ### v10.2609.2
 - Se crea componente base para todos los procesos en segundo plano.
 - Se renombra el componente para los procesos en segundo plano, temporizados.
