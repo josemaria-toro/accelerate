@@ -5,16 +5,17 @@ using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Logging.Abstractions;
+using Zetatech.Accelerate.Logging.ChannelEntries;
 
-namespace Zetatech.Accelerate.Logging.Console;
+namespace Zetatech.Accelerate.Logging.Loggers;
 
-public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
+internal sealed class FlatFileLogger : BaseLogger<FlatFileLoggerOptions>
 {
-    private readonly ChannelWriter<ConsoleLoggerEntry> _channelWriter;
+    private readonly ChannelWriter<FlatFileChannelEntry> _channelWriter;
 
-    public ConsoleLogger(IOptions<ConsoleLoggerOptions> options,
-                         String category,
-                         ChannelWriter<ConsoleLoggerEntry> channelWriter) : base(options, category)
+    public FlatFileLogger(IOptions<FlatFileLoggerOptions> options,
+                          String category,
+                          ChannelWriter<FlatFileChannelEntry> channelWriter) : base(options, category)
     {
         _channelWriter = channelWriter ?? throw new ArgumentException("The provided channel writer must be a valid instance", nameof(channelWriter));
     }
@@ -30,23 +31,26 @@ public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
             var activity = Activity.Current;
             var stringBuilder = new StringBuilder();
 
-            TrackTrace(stringBuilder, logLevel, $"{state}", activity);
-            TrackException(stringBuilder, logLevel, exception, activity);
+            AppendTraceData(stringBuilder, logLevel, $"{state}", activity);
+            AppendErrorData(stringBuilder, logLevel, exception, activity);
 
             if (stringBuilder.Length > 0)
             {
-                await _channelWriter.WriteAsync(new ConsoleLoggerEntry
+                var flatFileChannelEntry = new FlatFileChannelEntry
                 {
                     Message = stringBuilder.ToString(),
                     Severity = logLevel
-                });
+                };
+
+                await _channelWriter.WriteAsync(flatFileChannelEntry)
+                                    .ConfigureAwait(false);
             }
         }
     }
-    private void TrackException(StringBuilder stringBuilder,
-                                LogLevel logLevel,
-                                Exception exception,
-                                Activity activity)
+    private void AppendErrorData(StringBuilder stringBuilder,
+                                 LogLevel logLevel,
+                                 Exception exception,
+                                 Activity activity)
     {
         if (exception != null)
         {
@@ -70,14 +74,14 @@ public sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
 
             if (exception.InnerException != null)
             {
-                TrackException(stringBuilder, logLevel, exception.InnerException, activity);
+                AppendErrorData(stringBuilder, logLevel, exception.InnerException, activity);
             }
         }
     }
-    private void TrackTrace(StringBuilder stringBuilder,
-                            LogLevel logLevel,
-                            String message,
-                            Activity activity)
+    private void AppendTraceData(StringBuilder stringBuilder,
+                                 LogLevel logLevel,
+                                 String message,
+                                 Activity activity)
     {
         if (!String.IsNullOrEmpty(message))
         {

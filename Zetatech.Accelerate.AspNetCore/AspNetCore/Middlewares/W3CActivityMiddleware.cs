@@ -3,26 +3,25 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Zetatech.Accelerate.AspNetCore.Abstractions;
 
-namespace Zetatech.Accelerate.Http.Middlewares;
+namespace Zetatech.Accelerate.AspNetCore.Middlewares;
 
-public sealed class W3CActivityMiddleware
+public sealed class W3CActivityMiddleware : BaseMiddleware
 {
-    private readonly RequestDelegate _next;
-
-    public W3CActivityMiddleware(RequestDelegate next)
+    public W3CActivityMiddleware(RequestDelegate next) : base(next)
     {
-        _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext httpContext)
+    public override async Task InvokeAsync(HttpContext httpContext)
     {
         if (httpContext == null)
         {
             throw new ArgumentException("The provided http context must be a valid instance", nameof(httpContext));
         }
 
-        var activity = new Activity($"{httpContext.Request.Method.ToUpperInvariant()} {httpContext.Request.Path}");
+        var operationName = $"{httpContext.Request.Method.ToUpperInvariant()} {httpContext.Request.Path}";
+        var activity = new Activity(operationName);
 
         activity.SetIdFormat(ActivityIdFormat.W3C);
 
@@ -56,6 +55,7 @@ public sealed class W3CActivityMiddleware
             return Task.CompletedTask;
         });
 
-        await _next(httpContext);
+        await base.InvokeAsync(httpContext)
+                  .ConfigureAwait(false);
     }
 }

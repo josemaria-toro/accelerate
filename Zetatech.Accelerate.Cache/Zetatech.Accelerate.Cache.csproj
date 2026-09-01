@@ -3,7 +3,7 @@
         <AnalysisLevel>5.0</AnalysisLevel>
         <AssemblyName>Zetatech.Accelerate.Cache</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
-        <AssemblyTitle>Library with the cache components</AssemblyTitle>
+        <AssemblyTitle>Library with the cache management components</AssemblyTitle>
         <AssemblyVersion>10.2609.3</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
@@ -13,7 +13,7 @@
         <ContentTargetFolders>content</ContentTargetFolders>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <Copyright>Zeta Technologies © 2026</Copyright>
-        <Description>Library with the cache components</Description>
+        <Description>Library with the cache management components</Description>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -34,7 +34,7 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <Nullable>disable</Nullable>
         <OutputType>library</OutputType>
-        <PackageDescription>Library with the cache components</PackageDescription>
+        <PackageDescription>Library with the cache management components</PackageDescription>
         <PackageIcon>PackageIcon.png</PackageIcon>
         <PackageId>Zetatech.Accelerate.Cache</PackageId>
         <PackageLicenseFile>License.txt</PackageLicenseFile>

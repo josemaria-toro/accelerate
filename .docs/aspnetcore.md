@@ -8,6 +8,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
       ├─ AspNetCore
          ├─ Abstractions          ' Clases base para los componentes de ASP.NET Core.
          ├─ Extensions            ' Métodos de extensión para componentes de ASP.NET Core.
+         ├─ Middlewares           ' Clases especializadas para middlewares de aplicaciones ASP.NET Core.
       ├─ DependencyInjection      ' Métodos de extensión para el registro de componentes en el contenedor de dependencias.
 ```
 ## Configuraciones
@@ -51,6 +52,10 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ## Control de versiones
 ### v10.2609.3
 - Se añade la clase base para middlewares.
-- Se añade las clases base para controladores api.
-- Se añade las clases base para controladores web.
-- Se incluyen métodos de extensión para la lectura del cuerpo de peticiones y respuestas HTTP.
+- Se añade la clase base para controladores api.
+- Se añade la clase base para controladores web.
+- Se añaden métodos de extensión para la lectura del cuerpo de peticiones y respuestas HTTP.
+- Se añaden métodos de extensión para configurar CORS en las aplicaciones.
+- Se añaden métodos de extensión para configurar los límites de peticiones en las aplicaciones.
+- Se añaden métodos de extensión para configurar la ubicación de los recursos estáticos en las aplicaciones.
+- Se añaden métodos de extensión para configurar los componentes MVC en las aplicaciones.

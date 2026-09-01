@@ -22,6 +22,6 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2609.3
-- Se incluye el contrato para los componentes que permiten la gestión de la caché.
-- Se incluyen las clases especializadas para la gestión de caché en memoria.
-- Se incluye un proceso en segundo plano para realizar las labores de limpieza sobre el componente de gestión de la caché en memoria.
+- Se añade el contrato para los componentes que permiten la gestión de la caché.
+- Se añaden las clases especializadas para la gestión de caché en memoria.
+- Se añade un proceso en segundo plano para realizar las labores de limpieza sobre el componente de gestión de la caché en memoria.

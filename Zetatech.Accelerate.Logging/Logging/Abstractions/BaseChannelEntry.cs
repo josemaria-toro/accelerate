@@ -1,9 +1,9 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace Zetatech.Accelerate.Logging.Console;
+namespace Zetatech.Accelerate.Logging.Abstractions;
 
-public sealed class ConsoleLoggerEntry
+internal abstract class BaseChannelEntry
 {
     public String Message { get; set; }
     public LogLevel Severity { get; set; }

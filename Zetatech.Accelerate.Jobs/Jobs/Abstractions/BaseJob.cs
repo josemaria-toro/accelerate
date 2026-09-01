@@ -35,7 +35,8 @@ public abstract class BaseJob : BackgroundService
 
         try
         {
-            await OnExecuteAsync(cancellationToken);
+            await this.OnExecuteAsync(cancellationToken)
+                      .ConfigureAwait(false);
         }
         finally
         {

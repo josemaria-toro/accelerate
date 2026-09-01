@@ -1,7 +1,7 @@
 using System;
 using Zetatech.Accelerate.Logging.Abstractions;
 
-namespace Zetatech.Accelerate.Logging.FlatFile;
+namespace Zetatech.Accelerate.Logging;
 
 public sealed class FlatFileLoggerOptions : BaseLoggerOptions
 {

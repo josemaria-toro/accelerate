@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -12,9 +13,13 @@ public abstract class BaseMiddleware
         _next = next;
     }
 
-    protected async Task ExecuteNextAsync(HttpContext httpContext)
+    public virtual async Task InvokeAsync(HttpContext httpContext)
     {
-        await _next(httpContext);
+        if (httpContext == null)
+        {
+            throw new ArgumentException("The provided http context must be a valid instance", nameof(httpContext));
+        }
+
+        await _next(httpContext).ConfigureAwait(false);
     }
-    public abstract Task InvokeAsync(HttpContext httpContext);
 }

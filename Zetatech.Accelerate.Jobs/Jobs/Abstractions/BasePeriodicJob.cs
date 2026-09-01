@@ -49,7 +49,8 @@ public abstract class BasePeriodicJob : BaseJob
 
                 try
                 {
-                    await OnExecuteAsync(cancellationToken);
+                    await this.OnExecuteAsync(cancellationToken)
+                              .ConfigureAwait(false);
                 }
                 finally
                 {

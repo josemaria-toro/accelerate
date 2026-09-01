@@ -3,20 +3,25 @@ using System.Collections.Concurrent;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Zetatech.Accelerate.Logging.ChannelEntries;
+using Zetatech.Accelerate.Logging.Loggers;
 
-namespace Zetatech.Accelerate.Logging.Console;
+namespace Zetatech.Accelerate.Logging;
 
 public sealed class ConsoleLoggerProvider : ILoggerProvider
 {
-    private readonly Channel<ConsoleLoggerEntry> _channel;
+    private readonly Channel<ConsoleChannelEntry> _channel;
     private Boolean _disposed;
     private ConcurrentDictionary<String, ConsoleLogger> _loggers;
     private readonly IOptions<ConsoleLoggerOptions> _options;
 
-    public ConsoleLoggerProvider(IOptions<ConsoleLoggerOptions> options,
-                                 Channel<ConsoleLoggerEntry> channel)
+    public ConsoleLoggerProvider(IOptions<ConsoleLoggerOptions> options)
     {
-        _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(options));
+        _channel = Channel.CreateBounded<ConsoleChannelEntry>(new BoundedChannelOptions(1000)
+        {
+            FullMode = BoundedChannelFullMode.Wait,
+            SingleReader = true
+        });
         _loggers = new ConcurrentDictionary<String, ConsoleLogger>();
         _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
     }

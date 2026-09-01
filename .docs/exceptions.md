@@ -9,4 +9,4 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ```
 ## Control de versiones
 ### v10.2609.3
-- Se incluye el catálogo de excepciones.
+- Se añade el catálogo de excepciones.

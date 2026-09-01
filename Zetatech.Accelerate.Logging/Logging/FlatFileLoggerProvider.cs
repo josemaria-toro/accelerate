@@ -3,20 +3,25 @@ using System.Collections.Concurrent;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Zetatech.Accelerate.Logging.ChannelEntries;
+using Zetatech.Accelerate.Logging.Loggers;
 
-namespace Zetatech.Accelerate.Logging.FlatFile;
+namespace Zetatech.Accelerate.Logging;
 
 public sealed class FlatFileLoggerProvider : ILoggerProvider
 {
-    private readonly Channel<FlatFileLoggerEntry> _channel;
+    private readonly Channel<FlatFileChannelEntry> _channel;
     private Boolean _disposed;
     private ConcurrentDictionary<String, FlatFileLogger> _loggers;
     private readonly IOptions<FlatFileLoggerOptions> _options;
 
-    public FlatFileLoggerProvider(IOptions<FlatFileLoggerOptions> options,
-                                  Channel<FlatFileLoggerEntry> channel)
+    public FlatFileLoggerProvider(IOptions<FlatFileLoggerOptions> options)
     {
-        _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(options));
+        _channel = Channel.CreateBounded<FlatFileChannelEntry>(new BoundedChannelOptions(1000)
+        {
+            FullMode = BoundedChannelFullMode.Wait,
+            SingleReader = true
+        });
         _loggers = new ConcurrentDictionary<String, FlatFileLogger>();
         _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
     }

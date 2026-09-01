@@ -1,23 +1,23 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Jobs.Abstractions;
+using Zetatech.Accelerate.Logging.ChannelEntries;
 
-namespace Zetatech.Accelerate.Logging.FlatFile;
+namespace Zetatech.Accelerate.Logging.Jobs;
 
-public sealed class FlatFileLoggerJob : BaseJob
+internal sealed class FlatFileWriterJob : BaseJob
 {
-    private readonly Channel<FlatFileLoggerEntry> _channel;
+    private readonly Channel<FlatFileChannelEntry> _channel;
     private readonly FlatFileLoggerOptions _options;
 
 
-    public FlatFileLoggerJob(IOptions<FlatFileLoggerOptions> options,
-                             Channel<FlatFileLoggerEntry> channel)
+    public FlatFileWriterJob(IOptions<FlatFileLoggerOptions> options,
+                             Channel<FlatFileChannelEntry> channel)
     {
         _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(channel));
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
@@ -36,12 +36,12 @@ public sealed class FlatFileLoggerJob : BaseJob
 
         try
         {
-            await foreach (var loggerEntry in _channel.Reader.ReadAllAsync(cancellationToken)
-                                                             .ConfigureAwait(false))
+            await foreach (var channelEntry in _channel.Reader.ReadAllAsync(cancellationToken)
+                                                              .ConfigureAwait(false))
             {
                 RotateFileIfNeeded(ref stream, fileName);
 
-                await stream.WriteAsync(loggerEntry.Message)
+                await stream.WriteAsync(channelEntry.Message)
                             .ConfigureAwait(false);
                 await stream.FlushAsync(cancellationToken)
                             .ConfigureAwait(false);
@@ -52,11 +52,11 @@ public sealed class FlatFileLoggerJob : BaseJob
         }
         finally
         {
-            while (_channel.Reader.TryRead(out var loggerEntry))
+            while (_channel.Reader.TryRead(out var channelEntry))
             {
                 RotateFileIfNeeded(ref stream, fileName);
 
-                await stream.WriteAsync(loggerEntry.Message)
+                await stream.WriteAsync(channelEntry.Message)
                             .ConfigureAwait(false);
             }
 

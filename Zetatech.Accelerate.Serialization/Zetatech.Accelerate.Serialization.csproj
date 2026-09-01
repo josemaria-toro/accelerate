@@ -41,7 +41,7 @@
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageTags>Accelerate DependencyInjection Serialization Zetatech</PackageTags>
+        <PackageTags>Accelerate Json Serialization Zetatech</PackageTags>
         <PackageVersion>10.2609.3</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
@@ -72,8 +72,5 @@
         <Content Include="$(SolutionDir)/License.txt" Pack="true" PackagePath="License.txt" />
         <Content Include="$(SolutionDir)/PackageIcon.png" Pack="true" PackagePath="PackageIcon.png" />
         <Content Include="$(SolutionDir)/.docs/serialization.md" Pack="true" PackagePath="Readme.md" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate/Zetatech.Accelerate.csproj" />
     </ItemGroup>
 </Project>

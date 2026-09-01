@@ -11,4 +11,5 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 ## Configuraciones
 ## Control de versiones
 ### v10.2609.3
-- Se incluyen las clases base para los componentes que gestionan la ejecución de procesos en segundo plano.
+- Se añade la clase base para procesos en segundo plano.
+- Se añade la clase base para procesos en segundo plano que se ejecutan en intervalos de tiempo.

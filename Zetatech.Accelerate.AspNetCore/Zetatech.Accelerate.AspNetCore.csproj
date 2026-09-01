@@ -41,7 +41,7 @@
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageTags>Accelerate ASP.NET Controller Cors Middleware Mvc RateLimits StaticAssets Zetatech</PackageTags>
+        <PackageTags>Accelerate AspNetCore Controller Cors DependencyInjection Middleware Mvc RateLimits StaticAssets Zetatech</PackageTags>
         <PackageVersion>10.2609.3</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
@@ -72,6 +72,10 @@
         <Content Include="$(SolutionDir)/License.txt" Pack="true" PackagePath="License.txt" />
         <Content Include="$(SolutionDir)/PackageIcon.png" Pack="true" PackagePath="PackageIcon.png" />
         <Content Include="$(SolutionDir)/.docs/aspnetcore.md" Pack="true" PackagePath="Readme.md" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate.Exceptions/Zetatech.Accelerate.Exceptions.csproj" />
+        <ProjectReference Include="$(SolutionDir)/Zetatech.Accelerate.Serialization/Zetatech.Accelerate.Serialization.csproj" />
     </ItemGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />

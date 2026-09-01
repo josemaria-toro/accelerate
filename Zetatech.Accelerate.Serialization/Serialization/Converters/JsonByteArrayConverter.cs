@@ -2,7 +2,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Zetatech.Accelerate.Serialization;
+namespace Zetatech.Accelerate.Serialization.Converters;
 
 internal sealed class JsonByteArrayConverter : JsonConverter<Byte[]>
 {

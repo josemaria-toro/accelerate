@@ -4,16 +4,15 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Zetatech.Accelerate.Jobs.Abstractions;
+using Zetatech.Accelerate.Logging.ChannelEntries;
 
-using Shell = System.Console;
+namespace Zetatech.Accelerate.Logging.Jobs;
 
-namespace Zetatech.Accelerate.Logging.Console;
-
-public sealed class ConsoleLoggerJob : BaseJob
+internal sealed class ConsoleWriterJob : BaseJob
 {
-    private readonly Channel<ConsoleLoggerEntry> _channel;
+    private readonly Channel<ConsoleChannelEntry> _channel;
 
-    public ConsoleLoggerJob(Channel<ConsoleLoggerEntry> channel)
+    public ConsoleWriterJob(Channel<ConsoleChannelEntry> channel)
     {
         _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(channel));
     }
@@ -25,10 +24,10 @@ public sealed class ConsoleLoggerJob : BaseJob
             while (await _channel.Reader.WaitToReadAsync(cancellationToken)
                                         .ConfigureAwait(false))
             {
-                await foreach (var loggerEntry in _channel.Reader.ReadAllAsync(cancellationToken)
-                                                                 .ConfigureAwait(false))
+                await foreach (var channelEntry in _channel.Reader.ReadAllAsync(cancellationToken)
+                                                                  .ConfigureAwait(false))
                 {
-                    WriteLoggerEntry(loggerEntry);
+                    WriteChannelEntry(channelEntry);
                 }
             }
         }
@@ -37,15 +36,15 @@ public sealed class ConsoleLoggerJob : BaseJob
         }
         finally
         {
-            while (_channel.Reader.TryRead(out var loggerEntry))
+            while (_channel.Reader.TryRead(out var channelEntry))
             {
-                WriteLoggerEntry(loggerEntry);
+                WriteChannelEntry(channelEntry);
             }
         }
     }
-    private static void WriteLoggerEntry(ConsoleLoggerEntry loggerEntry)
+    private static void WriteChannelEntry(ConsoleChannelEntry channelEntry)
     {
-        Shell.ForegroundColor = loggerEntry.Severity switch
+        Console.ForegroundColor = channelEntry.Severity switch
         {
             LogLevel.Critical => ConsoleColor.Magenta,
             LogLevel.Debug => ConsoleColor.Gray,
@@ -54,7 +53,7 @@ public sealed class ConsoleLoggerJob : BaseJob
             _ => ConsoleColor.White
         };
 
-        Shell.Write(loggerEntry.Message);
-        Shell.ResetColor();
+        Console.Write(channelEntry.Message);
+        Console.ResetColor();
     }
 }
