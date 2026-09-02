@@ -2,6 +2,6 @@
 
 namespace Zetatech.Accelerate.Application;
 
-public interface IApplicationService : IDisposable
+public interface IService : IDisposable
 {
 }

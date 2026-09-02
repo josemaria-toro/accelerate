@@ -2,7 +2,7 @@ using System;
 
 namespace Zetatech.Accelerate.Application.Abstractions;
 
-public abstract class BaseApplicationService : IApplicationService
+public abstract class BaseService : IService
 {
     private Boolean _disposed;
 
