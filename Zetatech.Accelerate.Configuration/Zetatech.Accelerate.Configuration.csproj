@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AnalysisLevel>5.0</AnalysisLevel>
-        <AssemblyName>Zetatech.Accelerate</AssemblyName>
+        <AssemblyName>Zetatech.Accelerate.Configuration</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
-        <AssemblyTitle>Library with the framework core components</AssemblyTitle>
+        <AssemblyTitle>Library with the configuration components</AssemblyTitle>
         <AssemblyVersion>10.2609.3</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
@@ -13,7 +13,7 @@
         <ContentTargetFolders>content</ContentTargetFolders>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <Copyright>Zeta Technologies © 2026</Copyright>
-        <Description>Library with the framework core components</Description>
+        <Description>Library with the configuration components</Description>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -34,14 +34,14 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <Nullable>disable</Nullable>
         <OutputType>library</OutputType>
-        <PackageDescription>Library with the framework core components</PackageDescription>
+        <PackageDescription>Library with the configuration components</PackageDescription>
         <PackageIcon>PackageIcon.png</PackageIcon>
-        <PackageId>Zetatech.Accelerate</PackageId>
+        <PackageId>Zetatech.Accelerate.Configuration</PackageId>
         <PackageLicenseFile>License.txt</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/users/josemaria-toro/projects/14</PackageProjectUrl>
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageTags>Accelerate Application Caching Data DependencyInjection Domain Exceptions Extensions Http Jobs Logging Messaging Serialization Telemetry Zetatech</PackageTags>
+        <PackageTags>Accelerate Configuration EnvironmentVariables Json Secrets Zetatech</PackageTags>
         <PackageVersion>10.2609.3</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
@@ -71,9 +71,13 @@
     <ItemGroup>
         <Content Include="$(SolutionDir)/License.txt" Pack="true" PackagePath="License.txt" />
         <Content Include="$(SolutionDir)/PackageIcon.png" Pack="true" PackagePath="PackageIcon.png" />
-        <Content Include="$(SolutionDir)/.docs/accelerate.md" Pack="true" PackagePath="Readme.md" />
+        <Content Include="$(SolutionDir)/.docs/configuration.md" Pack="true" PackagePath="Readme.md" />
     </ItemGroup>
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.11" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.11" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.11" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.11" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
     </ItemGroup>
 </Project>
