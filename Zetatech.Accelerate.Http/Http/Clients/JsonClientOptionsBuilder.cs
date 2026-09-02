@@ -9,8 +9,7 @@ namespace Zetatech.Accelerate.Http.Clients;
 
 public static class JsonClientOptionsBuilder
 {
-    public static JsonClientOptions Build(IConfiguration configService,
-                                          String key = null)
+    public static JsonClientOptions Build(IConfiguration configService, String key = null)
     {
         var rootKey = String.IsNullOrEmpty(key) ? "jsonClient" : $"{key}:jsonClient";
         var jsonClientOptions = new JsonClientOptions
@@ -44,8 +43,7 @@ public static class JsonClientOptionsBuilder
 
         return jsonClientOptions;
     }
-    private static X509Certificate2 BuildClientCertificate(IConfiguration configService,
-                                                           String key)
+    private static X509Certificate2 BuildClientCertificate(IConfiguration configService, String key)
     {
         X509Certificate2 clientCertificate = null;
 
@@ -98,8 +96,7 @@ public static class JsonClientOptionsBuilder
 
         return clientCertificate;
     }
-    private static NetworkCredential BuildNetworkCredentials(IConfiguration configService,
-                                                             String key)
+    private static NetworkCredential BuildNetworkCredentials(IConfiguration configService, String key)
     {
         return new NetworkCredential
         {
@@ -108,8 +105,7 @@ public static class JsonClientOptionsBuilder
             UserName = configService.GetValue<String>($"{key}:userName", String.Empty)
         };
     }
-    private static Encoding GetEncoding(IConfiguration configService,
-                                        String key)
+    private static Encoding GetEncoding(IConfiguration configService, String key)
     {
         var encodingName = configService.GetValue<String>($"{key}:encoding");
 

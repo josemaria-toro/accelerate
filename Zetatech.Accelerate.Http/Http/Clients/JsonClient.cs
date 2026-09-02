@@ -17,7 +17,7 @@ public sealed class JsonClient : HttpClient
     private Boolean _disposed;
     private readonly JsonClientOptions _options;
 
-    public JsonClient(IOptions<JsonClientOptions> options) : base(new JsonClientHandler(options))
+    public JsonClient(IOptions<JsonClientOptions> options) : base(new JsonClientHandler(options?.Value))
     {
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
 
@@ -46,10 +46,7 @@ public sealed class JsonClient : HttpClient
 
         _disposed = true;
     }
-    private HttpRequestMessage BuildHttpRequestMessage(Uri uri,
-                                                       HttpMethod httpMethod,
-                                                       Object body = null,
-                                                       IDictionary<String, String> headers = null)
+    private HttpRequestMessage BuildHttpRequestMessage(Uri uri, HttpMethod httpMethod, Object body = null, IDictionary<String, String> headers = null)
     {
         var httpRequestMessage = new HttpRequestMessage(httpMethod, uri);
 
@@ -85,49 +82,35 @@ public sealed class JsonClient : HttpClient
 
         return httpRequestMessage;
     }
-    public async Task<HttpResponseMessage> DeleteAsync<TBody>(Uri uri,
-                                                              TBody body = null,
-                                                              IDictionary<String, String> headers = null,
-                                                              CancellationToken cancellationToken = default) where TBody : class
+    public async Task<HttpResponseMessage> DeleteAsync<TBody>(Uri uri, TBody body = null, IDictionary<String, String> headers = null, CancellationToken cancellationToken = default) where TBody : class
     {
         var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Delete, body, headers);
 
         return await base.SendAsync(httpRequestMessage, cancellationToken)
                          .ConfigureAwait(false);
     }
-    public async Task<HttpResponseMessage> GetAsync(Uri uri,
-                                                    IDictionary<String, String> headers = null,
-                                                    CancellationToken cancellationToken = default)
+    public async Task<HttpResponseMessage> GetAsync(Uri uri, IDictionary<String, String> headers = null, CancellationToken cancellationToken = default)
     {
         var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Get, null, headers);
 
         return await base.SendAsync(httpRequestMessage, cancellationToken)
                          .ConfigureAwait(false);
     }
-    public async Task<HttpResponseMessage> PatchAsync<TBody>(Uri uri,
-                                                             TBody body = null,
-                                                             IDictionary<String, String> headers = null,
-                                                             CancellationToken cancellationToken = default) where TBody : class
+    public async Task<HttpResponseMessage> PatchAsync<TBody>(Uri uri, TBody body = null, IDictionary<String, String> headers = null, CancellationToken cancellationToken = default) where TBody : class
     {
         var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Patch, body, headers);
 
         return await base.SendAsync(httpRequestMessage, cancellationToken)
                          .ConfigureAwait(false);
     }
-    public async Task<HttpResponseMessage> PostAsync<TBody>(Uri uri,
-                                                            TBody body = null,
-                                                            IDictionary<String, String> headers = null,
-                                                            CancellationToken cancellationToken = default) where TBody : class
+    public async Task<HttpResponseMessage> PostAsync<TBody>(Uri uri, TBody body = null, IDictionary<String, String> headers = null, CancellationToken cancellationToken = default) where TBody : class
     {
         var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Post, body, headers);
 
         return await base.SendAsync(httpRequestMessage, cancellationToken)
                          .ConfigureAwait(false);
     }
-    public async Task<HttpResponseMessage> PutAsync<TBody>(Uri uri,
-                                                           TBody body = null,
-                                                           IDictionary<String, String> headers = null,
-                                                           CancellationToken cancellationToken = default) where TBody : class
+    public async Task<HttpResponseMessage> PutAsync<TBody>(Uri uri, TBody body = null, IDictionary<String, String> headers = null, CancellationToken cancellationToken = default) where TBody : class
     {
         var httpRequestMessage = BuildHttpRequestMessage(uri, HttpMethod.Put, body, headers);
 

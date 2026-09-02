@@ -18,9 +18,7 @@ public sealed class InMemoryCache : ICache
 
     internal ConcurrentDictionary<String, InMemoryCacheItem> Dictionary => _dictionary;
 
-    public Boolean Add<TValue>(String key,
-                               TValue value,
-                               TimeSpan delta)
+    public Boolean Add<TValue>(String key, TValue value, TimeSpan delta)
     {
         if (String.IsNullOrEmpty(key))
         {

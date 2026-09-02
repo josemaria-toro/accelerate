@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Zetatech.Accelerate.Exceptions;
+using Zetatech.Accelerate.Messaging.Factories;
 using Zetatech.Accelerate.Messaging.Messages;
 using Zetatech.Accelerate.Serialization;
 
@@ -13,31 +13,18 @@ namespace Zetatech.Accelerate.Messaging.Abstractions;
 
 public abstract class BaseRabbitMQPublisher : BaseMessagePublisher
 {
-    private readonly IChannel _channel;
+    private IChannel _channel;
     private readonly String _exchangeName;
     private readonly RabbitMQOptions _options;
     private readonly String _queueName;
 
-    protected BaseRabbitMQPublisher(IOptions<RabbitMQOptions> options,
-                                    IRabbitMQChannelFactory channelFactory)
+    protected BaseRabbitMQPublisher(RabbitMQOptions options)
     {
-        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
-        _channel = channelFactory.CreateChannel(_options.ConnectionString,
-                                                _options.UseSsl,
-                                                _options.SslCertIssuer,
-                                                _options.SslCertSerialNumber,
-                                                _options.SslCertSubject,
-                                                _options.SslCertThumbprint);
-        _exchangeName = _options.ExchangeName ?? throw new ConfigurationException("The exchange name has an invalid value", "exchangeName");
-
-        if (!String.IsNullOrEmpty(_options.QueueName))
-        {
-            _queueName = _options.QueueName;
-        }
+        _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
+        _exchangeName = _options.ExchangeName ?? "amq.direct";
+        _queueName = _options.QueueName;
     }
-    public override async Task<Guid> PublishAsync<TBody>(TBody body,
-                                                         String queueName = null,
-                                                         CancellationToken cancellationToken = default) where TBody : class
+    public override async Task<Guid> PublishAsync<TBody>(TBody body, String queueName = null, CancellationToken cancellationToken = default) where TBody : class
     {
         if (body == null)
         {
@@ -71,6 +58,12 @@ public abstract class BaseRabbitMQPublisher : BaseMessagePublisher
 
         var jsonMessage = Json.ToString(message);
         var messageBuffer = Encoding.UTF8.GetBytes(jsonMessage);
+
+        if (_channel == null)
+        {
+            _channel = await RabbitMQChannelFactory.Current.CreateChannelAsync(_options)
+                                                           .ConfigureAwait(false);
+        }
 
         try
         {

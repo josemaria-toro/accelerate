@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.Extensions.Options;
 
 namespace Zetatech.Accelerate.Http.Clients;
 
@@ -10,9 +9,9 @@ internal sealed class JsonClientHandler : HttpClientHandler
     private Boolean _disposed;
     private readonly JsonClientOptions _options;
 
-    public JsonClientHandler(IOptions<JsonClientOptions> options)
+    public JsonClientHandler(JsonClientOptions options)
     {
-        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
+        _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
 
         if (_options.AutoRedirect)
         {

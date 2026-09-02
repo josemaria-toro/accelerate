@@ -3,19 +3,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Zetatech.Accelerate.AspNetCore.Abstractions;
 
 namespace Zetatech.Accelerate.Telemetry.Collectors;
 
-public sealed class HttpRequestCollector
+public sealed class HttpRequestCollector : BaseMiddleware
 {
-    private readonly RequestDelegate _next;
-
-    public HttpRequestCollector(RequestDelegate next)
+    public HttpRequestCollector(RequestDelegate next) : base(next)
     {
-        _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext httpContext)
+    public async override Task InvokeAsync(HttpContext httpContext)
     {
         if (httpContext == null)
         {
@@ -39,6 +37,7 @@ public sealed class HttpRequestCollector
                                    .ConfigureAwait(false);
         });
 
-        await _next(httpContext);
+        await base.InvokeAsync(httpContext)
+                  .ConfigureAwait(false);
     }
 }

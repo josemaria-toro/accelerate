@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Logging.Abstractions;
 using Zetatech.Accelerate.Logging.ChannelEntries;
 
@@ -13,18 +12,12 @@ internal sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
 {
     private readonly ChannelWriter<ConsoleChannelEntry> _channelWriter;
 
-    public ConsoleLogger(IOptions<ConsoleLoggerOptions> options,
-                         String category,
-                         ChannelWriter<ConsoleChannelEntry> channelWriter) : base(options, category)
+    public ConsoleLogger(ConsoleLoggerOptions options, String category, ChannelWriter<ConsoleChannelEntry> channelWriter) : base(options, category)
     {
         _channelWriter = channelWriter ?? throw new ArgumentException("The provided channel writer must be a valid instance", nameof(channelWriter));
     }
 
-    public override async void Log<TState>(LogLevel logLevel,
-                                           EventId eventId,
-                                           TState state,
-                                           Exception exception,
-                                           Func<TState, Exception, String> formatter)
+    public override async void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, String> formatter)
     {
         if (IsEnabled(logLevel))
         {
@@ -47,10 +40,7 @@ internal sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
             }
         }
     }
-    private void AppendErrorData(StringBuilder stringBuilder,
-                                 LogLevel logLevel,
-                                 Exception exception,
-                                 Activity activity)
+    private void AppendErrorData(StringBuilder stringBuilder, LogLevel logLevel, Exception exception, Activity activity)
     {
         if (exception != null)
         {
@@ -78,10 +68,7 @@ internal sealed class ConsoleLogger : BaseLogger<ConsoleLoggerOptions>
             }
         }
     }
-    private void AppendTraceData(StringBuilder stringBuilder,
-                                 LogLevel logLevel,
-                                 String message,
-                                 Activity activity)
+    private void AppendTraceData(StringBuilder stringBuilder, LogLevel logLevel, String message, Activity activity)
     {
         if (!String.IsNullOrEmpty(message))
         {

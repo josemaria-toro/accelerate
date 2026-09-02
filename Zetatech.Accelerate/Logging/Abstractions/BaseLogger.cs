@@ -11,7 +11,7 @@ public abstract class BaseLogger<TOptions> : ILogger, IDisposable where TOptions
     private Boolean _disposed;
     private readonly TOptions _options;
 
-    protected BaseLogger(IOptions<TOptions> options,
+    protected BaseLogger(TOptions options,
                          String category)
     {
         if (String.IsNullOrEmpty(category))
@@ -20,7 +20,7 @@ public abstract class BaseLogger<TOptions> : ILogger, IDisposable where TOptions
         }
 
         _category = category;
-        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
+        _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
     }
 
     protected String Category => _category;

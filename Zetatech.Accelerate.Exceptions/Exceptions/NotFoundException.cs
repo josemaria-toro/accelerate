@@ -10,8 +10,7 @@ public class NotFoundException : Exception
     public NotFoundException(String message) : base(message)
     {
     }
-    public NotFoundException(String message,
-                             Exception innerException) : base(message, innerException)
+    public NotFoundException(String message, Exception innerException) : base(message, innerException)
     {
     }
 }

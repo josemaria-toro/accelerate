@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Zetatech.Accelerate.Exceptions;
+using Zetatech.Accelerate.Messaging.Factories;
 using Zetatech.Accelerate.Messaging.Messages;
 using Zetatech.Accelerate.Serialization;
 
@@ -15,48 +16,35 @@ namespace Zetatech.Accelerate.Messaging.Abstractions;
 
 public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBody>, IAsyncBasicConsumer where TBody : class
 {
-    private readonly IChannel _channel;
+    private IChannel _channel;
     private readonly RabbitMQOptions _options;
     private readonly String _queueName;
 
-    protected BaseRabbitMQSubscriber(IOptions<RabbitMQOptions> options,
-                                     IRabbitMQChannelFactory channelFactory)
+    protected BaseRabbitMQSubscriber(IOptions<RabbitMQOptions> options)
     {
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
-        _channel = channelFactory.CreateChannel(_options.ConnectionString,
-                                                _options.UseSsl,
-                                                _options.SslCertIssuer,
-                                                _options.SslCertSerialNumber,
-                                                _options.SslCertSubject,
-                                                _options.SslCertThumbprint);
         _queueName = _options.QueueName ?? throw new ConfigurationException("The queue name has an invalid value", "queueName");
     }
 
-    public IChannel Channel => _channel;
+    public IChannel Channel
+    {
+        get
+        {
+            if (_channel == null)
+            {
+                var channelTask = RabbitMQChannelFactory.Current.CreateChannelAsync(_options);
+                channelTask.Wait();
+                _channel = channelTask.Result;
+            }
 
-    public virtual async Task HandleBasicCancelAsync(String queueName,
-                                                     CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+            return _channel;
+        }
     }
-    public virtual async Task HandleBasicCancelOkAsync(String queueName,
-                                                       CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-    }
-    public virtual async Task HandleBasicConsumeOkAsync(String queueName,
-                                                        CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-    }
-    public async Task HandleBasicDeliverAsync(String queueName,
-                                              UInt64 deliveryTag,
-                                              Boolean redelivered,
-                                              String exchange,
-                                              String routingKey,
-                                              IReadOnlyBasicProperties properties,
-                                              ReadOnlyMemory<Byte> body,
-                                              CancellationToken cancellationToken = default)
+
+    public virtual async Task HandleBasicCancelAsync(String queueName, CancellationToken cancellationToken = default) => cancellationToken.ThrowIfCancellationRequested();
+    public virtual async Task HandleBasicCancelOkAsync(String queueName, CancellationToken cancellationToken = default) => cancellationToken.ThrowIfCancellationRequested();
+    public virtual async Task HandleBasicConsumeOkAsync(String queueName, CancellationToken cancellationToken = default) => cancellationToken.ThrowIfCancellationRequested();
+    public async Task HandleBasicDeliverAsync(String queueName, UInt64 deliveryTag, Boolean redelivered, String exchange, String routingKey, IReadOnlyBasicProperties properties, ReadOnlyMemory<Byte> body, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -108,24 +96,15 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
                           .ConfigureAwait(false);
         }
     }
-    public virtual async Task HandleChannelShutdownAsync(Object channel,
-                                                         ShutdownEventArgs shutdownReason)
+    public virtual async Task HandleChannelShutdownAsync(Object channel, ShutdownEventArgs shutdownReason)
     {
     }
-    protected abstract Task OnMessageReceivedAsync(RabbitMQMessage<TBody> message,
-                                                   CancellationToken cancellationToken = default);
+    protected abstract Task OnMessageReceivedAsync(RabbitMQMessage<TBody> message, CancellationToken cancellationToken = default);
     public override async Task SubscribeAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            await _channel.BasicConsumeAsync(arguments: default,
-                                             autoAck: false,
-                                             cancellationToken: cancellationToken,
-                                             consumer: this,
-                                             consumerTag: _queueName,
-                                             exclusive: false,
-                                             noLocal: false,
-                                             queue: _queueName)
+            await _channel.BasicConsumeAsync(_queueName, false, _queueName, false, false, default, this, cancellationToken)
                           .ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -137,9 +116,7 @@ public abstract class BaseRabbitMQSubscriber<TBody> : BaseMessageSubscriber<TBod
     {
         try
         {
-            await _channel.BasicCancelAsync(cancellationToken: cancellationToken,
-                                            consumerTag: _queueName,
-                                            noWait: false)
+            await _channel.BasicCancelAsync(_queueName, false, cancellationToken)
                           .ConfigureAwait(false);
         }
         catch (Exception ex)

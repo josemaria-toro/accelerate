@@ -16,6 +16,11 @@ public sealed class ErrorHandlingMiddleware : BaseMiddleware
 
     public override async Task InvokeAsync(HttpContext httpContext)
     {
+        if (httpContext == null)
+        {
+            throw new ArgumentException("The provided http context must be a valid instance", nameof(httpContext));
+        }
+
         try
         {
             await base.InvokeAsync(httpContext)
@@ -62,9 +67,7 @@ public sealed class ErrorHandlingMiddleware : BaseMiddleware
             HandleException(httpContext, ex, StatusCodes.Status500InternalServerError);
         }
     }
-    private void HandleException(HttpContext httpContext,
-                                 Exception exception,
-                                 Int32 statusCode)
+    private void HandleException(HttpContext httpContext, Exception exception, Int32 statusCode)
     {
         var errorMessage = $"An error of type '{exception.GetType()}' was raised: {exception.Message}";
 

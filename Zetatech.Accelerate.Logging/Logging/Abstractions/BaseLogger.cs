@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Zetatech.Accelerate.Logging.Abstractions;
 
@@ -11,16 +10,10 @@ public abstract class BaseLogger<TOptions> : ILogger, IDisposable where TOptions
     private Boolean _disposed;
     private readonly TOptions _options;
 
-    protected BaseLogger(IOptions<TOptions> options,
-                         String category)
+    protected BaseLogger(TOptions options, String category)
     {
-        if (String.IsNullOrEmpty(category))
-        {
-            throw new ArgumentException("The provided category is invalid", nameof(category));
-        }
-
-        _category = category;
-        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
+        _category = category ?? throw new ArgumentException("The provided category is invalid", nameof(category));
+        _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
     }
 
     protected String Category => _category;
@@ -67,9 +60,5 @@ public abstract class BaseLogger<TOptions> : ILogger, IDisposable where TOptions
     {
         return logLevel >= Options.LogLevel;
     }
-    public abstract void Log<TState>(LogLevel logLevel,
-                                     EventId eventId,
-                                     TState state,
-                                     Exception exception,
-                                     Func<TState, Exception, String> formatter);
+    public abstract void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, String> formatter);
 }

@@ -22,7 +22,5 @@ public abstract class BaseMessagePublisher : IMessagePublisher
 
         _disposed = true;
     }
-    public abstract Task<Guid> PublishAsync<TBody>(TBody body,
-                                                   String queueName = null,
-                                                   CancellationToken cancellationToken = default) where TBody : class;
+    public abstract Task<Guid> PublishAsync<TBody>(TBody body, String queueName = null, CancellationToken cancellationToken = default) where TBody : class;
 }

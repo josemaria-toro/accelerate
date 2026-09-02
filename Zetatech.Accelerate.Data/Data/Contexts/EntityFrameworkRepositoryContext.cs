@@ -1,7 +1,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Data.Abstractions;
 using Zetatech.Accelerate.Data.Enums;
 
@@ -13,9 +12,9 @@ public sealed class EntityFrameworkContext<TEntity, TOptions> : DbContext where 
     private Boolean _disposed;
     private readonly TOptions _options;
 
-    public EntityFrameworkContext(IOptions<TOptions> options)
+    internal EntityFrameworkContext(TOptions options)
     {
-        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
+        _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
 
         if (ChangeTracker != null)
         {

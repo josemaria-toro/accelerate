@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Zetatech.Accelerate.Data.Contexts;
 
 namespace Zetatech.Accelerate.Data.Abstractions;
@@ -20,7 +19,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
     private SemaphoreSlim _semaphore;
     private String _sqlCreationScript;
 
-    protected BaseEntityFrameworkRepository(IOptions<TOptions> options)
+    protected BaseEntityFrameworkRepository(TOptions options)
     {
         _context = new EntityFrameworkContext<TEntity, TOptions>(options);
         _entities = _context.Set<TEntity>();
@@ -31,8 +30,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
     protected DbSet<TEntity> Entities { get => _entities; }
     protected String SqlCreationScript { get => _sqlCreationScript ??= _context.Database.GenerateCreateScript(); }
 
-    public async Task DeleteAsync(TEntity entity,
-                                  CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
         {
@@ -48,7 +46,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
 
             _entities.Remove(entity);
 
-            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
+            await this.SavePendingChangesAsync(true, cancellationToken)
+                      .ConfigureAwait(false);
         }
         catch (DataException)
         {
@@ -59,8 +58,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             throw new DataException($"Unexpected error was thrown while deleting the entity with id '{entity.Id}'", ex);
         }
     }
-    public async Task DeleteAsync(IList<TEntity> entities,
-                                  CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
     {
         if (entities == null)
         {
@@ -79,7 +77,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
                 _entities.Remove(entity);
             }
 
-            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
+            await this.SavePendingChangesAsync(true, cancellationToken)
+                      .ConfigureAwait(false);
         }
         catch (DataException)
         {
@@ -90,8 +89,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             throw new DataException("Unexpected error was thrown while deleting a list of entities", ex);
         }
     }
-    public async Task DeleteAsync(Expression<Func<TEntity, Boolean>> expression,
-                                  CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Expression<Func<TEntity, Boolean>> expression, CancellationToken cancellationToken = default)
     {
         if (expression == null)
         {
@@ -116,7 +114,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
                     _entities.Remove(entity);
                 }
 
-                await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
+                await this.SavePendingChangesAsync(true, cancellationToken)
+                          .ConfigureAwait(false);
             }
         }
         catch (DataException)
@@ -150,8 +149,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             _sqlCreationScript = null;
         }
     }
-    public async Task InsertAsync(TEntity entity,
-                                  CancellationToken cancellationToken = default)
+    public async Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
         {
@@ -168,10 +166,11 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
 
         await _entities.AddAsync(entity, cancellationToken)
                        .ConfigureAwait(false);
-        await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
+
+        await this.SavePendingChangesAsync(true, cancellationToken)
+                  .ConfigureAwait(false);
     }
-    public async Task InsertAsync(IList<TEntity> entities,
-                                  CancellationToken cancellationToken = default)
+    public async Task InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
     {
         if (entities == null)
         {
@@ -192,7 +191,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
                            .ConfigureAwait(false);
         }
 
-        await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
+        await this.SavePendingChangesAsync(true, cancellationToken)
+                  .ConfigureAwait(false);
     }
 
     private async Task RollbackPendingChangesAsync(CancellationToken cancellationToken = default)
@@ -230,8 +230,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             throw new DataException("Unexpected error was thrown while undoing pending changes", ex);
         }
     }
-    private async Task SavePendingChangesAsync(Boolean performRollbackOnFailure,
-                                               CancellationToken cancellationToken = default)
+    private async Task SavePendingChangesAsync(Boolean performRollbackOnFailure, CancellationToken cancellationToken = default)
     {
         await _semaphore.WaitAsync(cancellationToken)
                         .ConfigureAwait(false);
@@ -262,10 +261,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             _semaphore.Release();
         }
     }
-    public async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression = null,
-                                                       Int32? skip = null,
-                                                       Int32? take = null,
-                                                       CancellationToken cancellationToken = default)
+    public async Task<IQueryable<TEntity>> SelectAsync(Expression<Func<TEntity, Boolean>> expression = null, Int32? skip = null, Int32? take = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -286,9 +282,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             throw new DataException("Unexpected error was thrown while selecting entities from the data source", ex);
         }
     }
-    public async Task<TEntity> SingleAsync(Expression<Func<TEntity, Boolean>> expression = null,
-                                           Int32? skip = null,
-                                           CancellationToken cancellationToken = default)
+    public async Task<TEntity> SingleAsync(Expression<Func<TEntity, Boolean>> expression = null, Int32? skip = null, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -308,8 +302,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             throw new DataException("Unexpected error was thrown while selecting the first entity in the data source", ex);
         }
     }
-    public async Task UpdateAsync(TEntity entity,
-                                  CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
         {
@@ -327,7 +320,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
 
             _entities.Update(entity);
 
-            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
+            await this.SavePendingChangesAsync(true, cancellationToken)
+                      .ConfigureAwait(false);
         }
         catch (DataException)
         {
@@ -338,8 +332,7 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
             throw new DataException($"Unexpected error was thrown while updating the entity with id {entity.Id}", ex);
         }
     }
-    public async Task UpdateAsync(IList<TEntity> entities,
-                                  CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
     {
         if (entities == null)
         {
@@ -360,7 +353,8 @@ public abstract class BaseEntityFrameworkRepository<TEntity, TOptions> : IReposi
                 _entities.Update(entity);
             }
 
-            await SavePendingChangesAsync(true, cancellationToken).ConfigureAwait(false);
+            await this.SavePendingChangesAsync(true, cancellationToken)
+                      .ConfigureAwait(false);
         }
         catch (DataException)
         {

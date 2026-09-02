@@ -10,8 +10,7 @@ public class MessagingException : Exception
     public MessagingException(String message) : base(message)
     {
     }
-    public MessagingException(String message,
-                              Exception innerException) : base(message, innerException)
+    public MessagingException(String message, Exception innerException) : base(message, innerException)
     {
     }
 }

@@ -2,19 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Zetatech.Accelerate.AspNetCore.Abstractions;
 
-namespace Zetatech.Accelerate.Security.Middlewares;
+namespace Zetatech.Accelerate.AspNetCore.Middlewares;
 
-public sealed class SecurityHeadersMiddleware
+public sealed class SecurityHeadersMiddleware : BaseMiddleware
 {
-    private readonly RequestDelegate _next;
-
-    public SecurityHeadersMiddleware(RequestDelegate next)
+    public SecurityHeadersMiddleware(RequestDelegate next) : base(next)
     {
-        _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext httpContext)
+    public async override Task InvokeAsync(HttpContext httpContext)
     {
         if (httpContext == null)
         {
@@ -36,6 +34,7 @@ public sealed class SecurityHeadersMiddleware
             return Task.CompletedTask;
         });
 
-        await _next(httpContext);
+        await base.InvokeAsync(httpContext)
+                  .ConfigureAwait(false);
     }
 }

@@ -10,18 +10,14 @@ public class DomainException : Exception
     public DomainException(String message) : base(message)
     {
     }
-    public DomainException(String message,
-                           String specification) : base(message)
+    public DomainException(String message, String specification) : base(message)
     {
         Specification = specification;
     }
-    public DomainException(String message,
-                           Exception innerException) : base(message, innerException)
+    public DomainException(String message, Exception innerException) : base(message, innerException)
     {
     }
-    public DomainException(String message,
-                           Exception innerException,
-                           String specification) : base(message, innerException)
+    public DomainException(String message, Exception innerException, String specification) : base(message, innerException)
     {
         Specification = specification;
     }

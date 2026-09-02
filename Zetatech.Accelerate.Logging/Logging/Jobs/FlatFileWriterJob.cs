@@ -16,8 +16,7 @@ internal sealed class FlatFileWriterJob : BaseJob
     private readonly FlatFileLoggerOptions _options;
 
 
-    public FlatFileWriterJob(IOptions<FlatFileLoggerOptions> options,
-                             Channel<FlatFileChannelEntry> channel)
+    public FlatFileWriterJob(IOptions<FlatFileLoggerOptions> options, Channel<FlatFileChannelEntry> channel)
     {
         _channel = channel ?? throw new ArgumentException("The provided channel must be a valid instance", nameof(channel));
         _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));

@@ -13,7 +13,7 @@ public sealed class ConsoleLoggerProvider : ILoggerProvider
     private readonly Channel<ConsoleChannelEntry> _channel;
     private Boolean _disposed;
     private ConcurrentDictionary<String, ConsoleLogger> _loggers;
-    private readonly IOptions<ConsoleLoggerOptions> _options;
+    private readonly ConsoleLoggerOptions _options;
 
     public ConsoleLoggerProvider(IOptions<ConsoleLoggerOptions> options)
     {
@@ -23,7 +23,7 @@ public sealed class ConsoleLoggerProvider : ILoggerProvider
             SingleReader = true
         });
         _loggers = new ConcurrentDictionary<String, ConsoleLogger>();
-        _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
+        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
     }
 
     public ILogger CreateLogger(String category)

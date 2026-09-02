@@ -10,8 +10,7 @@ public class UnavailableException : Exception
     public UnavailableException(String message) : base(message)
     {
     }
-    public UnavailableException(String message,
-                                Exception innerException) : base(message, innerException)
+    public UnavailableException(String message, Exception innerException) : base(message, innerException)
     {
     }
 }

@@ -59,3 +59,7 @@ Librería perteneciente al framework **Zetatech Accelerate**, desarrollada por *
 - Se añaden métodos de extensión para configurar los límites de peticiones en las aplicaciones.
 - Se añaden métodos de extensión para configurar la ubicación de los recursos estáticos en las aplicaciones.
 - Se añaden métodos de extensión para configurar los componentes MVC en las aplicaciones.
+- Se añade un middleware para gestionar el código de respuesta en base a la excepción capturada.
+- Se añade un middleware para requerir la existencia de cabeceras en las peticiones, comprobando sus valores de forma opcional.
+- Se añade un middleware para añadir cabeceras de seguridad en las respuestas.
+- Se añade un middleware para estandarizar la trazabilidad de la actividad de las aplicaciones.

@@ -35,6 +35,7 @@ public sealed class InMemoryCacheCleanerJob : BasePeriodicJob
         foreach (var expiredObject in expiredObjects)
         {
             _ = _inMemoryCache.Dictionary.TryRemove(expiredObject.Key, out var _);
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 }

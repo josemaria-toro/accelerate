@@ -13,7 +13,7 @@ public sealed class FlatFileLoggerProvider : ILoggerProvider
     private readonly Channel<FlatFileChannelEntry> _channel;
     private Boolean _disposed;
     private ConcurrentDictionary<String, FlatFileLogger> _loggers;
-    private readonly IOptions<FlatFileLoggerOptions> _options;
+    private readonly FlatFileLoggerOptions _options;
 
     public FlatFileLoggerProvider(IOptions<FlatFileLoggerOptions> options)
     {
@@ -23,7 +23,7 @@ public sealed class FlatFileLoggerProvider : ILoggerProvider
             SingleReader = true
         });
         _loggers = new ConcurrentDictionary<String, FlatFileLogger>();
-        _options = options ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
+        _options = options?.Value ?? throw new ArgumentException("The provided configuration options must be a valid instance", nameof(options));
     }
 
     public ILogger CreateLogger(String category)

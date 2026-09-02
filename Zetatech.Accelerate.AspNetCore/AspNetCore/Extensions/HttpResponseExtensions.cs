@@ -25,8 +25,7 @@ public static class HttpResponseExtensions
 
         return jsonContentTypes.Any(x => httpResponse.ContentType.Contains(x, StringComparison.InvariantCultureIgnoreCase));
     }
-    public static async Task<Byte[]> ReadBodyAsBufferAsync(this HttpResponse httpResponse,
-                                                           CancellationToken cancellationToken = default)
+    public static async Task<Byte[]> ReadBodyAsBufferAsync(this HttpResponse httpResponse, CancellationToken cancellationToken = default)
     {
         if (httpResponse == null)
         {
@@ -62,8 +61,7 @@ public static class HttpResponseExtensions
 
         return buffer;
     }
-    public static async Task<TBody> ReadBodyAsJsonAsync<TBody>(this HttpResponse httpResponse,
-                                                               CancellationToken cancellationToken = default) where TBody : class, new()
+    public static async Task<TBody> ReadBodyAsJsonAsync<TBody>(this HttpResponse httpResponse, CancellationToken cancellationToken = default) where TBody : class, new()
     {
         if (httpResponse == null)
         {
@@ -85,8 +83,7 @@ public static class HttpResponseExtensions
 
         return jsonObject;
     }
-    public static async Task<String> ReadBodyAsStringAsync(this HttpResponse httpResponse,
-                                                           CancellationToken cancellationToken = default)
+    public static async Task<String> ReadBodyAsStringAsync(this HttpResponse httpResponse, CancellationToken cancellationToken = default)
     {
         if (httpResponse == null)
         {

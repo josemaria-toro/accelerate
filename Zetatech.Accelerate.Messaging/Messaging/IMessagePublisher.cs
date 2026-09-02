@@ -6,7 +6,5 @@ namespace Zetatech.Accelerate.Messaging;
 
 public interface IMessagePublisher : IDisposable
 {
-    Task<Guid> PublishAsync<TBody>(TBody body,
-                                   String queueName = null,
-                                   CancellationToken cancellationToken = default) where TBody : class;
+    Task<Guid> PublishAsync<TBody>(TBody body, String queueName = null, CancellationToken cancellationToken = default) where TBody : class;
 }

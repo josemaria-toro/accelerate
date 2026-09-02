@@ -1,11 +1,9 @@
 using System;
 using System.IO;
-using System.Threading.Channels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Zetatech.Accelerate.Logging;
-using Zetatech.Accelerate.Logging.ChannelEntries;
 using Zetatech.Accelerate.Logging.Jobs;
 
 namespace Zetatech.Accelerate.DependencyInjection;
