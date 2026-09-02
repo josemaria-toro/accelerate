@@ -1,0 +1,12 @@
+{
+    "inputs": [],
+    "servers": {
+        "dotnet-outdated": {
+            "args": [
+                "mcp"
+            ],
+            "command": "dotnet-outdated",
+            "type": "stdio"
+        }
+    }
+}
