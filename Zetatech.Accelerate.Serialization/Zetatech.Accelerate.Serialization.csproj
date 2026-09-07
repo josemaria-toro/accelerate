@@ -4,7 +4,7 @@
         <AssemblyName>Zetatech.Accelerate.Serialization</AssemblyName>
         <AssemblyOriginatorKeyFile>$(SolutionDir)/Signature.snk</AssemblyOriginatorKeyFile>
         <AssemblyTitle>Library with the framework serialization components</AssemblyTitle>
-        <AssemblyVersion>10.2609.3</AssemblyVersion>
+        <AssemblyVersion>10.2609.4</AssemblyVersion>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <Authors>Zeta Technologies</Authors>
         <CodeAnalysisOutputToConsole>true</CodeAnalysisOutputToConsole>
@@ -17,7 +17,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <FileVersion>10.2609.3</FileVersion>
+        <FileVersion>10.2609.4</FileVersion>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -26,7 +26,7 @@
         <IncludeContentInPack>true</IncludeContentInPack>
         <IncludeSource>false</IncludeSource>
         <IncludeSymbols>true</IncludeSymbols>
-        <InformationalVersion>10.2609.3</InformationalVersion>
+        <InformationalVersion>10.2609.4</InformationalVersion>
         <IsPackable>true</IsPackable>
         <IsPublishable>false</IsPublishable>
         <IsTestProject>false</IsTestProject>
@@ -42,7 +42,7 @@
         <PackageReadmeFile>Readme.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageTags>Accelerate Json Serialization Zetatech</PackageTags>
-        <PackageVersion>10.2609.3</PackageVersion>
+        <PackageVersion>10.2609.4</PackageVersion>
         <Product>Accelerate Framework</Product>
         <PublishDocumentationFile>false</PublishDocumentationFile>
         <PublishDocumentationFiles>false</PublishDocumentationFiles>

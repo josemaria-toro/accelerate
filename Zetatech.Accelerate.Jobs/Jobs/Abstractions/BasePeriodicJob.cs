@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Zetatech.Accelerate.Jobs.Abstractions;
 
@@ -11,8 +12,7 @@ public abstract class BasePeriodicJob : BaseJob
     private Boolean _runOnStartup;
     private PeriodicTimer _timer;
 
-    protected BasePeriodicJob(TimeSpan interval,
-                              Boolean runOnStartup = false)
+    protected BasePeriodicJob(TimeSpan interval, Boolean runOnStartup = false, ILoggerFactory loggerFactory = null) : base(loggerFactory)
     {
         _runOnStartup = runOnStartup;
         _timer = new PeriodicTimer(interval);

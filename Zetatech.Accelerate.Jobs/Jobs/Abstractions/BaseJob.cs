@@ -3,12 +3,21 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Zetatech.Accelerate.Jobs.Abstractions;
 
 public abstract class BaseJob : BackgroundService
 {
     private Boolean _disposed;
+    private readonly ILogger _logger;
+
+    protected BaseJob(ILoggerFactory loggerFactory = null)
+    {
+        _logger = loggerFactory?.CreateLogger(GetType().Name);
+    }
+
+    public ILogger Logger => _logger;
 
     public override void Dispose()
     {
