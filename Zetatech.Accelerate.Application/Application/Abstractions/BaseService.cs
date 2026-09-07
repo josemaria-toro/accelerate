@@ -1,10 +1,19 @@
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace Zetatech.Accelerate.Application.Abstractions;
 
-public abstract class BaseApplicationService : IApplicationService
+public abstract class BaseService : IService
 {
     private Boolean _disposed;
+    private readonly ILogger _logger;
+
+    protected BaseService(ILoggerFactory loggerFactory = null)
+    {
+        _logger = loggerFactory?.CreateLogger(GetType().Name);
+    }
+
+    public ILogger Logger => _logger;
 
     public void Dispose()
     {
