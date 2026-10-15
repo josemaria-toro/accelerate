@@ -1,0 +1,94 @@
+schema: spec-driven
+
+# Project context
+context: |
+  Project: Accelerate, an application development framework by Zeta Technologies.
+  It provides decoupled, reusable components built on consolidated design patterns
+  to speed up application development.
+
+  Technology
+  - Language: Python.
+  - Web components must be built on FastAPI.
+  - Unit and integration tests use pytest.
+  - License: GNU (GPL).
+
+  Language
+  - All source code, docstrings, documentation and OpenSpec artifacts are written in English.
+
+  Solution structure (top-level component groups / packages)
+  - application: application layer components.
+  - background: background processing components.
+  - caching: cache management components.
+  - configuration: configuration management components.
+  - domain: domain layer and data access components.
+  - exceptions: exception catalog.
+  - http: HTTP components.
+  - logging: diagnostic logging components.
+  - messaging: message publishing and queue/messaging subscription components.
+  - serialization: object serialization/deserialization components.
+  - telemetry: application telemetry components.
+  - web: web application components.
+  New functionality must be placed in the matching group; propose a new group only when none fits.
+
+  Coding conventions
+  - Follow Python conventions and PEP 8 naming.
+  - One class, enum, interface, etc. per file.
+  - Interface names start with "I" (e.g. ICache).
+  - Base classes / abstractions start with "Base" (e.g. BaseRepository).
+  - Imports of the framework's own interfaces, classes, enums, etc. use relative imports.
+  - Member ordering inside a class: grouped in this order, and alphabetically
+    (case-insensitive) within each group:
+    1. Constructors and destructors
+    2. Public properties
+    3. Remaining properties (private, protected or static)
+    4. Public methods
+    5. Remaining methods (private, protected or static)
+  - Options pattern for configuration:
+    - Each class receives its settings through an options class passed to the constructor.
+    - Options class names end with "Options" (e.g. RedisCacheOptions).
+    - Hot reload of configuration is not supported; options are read once at construction.
+
+  Documentation
+  - Root README.md: project description, structure, relevant information and links to
+    each component group's documentation.
+  - docs/<group>/README.md for each component group, containing at least:
+    - Description
+    - Class diagram (Mermaid)
+    - Description of every interface, class, enum, etc.
+    - Usage examples
+    - Version history with a high-level changelog
+
+  Testing
+  - Every component except interfaces has unit tests with coverage above 80.0%.
+  - Components integrating with third-party systems (databases, message brokers, etc.)
+    must be tested against mocks that simulate those systems.
+
+  Versioning
+  - Version is generated automatically with format PPP.YYMM.N (###.####.#):
+    - PPP: supported Python version without dot (e.g. 313, 314).
+    - YYMM: current two-digit year and two-digit month.
+    - N: release counter, incremented on each release and reset every month.
+    - Example: 314.2610.1 is the first release of October 2026 for Python 3.14.
+
+# Per-artifact rules
+rules:
+  proposal:
+    - Identify which component groups (application, background, caching, ...) are affected
+  design:
+    - Name interfaces with the "I" prefix, abstractions with the "Base" prefix, and settings classes with the "Options" suffix
+    - Show the options class received by the constructor for every configurable class
+    - Include a Mermaid class diagram for new or changed components
+  tasks:
+    - Plan one file per class, enum or interface
+    - Include tasks for unit tests (coverage > 80.0%, interfaces excluded) and mocks for any third-party integration
+    - Include a task to update the root README.md and the affected docs/<group>/README.md
+    - Include a final task to bump the project version and update the changelog
+
+# Per-operation guidance
+operations:
+  apply:
+    guidance:
+      - Generate the new project version (PPP.YYMM.N) using the current date; increment N if a release already exists for the current month, otherwise reset it to 1
+      - Update the changelog / version history in the affected docs/<group>/README.md with a high-level summary of the change
+      - Run pytest with coverage and confirm every non-interface component is above 80.0%
+      - Verify member ordering, one-type-per-file and relative imports before finishing
